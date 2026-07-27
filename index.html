@@ -3,16 +3,19 @@
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"><title>هيردسمارت | نظام إدارة المزارع</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet"><style>
 *{box-sizing:border-box;margin:0;padding:0}body{background:#F3EEDE;color:#202A1E;font-family:'Tajawal',sans-serif;min-height:100vh;overflow-x:hidden}:root{--bg:#F3EEDE;--sidebar:#1F3A26;--sidebar-hover:#2B4B33;--card:#FFFDF5;--ink:#202A1E;--ink-soft:#5A6553;--green:#3C6B41;--green-deep:#1F3A26;--gold:#C79A45;--gold-deep:#8A6417;--rust:#A85234;--line:#E1D6B4;--radius:12px;--topbar-h:60px;--sidebar-w:220px}.num{font-family:'JetBrains Mono',monospace}button,input,select{font-family:inherit;cursor:pointer}.topbar{height:var(--topbar-h);display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:var(--card);border-bottom:1px solid var(--line);z-index:20;flex-wrap:wrap;gap:6px}.brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:1rem;color:var(--green-deep)}.brand .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(155deg,var(--green),var(--green-deep));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem}.top-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.status-badge{display:flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;color:var(--ink-soft);background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:999px}.status-dot{width:7px;height:7px;border-radius:50%;background:#C9BE9C}.status-dot.on{background:var(--green);animation:pulseGreen 2s infinite}.status-dot.off{background:var(--rust);animation:pulse 1.8s infinite}@keyframes pulseGreen{0%{box-shadow:0 0 0 0 rgba(60,107,65,.5)}70%{box-shadow:0 0 0 8px rgba(60,107,65,0)}100%{box-shadow:0 0 0 0 rgba(60,107,65,0)}}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(168,82,52,.6)}70%{box-shadow:0 0 0 10px rgba(168,82,52,0)}100%{box-shadow:0 0 0 0 rgba(168,82,52,0)}}.user-chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:4px 12px;border-radius:999px;font-size:.75rem;font-weight:700;color:var(--green-deep)}.user-chip .role-tag{font-size:.6rem;font-weight:700;background:var(--gold);color:var(--green-deep);padding:2px 8px;border-radius:999px}.role-switch{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:999px;font-size:.75rem;color:var(--ink-soft);font-weight:700}.role-switch select{border:none;background:transparent;font-weight:700;color:var(--green-deep);font-size:.8rem}.guest-banner{background:linear-gradient(90deg,var(--gold-deep),var(--gold));color:#fff;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:.8rem;font-weight:700;flex-wrap:wrap;text-align:center}.guest-banner .banner-actions{display:flex;gap:6px}.guest-banner button{padding:4px 14px;border-radius:999px;font-size:.75rem;font-weight:700;border:1.5px solid #fff;background:transparent;color:#fff}.guest-banner button:hover{background:#fff;color:var(--gold-deep)}.btn{padding:8px 16px;border-radius:9px;font-weight:700;font-size:.8rem;border:1.5px solid transparent}.btn-outline{background:transparent;border-color:var(--green-deep);color:var(--green-deep)}.btn-outline:hover{background:var(--green-deep);color:#fff}.btn-solid{background:var(--green-deep);color:#fff}.btn-solid:hover{background:var(--green)}.btn-small{padding:4px 10px;font-size:.7rem;border-radius:6px}.btn[disabled],.locked{opacity:.4;pointer-events:none}.btn-ghost-icon{background:transparent;border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:.8rem;color:var(--green-deep)}.btn-ghost-icon:hover{background:var(--bg)}.app-body{display:flex;height:calc(100vh - var(--topbar-h))}.sidebar{width:var(--sidebar-w);background:var(--sidebar);color:#EFE9D6;padding:12px 8px;flex:none;display:flex;flex-direction:column;gap:2px;overflow-y:auto}.nav-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#D9D3B8;font-weight:600;font-size:.85rem;background:transparent;border:none;width:100%;text-align:right}.nav-item:hover{background:var(--sidebar-hover);color:#fff}.nav-item.active{background:var(--gold);color:var(--green-deep)}.nav-item.hidden-role{display:none}.nav-icon{font-size:1rem}.sidebar-foot{margin-top:auto;font-size:.65rem;color:#93A088;padding:8px 12px}.content{flex:1;overflow-y:auto;padding:16px 14px}.view{display:none}.view.active{display:block;animation:fadein .25s ease}.view-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;flex-wrap:wrap}.view-head h1{font-size:1.2rem;color:var(--green-deep);font-weight:900}.view-head p{color:var(--ink-soft);font-size:.8rem;margin-top:2px}.head-actions{display:flex;gap:6px;align-items:center}.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:16px}.stat-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;transition:transform .2s}.stat-card:hover{transform:translateY(-2px)}.stat-card .label{font-size:.7rem;color:var(--ink-soft);font-weight:700;margin-bottom:4px}.stat-card .value{font-size:1.5rem;font-weight:700;color:var(--green-deep)}.stat-card .value.rust{color:var(--rust)}.stat-card .sub{font-size:.65rem;color:var(--ink-soft);margin-top:2px}.live-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;color:var(--rust)}.live-dot{width:6px;height:6px;border-radius:50%;background:var(--rust);animation:pulse 1.8s infinite}.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.panel-grid{grid-template-columns:1fr}}.gauge-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gauge{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}.gauge .g-label{font-size:.7rem;color:var(--ink-soft);font-weight:700;margin-bottom:4px}.gauge .g-value{font-size:1.5rem;font-weight:700}.gauge .g-bar{height:5px;border-radius:4px;background:var(--line);margin-top:6px;overflow:hidden}.gauge .g-fill{height:100%;border-radius:4px;transition:width .5s}.card-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;animation:fadein .3s;overflow-x:auto}.card-box h4{color:var(--green-deep);margin-bottom:10px;font-size:.95rem;display:flex;align-items:center;justify-content:space-between}table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:400px}th{text-align:right;color:var(--ink-soft);font-weight:700;font-size:.7rem;padding:8px 6px;border-bottom:1px solid var(--line)}td{padding:8px 6px;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:none}tbody tr:hover{background:#FAF6E8}.empty-row td{color:var(--ink-soft);text-align:center;padding:16px 6px;font-size:.8rem}.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.65rem;font-weight:700}.badge.ok{background:#DEEAD9;color:var(--green-deep)}.badge.pending{background:#F1E3BE;color:var(--gold-deep)}.badge.late{background:#F3DAD1;color:var(--rust)}.badge.active{background:#F3DAD1;color:var(--rust)}.producer-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}.producer-row:last-child{border-bottom:none}.producer-row .liters{font-weight:600;color:var(--rust)}.alert-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}.alert-item:last-child{border-bottom:none}.dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none}.dot.red{background:var(--rust);animation:pulse 1.8s infinite}.dot.gray{background:#C9BE9C}.alert-item .meta{font-size:.7rem;color:var(--ink-soft);margin-top:2px}.alert-item .body{flex:1}.row-actions{display:flex;gap:4px}.modal-overlay{position:fixed;inset:0;background:rgba(20,26,17,.55);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px);padding:16px}.modal-overlay.hidden{display:none}.modal{background:var(--card);border-radius:16px;padding:20px;width:100%;max-width:400px;border:1px solid var(--line);max-height:88vh;overflow-y:auto;position:relative;animation:modalIn .3s}@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}.modal h3{color:var(--green-deep);font-size:1.1rem;margin-bottom:4px}.modal .sub{color:var(--ink-soft);font-size:.75rem;margin-bottom:14px}.auth-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--bg);border-radius:10px;padding:4px}.auth-tab{flex:1;padding:8px;text-align:center;border-radius:8px;font-weight:700;font-size:.8rem;color:var(--ink-soft);border:none;background:transparent}.auth-tab.active{background:var(--green-deep);color:#fff}.field{margin-bottom:12px}.field label{display:block;font-size:.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:4px}.field input,.field select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:.85rem;color:var(--ink)}.field input:focus,.field select:focus{outline:none;border-color:var(--green)}.field-error{color:var(--rust);font-size:.7rem;margin-top:3px}.field-errors{margin-top:6px}.modal-actions{display:flex;gap:8px;margin-top:16px}.modal-actions .btn{flex:1}.modal-close{position:absolute;top:12px;left:12px;background:none;border:none;font-size:1rem;color:var(--ink-soft);cursor:pointer}#toast-wrap{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:90%;max-width:400px}.toast{background:var(--green-deep);color:#fff;padding:10px 16px;border-radius:10px;font-size:.8rem;font-weight:600;box-shadow:0 8px 20px -6px rgba(0,0,0,.35);animation:toastin .3s ease;pointer-events:auto;text-align:center}.toast.error{background:var(--rust)}@keyframes toastin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}@media(max-width:640px){.form-grid-2,.form-grid-3{grid-template-columns:1fr}}.hidden{display:none!important}.mt-12{margin-top:12px}@media(max-width:880px){.sidebar{width:60px}.nav-item span.label{display:none}.stat-row{grid-template-columns:1fr 1fr}.panel-grid{grid-template-columns:1fr}.top-right .user-chip{display:none}}@media(max-width:480px){.topbar{padding:0 8px}.brand{font-size:.85rem}.brand .mark{width:26px;height:26px;font-size:1rem}.status-badge{font-size:.6rem;padding:2px 8px}.guest-banner{font-size:.7rem;padding:6px 12px}.content{padding:10px 8px}.stat-row{grid-template-columns:1fr}.gauge-grid{grid-template-columns:1fr 1fr}.view-head h1{font-size:1rem}.btn{padding:6px 12px;font-size:.75rem}.modal{padding:16px;max-width:100%}}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.cow-runner{position:fixed;bottom:10px;right:10px;font-size:2.5rem;z-index:50;animation:runCow 12s linear infinite;display:none;pointer-events:none}@keyframes runCow{0%{transform:translateX(0) scaleX(1)}25%{transform:translateX(60px) scaleX(1)}50%{transform:translateX(120px) scaleX(1)}75%{transform:translateX(60px) scaleX(1)}100%{transform:translateX(0) scaleX(1)}}.guest-mode .cow-runner{display:block}
+/* البقرة تظهر دائماً (حتى بعد تسجيل الدخول) */
+.cow-runner{position:fixed;bottom:10px;right:10px;font-size:2.8rem;z-index:50;animation:runCow 12s ease-in-out infinite;display:block;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15))}@keyframes runCow{0%{transform:translateX(0) scaleX(1) rotate(0deg)}25%{transform:translateX(80px) scaleX(1) rotate(-3deg)}50%{transform:translateX(150px) scaleX(1) rotate(0deg)}75%{transform:translateX(80px) scaleX(1) rotate(3deg)}100%{transform:translateX(0) scaleX(1) rotate(0deg)}}
 .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;font-size:.8rem}.feature-item{background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--line);text-align:center}.feature-item span{display:block;font-size:1.5rem;margin-bottom:4px}
 </style></head>
 <body>
+<!-- البقرة تظهر دائماً -->
 <div class="cow-runner">🐄</div>
+
 <header class="topbar"><div class="brand"><span class="mark">🐄</span> هيردسمارت</div><div class="top-right"><span class="status-badge"><span class="status-dot" id="apiStatusDot"></span><span id="apiStatusText">جارِ الفحص...</span></span><div class="role-switch" id="roleSwitcherWrap" style="display:none;"><span>🧑‍🌾</span><select id="roleSwitcher"><option value="owner">مالك</option><option value="vet">بيطري</option><option value="worker">عامل</option></select></div><span class="user-chip" id="userChip" style="display:none;">👋 <strong id="userNameLabel">—</strong><span class="role-tag" id="userRoleTag">—</span></span><button class="btn btn-outline btn-small" id="btnLogin" onclick="openAuth('login')">دخول</button><button class="btn btn-solid btn-small" id="btnRegister" onclick="openAuth('register')">حساب جديد</button><button class="btn btn-outline btn-small" id="btnLogout" style="display:none;" onclick="logout()">خروج</button></div></header>
 <div class="guest-banner" id="guestBanner" style="display:none;"><span>🌾 أنت في وضع المعاينة التجريبية</span><div class="banner-actions"><button onclick="openAuth('login')">سجّل الدخول</button><button onclick="openAuth('register')">أنشئ حساب</button></div></div>
 <div class="app-body"><aside class="sidebar"><button class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span><span class="label">التحليلات</span></button><button class="nav-item" data-view="cattle"><span class="nav-icon">🐄</span><span class="label">القطيع</span></button><button class="nav-item" data-view="milk"><span class="nav-icon">🥛</span><span class="label">الحليب</span></button><button class="nav-item" data-view="health"><span class="nav-icon">💉</span><span class="label">الطبي</span></button><button class="nav-item" data-view="alerts"><span class="nav-icon">📡</span><span class="label">التنبيهات</span></button><button class="nav-item hidden-role" id="navStaff" data-view="staff"><span class="nav-icon">👥</span><span class="label">الموظفين</span></button><div class="sidebar-foot">آخر تحديث: <span id="syncTime" class="num">—</span></div></aside>
 <main class="content">
-<section class="view active" id="view-dashboard"><div class="view-head"><div><h1>لوحة التحليلات</h1><p>نظرة عامة لحظية</p></div><div class="head-actions"><span class="live-badge"><span class="live-dot"></span> مباشر</span><button class="btn-ghost-icon" onclick="refreshAll()">⟳</button></div></div><div class="stat-row"><div class="stat-card"><div class="label">إجمالي الماشية</div><div class="value num" id="statCattle">—</div><div class="sub">رأس</div></div><div class="stat-card"><div class="label">إنتاج اليوم</div><div class="value num" id="statMilk">—</div><div class="sub">لتر</div></div><div class="stat-card"><div class="label">تنبيهات نشطة</div><div class="value num rust" id="statCritical">0</div><div class="sub">مستشعرات</div></div></div><div class="panel-grid"><div class="card-box"><h4>📈 إنتاج الأسبوع</h4><div id="milkSummaryText" style="font-size:1.1rem;font-weight:700;color:var(--green-deep);padding:8px 0;">—</div><div style="font-size:.75rem;color:var(--ink-soft);">إجمالي اللبن خلال آخر 7 أيام</div></div><div class="card-box"><h4>📡 المستشعرات <span class="live-badge"><span class="live-dot"></span></span></h4><div class="gauge-grid"><div class="gauge"><div class="g-label">🌡️ الحرارة</div><div class="g-value num" id="gaugeTempVal">—</div><div class="g-bar"><div class="g-fill" id="gaugeTempBar"></div></div></div><div class="gauge"><div class="g-label">🏃 الحركة</div><div class="g-value num" id="gaugeMoveVal">—</div><div class="g-bar"><div class="g-fill" id="gaugeMoveBar"></div></div></div></div><div style="margin-top:12px;"><h4 style="font-size:.85rem;">🏆 أعلى الإنتاج</h4><div id="topProducers"><div class="empty-row">لا توجد بيانات</div></div></div></div></div><div class="card-box" id="featuresCard"><h4>✨ مميزات هيردسمارت</h4><div class="feature-grid"><div class="feature-item"><span>🐄</span> تتبع القطيع لحظياً</div><div class="feature-item"><span>🥛</span> إنتاج الحليب اليومي</div><div class="feature-item"><span>💉</span> جدول التطعيمات</div><div class="feature-item"><span>📡</span> تنبيهات المستشعرات</div></div><p style="font-size:.8rem;color:var(--ink-soft);margin-top:8px;">سجّل الدخول لإدارة مزرعتك بذكاء</p></div><div class="card-box"><h4>🔔 آخر التنبيهات <button class="btn btn-outline btn-small" onclick="switchView('alerts')">عرض الكل</button></h4><div id="dashRecentAlerts"><div class="empty-row">لا توجد تنبيهات</div></div></div></section>
+<section class="view active" id="view-dashboard"><div class="view-head"><div><h1>لوحة التحليلات</h1><p>نظرة عامة لحظية</p></div><div class="head-actions"><span class="live-badge"><span class="live-dot"></span> مباشر</span><button class="btn-ghost-icon" onclick="refreshAll()">⟳</button></div></div><div class="stat-row"><div class="stat-card"><div class="label">إجمالي الماشية</div><div class="value num" id="statCattle">—</div><div class="sub">رأس</div></div><div class="stat-card"><div class="label">إنتاج اليوم</div><div class="value num" id="statMilk">—</div><div class="sub">لتر</div></div><div class="stat-card"><div class="label">تنبيهات نشطة</div><div class="value num rust" id="statCritical">0</div><div class="sub">مستشعرات</div></div></div><div class="panel-grid"><div class="card-box"><h4>📈 إنتاج الأسبوع</h4><div id="milkSummaryText" style="font-size:1.1rem;font-weight:700;color:var(--green-deep);padding:8px 0;">—</div><div style="font-size:.75rem;color:var(--ink-soft);">إجمالي اللبن خلال آخر 7 أيام</div></div><div class="card-box"><h4>📡 المستشعرات <span class="live-badge"><span class="live-dot"></span></span> <button class="btn btn-outline btn-small" onclick="refreshTelemetry()" style="font-size:.65rem;">تحديث</button></h4><div class="gauge-grid"><div class="gauge"><div class="g-label">🌡️ الحرارة</div><div class="g-value num" id="gaugeTempVal">—</div><div class="g-bar"><div class="g-fill" id="gaugeTempBar"></div></div></div><div class="gauge"><div class="g-label">🏃 الحركة</div><div class="g-value num" id="gaugeMoveVal">—</div><div class="g-bar"><div class="g-fill" id="gaugeMoveBar"></div></div></div></div><div style="margin-top:12px;"><h4 style="font-size:.85rem;">🏆 أعلى الإنتاج</h4><div id="topProducers"><div class="empty-row">لا توجد بيانات</div></div></div></div></div><div class="card-box" id="featuresCard"><h4>✨ مميزات هيردسمارت</h4><div class="feature-grid"><div class="feature-item"><span>🐄</span> تتبع القطيع لحظياً</div><div class="feature-item"><span>🥛</span> إنتاج الحليب اليومي</div><div class="feature-item"><span>💉</span> جدول التطعيمات</div><div class="feature-item"><span>📡</span> تنبيهات المستشعرات</div></div><p style="font-size:.8rem;color:var(--ink-soft);margin-top:8px;">سجّل الدخول لإدارة مزرعتك بذكاء</p></div><div class="card-box"><h4>🔔 آخر التنبيهات <button class="btn btn-outline btn-small" onclick="switchView('alerts')">عرض الكل</button></h4><div id="dashRecentAlerts"><div class="empty-row">لا توجد تنبيهات</div></div></div></section>
 <section class="view" id="view-cattle"><div class="view-head"><div><h1>🐄 إدارة القطيع</h1><p>سجل كامل للماشية</p></div><button class="btn btn-solid" data-roles="owner,vet" onclick="openCattleForm()">+ إضافة</button></div><div class="card-box" id="cattleFormBox" style="display:none;"><h4>إضافة رأس ماشية</h4><form id="cattleForm" onsubmit="return handleAddCattle(event)"><div class="form-grid-2"><div class="field"><label>الرقم (Tag)</label><input id="cattleTag" type="text" required placeholder="A420"></div><div class="field"><label>السلالة</label><input id="cattleBreed" type="text" required placeholder="هولشتاين"></div><div class="field"><label>الجنس</label><select id="cattleGender"><option value="1">أنثى</option><option value="0">ذكر</option></select></div><div class="field"><label>تاريخ الميلاد</label><input id="cattleBirth" type="date" required></div></div><div id="cattleErrors" class="field-errors"></div><div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('cattleFormBox').style.display='none'">إلغاء</button></div></form></div><div class="card-box" style="overflow-x:auto;"><table><thead><tr><th>الرقم</th><th>السلالة</th><th>الجنس</th><th>الميلاد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="cattleTableBody"><tr class="empty-row"><td colspan="6">سجّل الدخول</td></tr></tbody></table></div></section>
 <section class="view" id="view-milk"><div class="view-head"><div><h1>🥛 إنتاج الحليب</h1><p>سجل الورديات</p></div><button class="btn btn-solid" data-roles="owner,vet,worker" onclick="openMilkForm()">+ تسجيل</button></div><div class="card-box" id="milkFormBox" style="display:none;"><h4>تسجيل وردية</h4><form id="milkForm" onsubmit="return handleAddMilk(event)"><div class="form-grid-3"><div class="field"><label>البقرة</label><select id="milkCow" required></select></div><div class="field"><label>الوردية</label><select id="milkShift"><option value="0">صباحية</option><option value="1">مسائية</option></select></div><div class="field"><label>الكمية (لتر)</label><input id="milkQty" type="number" step="0.1" required placeholder="13.5"></div></div><div id="milkErrors" class="field-errors"></div><div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('milkFormBox').style.display='none'">إلغاء</button></div></form></div><div class="card-box" style="overflow-x:auto;"><table><thead><tr><th>التاريخ</th><th>الوردية</th><th>البقرة</th><th>الكمية</th></tr></thead><tbody id="milkTableBody"><tr class="empty-row"><td colspan="4">سجّل الدخول</td></tr></tbody></table></div></section>
 <section class="view" id="view-health"><div class="view-head"><div><h1>💉 الجدول الطبي</h1><p>تطعيمات وسجلات صحية</p></div><div class="head-actions"><button class="btn btn-outline" data-roles="owner,vet" onclick="openVaccineTypeForm()">+ لقاح</button><button class="btn btn-outline" data-roles="owner,vet" onclick="openVaccinationForm()">+ تطعيم</button><button class="btn btn-solid" data-roles="owner,vet" onclick="openHealthForm()">+ سجل صحي</button></div></div><div class="card-box" id="vtFormBox" style="display:none;"><h4>نوع لقاح جديد</h4><form id="vtForm" onsubmit="return handleAddVaccineType(event)"><div class="form-grid-2"><div class="field"><label>الاسم</label><input id="vtName" type="text" required placeholder="البروسيلا"></div><div class="field"><label>العمر (شهر)</label><input id="vtAge" type="number" required placeholder="6"></div><div class="field"><label>الجرعة</label><input id="vtDosage" type="number" step="0.1" required placeholder="2"></div><div class="field"><label>الفاصل (يوم)</label><input id="vtInterval" type="number"></div></div><div id="vtErrors" class="field-errors"></div><div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('vtFormBox').style.display='none'">إلغاء</button></div></form></div><div class="card-box" id="vaccFormBox" style="display:none;"><h4>جدولة تطعيم</h4><form id="vaccForm" onsubmit="return handleAddVacc(event)"><div class="form-grid-3"><div class="field"><label>البقرة</label><select id="vaccCow" required></select></div><div class="field"><label>نوع اللقاح</label><select id="vaccType" required></select></div><div class="field"><label>الموعد</label><input id="vaccDate" type="date" required></div></div><div id="vaccErrors" class="field-errors"></div><div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('vaccFormBox').style.display='none'">إلغاء</button></div></form></div><div class="card-box" id="healthFormBox" style="display:none;"><h4>سجل صحي جديد</h4><form id="healthForm" onsubmit="return handleAddHealth(event)"><div class="form-grid-2"><div class="field"><label>البقرة</label><select id="healthCow" required></select></div><div class="field"><label>التشخيص</label><input id="healthDiag" type="text" required placeholder="التهاب الضرع"></div><div class="field"><label>خطة العلاج</label><input id="healthTreat" type="text" required placeholder="مضاد حيوي"></div><div class="field"><label>ملاحظات</label><input id="healthNotes" type="text"></div><div class="field" style="display:flex;align-items:center;gap:8px;"><label style="margin:0;"><input type="checkbox" id="healthContagious" style="width:auto;display:inline-block;margin-left:6px;"> معدية</label></div></div><div id="healthErrors" class="field-errors"></div><div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('healthFormBox').style.display='none'">إلغاء</button></div></form></div><div class="card-box" style="overflow-x:auto;"><h4>التطعيمات</h4><table><thead><tr><th>البقرة</th><th>اللقاح</th><th>الموعد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="vaccTableBody"><tr class="empty-row"><td colspan="5">سجّل الدخول</td></tr></tbody></table></div><div class="card-box" style="overflow-x:auto;"><h4>السجلات الصحية</h4><table><thead><tr><th>البقرة</th><th>التشخيص</th><th>العلاج</th><th>معدية؟</th></tr></thead><tbody id="healthTableBody"><tr class="empty-row"><td colspan="4">سجّل الدخول</td></tr></tbody></table></div></section>
@@ -25,73 +28,281 @@
 <div id="toast-wrap"></div>
 
 <script>
-const API_BASE='https://herdsmart.runasp.net/api';
-const EP={register:'/Auth/register',login:'/Auth/login',cattle:'/cattle',cattleById:id=>`/cattle/${id}`,milk:'/milk',milkTop:'/milk/top-producers',milkSummary:'/milk/summary',healthLogs:'/health-logs',vaccinations:'/vaccinations',vaccAdminister:id=>`/vaccinations/${id}/administer`,vaccines:'/vaccines',users:'/users'};
-const roleNames={owner:'مالك المزرعة',vet:'بيطري',worker:'عامل'};
-const ENUM={userRole:{0:'owner',1:'vet',2:'worker'},cattleStatus:{0:'نشطة',1:'مريضة',2:'حامل',3:'مباعة',4:'نافقة'}};
-function pick(obj,keys,fallback=''){for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null)return obj[k];}return fallback;}
-function asArray(data){if(Array.isArray(data))return data;if(data&&Array.isArray(data.items))return data.items;return[];}
-function fmtDate(d){return d?String(d).slice(0,10):'—';}
-function getToken(){return localStorage.getItem('hs_token');}
-function isLoggedIn(){return!!getToken();}
-function showToast(msg,isError){const wrap=document.getElementById('toast-wrap');const el=document.createElement('div');el.className='toast'+(isError?' error':'');el.textContent=msg;wrap.appendChild(el);setTimeout(()=>el.remove(),4000);}
-function openModal(id){document.getElementById(id).classList.remove('hidden');}
-function closeModal(id){document.getElementById(id).classList.add('hidden');}
-function openAuth(tab){openModal('authModal');setAuthTab(tab);}
-function setAuthTab(tab){document.getElementById('tabLogin').classList.toggle('active',tab==='login');document.getElementById('tabRegister').classList.toggle('active',tab==='register');document.getElementById('loginForm').style.display=tab==='login'?'block':'none';document.getElementById('registerForm').style.display=tab==='register'?'block':'none';}
-function switchView(view){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');}
+// ============================================================
+// 1. CONFIG (قم بتعديل نقطة نهاية المستشعرات حسب الباك إند الخاص بك)
+// ============================================================
+const API_BASE = 'https://herdsmart.runasp.net/api';
+const EP = {
+    register: '/Auth/register',
+    login: '/Auth/login',
+    cattle: '/cattle',
+    cattleById: id => `/cattle/${id}`,
+    milk: '/milk',
+    milkTop: '/milk/top-producers',
+    milkSummary: '/milk/summary',
+    healthLogs: '/health-logs',
+    vaccinations: '/vaccinations',
+    vaccAdminister: id => `/vaccinations/${id}/administer`,
+    vaccines: '/vaccines',
+    users: '/users',
+    // ⚠️ أضف نقطة نهاية المستشعرات الصحيحة هنا (مثال: '/telemetry/latest')
+    telemetry: '/telemetry' // غيّرها حسب الـ Controller عندك
+};
 
-async function apiFetch(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};const token=getToken();if(token)headers['Authorization']='Bearer '+token;const res=await fetch(API_BASE+path,{...options,headers,body:options.body?JSON.stringify(options.body):undefined});let data=null;try{data=await res.json();}catch(e){}if(!res.ok){let errors=[];if(data){if(data.errors&&typeof data.errors==='object'){const flat=Object.values(data.errors).flat();if(flat.length)errors=flat;}if(!errors.length&&Array.isArray(data.errors))errors=data.errors;if(!errors.length&&data.message)errors=[data.message];if(!errors.length&&data.title)errors=[data.title];}if(!errors.length)errors=['حدث خطأ غير متوقع'];const err=new Error(errors.join(' | '));err.parsedErrors=errors;err.status=res.status;throw err;}return data;}
+const roleNames = { owner: 'مالك المزرعة', vet: 'بيطري', worker: 'عامل' };
+const ENUM = { userRole: { 0: 'owner', 1: 'vet', 2: 'worker' }, cattleStatus: { 0: 'نشطة', 1: 'مريضة', 2: 'حامل', 3: 'مباعة', 4: 'نافقة' } };
 
-function saveSession({token,tenantId,role,fullName}){if(token)localStorage.setItem('hs_token',token);if(tenantId)localStorage.setItem('hs_tenant',tenantId);if(role)localStorage.setItem('hs_role',role);if(fullName)localStorage.setItem('hs_name',fullName);}
-function clearSession(){['hs_token','hs_tenant','hs_role','hs_name'].forEach(k=>localStorage.removeItem(k));}
-async function handleLogin(e){e.preventDefault();const email=document.getElementById('loginEmail').value;const password=document.getElementById('loginPassword').value;const errEl=document.getElementById('loginErrors');errEl.innerHTML='';try{const data=await apiFetch(EP.login,{method:'POST',body:{email,password}});const token=pick(data,['accessToken']);if(!token)throw new Error('لم يُرجع الخادم accessToken');saveSession({token,tenantId:pick(data,['tenantId']),role:pick(data,['role'],'owner'),fullName:pick(data,['fullName'])});closeModal('authModal');showToast('✅ تم تسجيل الدخول');enterLiveMode(pick(data,['fullName']),pick(data,['role'],'owner'));}catch(err){const msgs=err.parsedErrors||['فشل تسجيل الدخول'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-async function handleRegister(e){e.preventDefault();const farmName=document.getElementById('regFarmName').value;const ownerName=document.getElementById('regOwnerName').value;const email=document.getElementById('regEmail').value;const password=document.getElementById('regPassword').value;const errEl=document.getElementById('registerErrors');errEl.innerHTML='';try{const data=await apiFetch(EP.register,{method:'POST',body:{farmName,ownerName,email,password}});const token=pick(data,['accessToken']);if(!token)throw new Error('لم يُرجع الخادم accessToken');saveSession({token,tenantId:pick(data,['tenantId']),role:pick(data,['role'],'owner'),fullName:pick(data,['fullName'],ownerName)});closeModal('authModal');showToast('✅ تم إنشاء الحساب');enterLiveMode(pick(data,['fullName'],ownerName),pick(data,['role'],'owner'));}catch(err){const msgs=err.parsedErrors||['فشل إنشاء الحساب'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-function logout(){clearSession();enterGuestMode();showToast('تم تسجيل الخروج');}
+function pick(obj, keys, fallback = '') { for (const k of keys) { if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k]; } return fallback; }
+function asArray(data) { if (Array.isArray(data)) return data; if (data && Array.isArray(data.items)) return data.items; return []; }
+function fmtDate(d) { return d ? String(d).slice(0, 10) : '—'; }
+function getToken() { return localStorage.getItem('hs_token'); }
+function isLoggedIn() { return !!getToken(); }
+function showToast(msg, isError) { const wrap = document.getElementById('toast-wrap'); const el = document.createElement('div'); el.className = 'toast' + (isError ? ' error' : ''); el.textContent = msg; wrap.appendChild(el); setTimeout(() => el.remove(), 4000); }
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function openAuth(tab) { openModal('authModal'); setAuthTab(tab); }
+function setAuthTab(tab) { document.getElementById('tabLogin').classList.toggle('active', tab === 'login'); document.getElementById('tabRegister').classList.toggle('active', tab === 'register'); document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none'; document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none'; }
+function switchView(view) { document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view)); document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById('view-' + view).classList.add('active'); }
 
-// ----- الحالة العامة -----
-let mode='guest', currentRole='owner';
-let cattleList=[], vaccineTypes=[], alerts=[], criticalCount=0;
-let sensorTemp=5, sensorMove=5;
+// ============================================================
+// 2. API CLIENT
+// ============================================================
+async function apiFetch(path, options = {}) {
+    const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+    const token = getToken();
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const res = await fetch(API_BASE + path, { ...options, headers, body: options.body ? JSON.stringify(options.body) : undefined });
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok) {
+        let errors = [];
+        if (data) {
+            if (data.errors && typeof data.errors === 'object') { const flat = Object.values(data.errors).flat(); if (flat.length) errors = flat; }
+            if (!errors.length && Array.isArray(data.errors)) errors = data.errors;
+            if (!errors.length && data.message) errors = [data.message];
+            if (!errors.length && data.title) errors = [data.title];
+        }
+        if (!errors.length) errors = ['حدث خطأ غير متوقع'];
+        const err = new Error(errors.join(' | '));
+        err.parsedErrors = errors;
+        err.status = res.status;
+        throw err;
+    }
+    return data;
+}
 
-// بيانات تجريبية
-const MOCK={cattle:[{id:'m1',tagNumber:'A102',breed:'هولشتاين',gender:1,birthDate:'2023-05-12',status:0},{id:'m2',tagNumber:'A245',breed:'جيرسي',gender:1,birthDate:'2022-04-02',status:1},{id:'m3',tagNumber:'A310',breed:'هولشتاين',gender:1,birthDate:'2024-06-01',status:0},{id:'m4',tagNumber:'A088',breed:'براون سويس',gender:1,birthDate:'2021-11-18',status:0},{id:'m5',tagNumber:'A199',breed:'جيرسي',gender:1,birthDate:'2023-06-20',status:0}],milk:[{loggedAt:'2026-07-25',shift:0,cattleTagNumber:'A102',amountInLiters:14.2},{loggedAt:'2026-07-25',shift:0,cattleTagNumber:'A245',amountInLiters:13.1},{loggedAt:'2026-07-24',shift:1,cattleTagNumber:'A310',amountInLiters:12.6},{loggedAt:'2026-07-24',shift:1,cattleTagNumber:'A088',amountInLiters:11.4},{loggedAt:'2026-07-23',shift:0,cattleTagNumber:'A199',amountInLiters:12.9}],vaccinations:[{id:'v1',cattleTagNumber:'A088',vaccineName:'الحمى القلاعية',scheduledDate:'2026-07-10',administeredDate:null},{id:'v2',cattleTagNumber:'A102',vaccineName:'البروسيلا',scheduledDate:'2026-08-01',administeredDate:null},{id:'v3',cattleTagNumber:'A245',vaccineName:'الجمرة الخبيثة',scheduledDate:'2026-06-15',administeredDate:'2026-06-15'}],health:[{cattleTagNumber:'A088',diagnosis:'التهاب الضرع',treatmentPlan:'مضاد حيوي',isContagious:false},{cattleTagNumber:'A245',diagnosis:'عرج خفيف',treatmentPlan:'راحة',isContagious:false}],staff:[{fullName:'د.كريم',email:'kareem@farm.com',role:'vet'},{fullName:'أميرة',email:'amira@farm.com',role:'worker'}],weeklyMilk:[1620,1710,1690,1780,1750,1810,1840],topProducers:[{tagNumber:'A102',totalLiters:27.4},{tagNumber:'A245',totalLiters:25.1},{tagNumber:'A310',totalLiters:24.6}]};
+// ============================================================
+// 3. AUTH
+// ============================================================
+function saveSession({ token, tenantId, role, fullName }) { if (token) localStorage.setItem('hs_token', token); if (tenantId) localStorage.setItem('hs_tenant', tenantId); if (role) localStorage.setItem('hs_role', role); if (fullName) localStorage.setItem('hs_name', fullName); }
+function clearSession() { ['hs_token', 'hs_tenant', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
 
-// ===== دالة مسح جميع البيانات (للتسجيل الدخول) =====
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginErrors');
+    errEl.innerHTML = '';
+    try {
+        const data = await apiFetch(EP.login, { method: 'POST', body: { email, password } });
+        const token = pick(data, ['accessToken']);
+        if (!token) throw new Error('لم يُرجع الخادم accessToken');
+        saveSession({ token, tenantId: pick(data, ['tenantId']), role: pick(data, ['role'], 'owner'), fullName: pick(data, ['fullName']) });
+        closeModal('authModal');
+        showToast('✅ تم تسجيل الدخول');
+        enterLiveMode(pick(data, ['fullName']), pick(data, ['role'], 'owner'));
+    } catch (err) {
+        const msgs = err.parsedErrors || ['فشل تسجيل الدخول'];
+        errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join('');
+    }
+    return false;
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    const farmName = document.getElementById('regFarmName').value;
+    const ownerName = document.getElementById('regOwnerName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const errEl = document.getElementById('registerErrors');
+    errEl.innerHTML = '';
+    try {
+        const data = await apiFetch(EP.register, { method: 'POST', body: { farmName, ownerName, email, password } });
+        const token = pick(data, ['accessToken']);
+        if (!token) throw new Error('لم يُرجع الخادم accessToken');
+        saveSession({ token, tenantId: pick(data, ['tenantId']), role: pick(data, ['role'], 'owner'), fullName: pick(data, ['fullName'], ownerName) });
+        closeModal('authModal');
+        showToast('✅ تم إنشاء الحساب');
+        enterLiveMode(pick(data, ['fullName'], ownerName), pick(data, ['role'], 'owner'));
+    } catch (err) {
+        const msgs = err.parsedErrors || ['فشل إنشاء الحساب'];
+        errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join('');
+    }
+    return false;
+}
+
+function logout() { clearSession(); enterGuestMode(); showToast('تم تسجيل الخروج'); }
+
+// ============================================================
+// 4. STATE & MODE
+// ============================================================
+let mode = 'guest', currentRole = 'owner';
+let cattleList = [], vaccineTypes = [], alerts = [], criticalCount = 0;
+let sensorTemp = 5, sensorMove = 5;
+
+// ============================================================
+// 5. MOCK DATA (للوضع التجريبي فقط)
+// ============================================================
+const MOCK = {
+    cattle: [{ id: 'm1', tagNumber: 'A102', breed: 'هولشتاين', gender: 1, birthDate: '2023-05-12', status: 0 }, { id: 'm2', tagNumber: 'A245', breed: 'جيرسي', gender: 1, birthDate: '2022-04-02', status: 1 }, { id: 'm3', tagNumber: 'A310', breed: 'هولشتاين', gender: 1, birthDate: '2024-06-01', status: 0 }, { id: 'm4', tagNumber: 'A088', breed: 'براون سويس', gender: 1, birthDate: '2021-11-18', status: 0 }, { id: 'm5', tagNumber: 'A199', breed: 'جيرسي', gender: 1, birthDate: '2023-06-20', status: 0 }],
+    milk: [{ loggedAt: '2026-07-25', shift: 0, cattleTagNumber: 'A102', amountInLiters: 14.2 }, { loggedAt: '2026-07-25', shift: 0, cattleTagNumber: 'A245', amountInLiters: 13.1 }, { loggedAt: '2026-07-24', shift: 1, cattleTagNumber: 'A310', amountInLiters: 12.6 }, { loggedAt: '2026-07-24', shift: 1, cattleTagNumber: 'A088', amountInLiters: 11.4 }, { loggedAt: '2026-07-23', shift: 0, cattleTagNumber: 'A199', amountInLiters: 12.9 }],
+    vaccinations: [{ id: 'v1', cattleTagNumber: 'A088', vaccineName: 'الحمى القلاعية', scheduledDate: '2026-07-10', administeredDate: null }, { id: 'v2', cattleTagNumber: 'A102', vaccineName: 'البروسيلا', scheduledDate: '2026-08-01', administeredDate: null }, { id: 'v3', cattleTagNumber: 'A245', vaccineName: 'الجمرة الخبيثة', scheduledDate: '2026-06-15', administeredDate: '2026-06-15' }],
+    health: [{ cattleTagNumber: 'A088', diagnosis: 'التهاب الضرع', treatmentPlan: 'مضاد حيوي', isContagious: false }, { cattleTagNumber: 'A245', diagnosis: 'عرج خفيف', treatmentPlan: 'راحة', isContagious: false }],
+    staff: [{ fullName: 'د.كريم', email: 'kareem@farm.com', role: 'vet' }, { fullName: 'أميرة', email: 'amira@farm.com', role: 'worker' }],
+    weeklyMilk: [1620, 1710, 1690, 1780, 1750, 1810, 1840],
+    topProducers: [{ tagNumber: 'A102', totalLiters: 27.4 }, { tagNumber: 'A245', totalLiters: 25.1 }, { tagNumber: 'A310', totalLiters: 24.6 }]
+};
+
+// ============================================================
+// 6. CORE FUNCTIONS (تعمل في كل من وضعي الضيف والحي)
+// ============================================================
 function clearAllData() {
-    // جداول
     document.getElementById('cattleTableBody').innerHTML = '<tr class="empty-row"><td colspan="6">جاري التحميل...</td></tr>';
     document.getElementById('milkTableBody').innerHTML = '<tr class="empty-row"><td colspan="4">جاري التحميل...</td></tr>';
     document.getElementById('vaccTableBody').innerHTML = '<tr class="empty-row"><td colspan="5">جاري التحميل...</td></tr>';
     document.getElementById('healthTableBody').innerHTML = '<tr class="empty-row"><td colspan="4">جاري التحميل...</td></tr>';
     document.getElementById('staffTableBody').innerHTML = '<tr class="empty-row"><td colspan="3">جاري التحميل...</td></tr>';
-    // إحصائيات
     document.getElementById('statCattle').textContent = '—';
     document.getElementById('statMilk').textContent = '—';
     document.getElementById('statCritical').textContent = '0';
     document.getElementById('milkSummaryText').textContent = '—';
     document.getElementById('topProducers').innerHTML = '<div class="empty-row">جاري التحميل...</div>';
-    // المستشعرات
     document.getElementById('gaugeTempVal').textContent = '—';
     document.getElementById('gaugeMoveVal').textContent = '—';
     document.getElementById('gaugeTempBar').style.width = '0%';
     document.getElementById('gaugeMoveBar').style.width = '0%';
-    document.getElementById('gaugeTempVal').style.color = '';
-    document.getElementById('gaugeMoveVal').style.color = '';
-    // التنبيهات
     alerts = [];
     criticalCount = 0;
     renderAlerts(alerts);
-    // إعادة ضبط القيم الافتراضية للمستشعرات
-    sensorTemp = 5;
-    sensorMove = 5;
 }
 
-// ===== MODE SWITCHING =====
+function applyRolePermissions() {
+    document.querySelectorAll('[data-roles]').forEach(el => {
+        const allowed = el.dataset.roles.split(',');
+        const ok = allowed.includes(currentRole);
+        el.disabled = !ok;
+        el.classList.toggle('locked', !ok);
+        el.title = ok ? '' : '🔒 غير متاح لدور ' + (roleNames[currentRole] || '');
+    });
+    const navStaff = document.getElementById('navStaff');
+    if (currentRole === 'owner') navStaff.classList.remove('hidden-role');
+    else navStaff.classList.add('hidden-role');
+}
+
+function updateStats(cattleCount, dailyMilk, critical) {
+    document.getElementById('statCattle').textContent = cattleCount || '—';
+    document.getElementById('statMilk').textContent = dailyMilk || '—';
+    document.getElementById('statCritical').textContent = critical || 0;
+}
+
+function updateTopProducers(list) {
+    const el = document.getElementById('topProducers');
+    if (!list || !list.length) { el.innerHTML = '<div class="empty-row">لا توجد بيانات</div>'; return; }
+    el.innerHTML = list.map(p => `<div class="producer-row"><span>🐄 #${pick(p, ['tagNumber'], '—')}</span><span class="liters num">${Number(pick(p, ['totalLiters'], 0)).toFixed(1)} لتر</span></div>`).join('');
+}
+
+function updateWeeklySummary(values) {
+    const el = document.getElementById('milkSummaryText');
+    if (!values || !values.length) { el.textContent = '—'; return; }
+    const total = values.reduce((a, b) => a + b, 0);
+    const avg = Math.round(total / values.length);
+    el.textContent = `📊 إجمالي الأسبوع: ${total} لتر | المعدل اليومي: ${avg} لتر`;
+}
+
+function updateSensors(temp, move) {
+    const colorTemp = temp >= 9 ? '#A85234' : temp >= 7 ? '#C79A45' : '#3C6B41';
+    const colorMove = move >= 9 ? '#A85234' : move >= 7 ? '#C79A45' : '#3C6B41';
+    document.getElementById('gaugeTempVal').textContent = temp.toFixed(1) + '/10';
+    document.getElementById('gaugeMoveVal').textContent = move.toFixed(1) + '/10';
+    document.getElementById('gaugeTempVal').style.color = colorTemp;
+    document.getElementById('gaugeMoveVal').style.color = colorMove;
+    document.getElementById('gaugeTempBar').style.width = (temp * 10) + '%';
+    document.getElementById('gaugeTempBar').style.background = colorTemp;
+    document.getElementById('gaugeMoveBar').style.width = (move * 10) + '%';
+    document.getElementById('gaugeMoveBar').style.background = colorMove;
+}
+
+function renderAlerts(list) {
+    const container = document.getElementById('alertsList');
+    const dash = document.getElementById('dashRecentAlerts');
+    if (!list || !list.length) { container.innerHTML = '<div class="empty-row">🎉 لا توجد تنبيهات</div>'; dash.innerHTML = '<div class="empty-row">لا توجد تنبيهات</div>'; return; }
+    const html = list.map(a => `<div class="alert-item"><span class="dot ${a.active?'red':'gray'}"></span><div class="body"><div><strong>${a.text}</strong></div><div class="meta">${a.time} · <span class="badge ${a.active?'active':'ok'}">${a.active?'نشط':'تم الحل'}</span></div></div>${a.active?`<div class="alert-actions"><button class="btn btn-outline btn-small" onclick="resolveAlert('${a.id}')">إصلاح</button></div>`:''}</div>`).join('');
+    container.innerHTML = html;
+    dash.innerHTML = list.slice(0, 3).map(a => `<div class="alert-item"><span class="dot ${a.active?'red':'gray'}"></span><div class="body"><div><strong>${a.text}</strong></div><div class="meta">${a.time} · <span class="badge ${a.active?'active':'ok'}">${a.active?'نشط':'تم الحل'}</span></div></div>${a.active?`<div class="alert-actions"><button class="btn btn-outline btn-small" onclick="resolveAlert('${a.id}')">إصلاح</button></div>`:''}</div>`).join('');
+}
+
+function renderCattleTable(list) {
+    const tbody = document.getElementById('cattleTableBody');
+    if (!list || !list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="6">لا توجد ماشية</td></tr>'; return; }
+    tbody.innerHTML = list.map(c => {
+        const id = pick(c, ['id']);
+        const tag = pick(c, ['tagNumber'], '—');
+        const breed = pick(c, ['breed'], '—');
+        const gender = pick(c, ['gender'], 0) == 1 ? 'أنثى' : 'ذكر';
+        const birth = fmtDate(pick(c, ['birthDate']));
+        const status = ENUM.cattleStatus[pick(c, ['status'], 0)] || 'نشطة';
+        const canDelete = (mode === 'live' && (currentRole === 'owner' || currentRole === 'vet'));
+        return `<tr><td class="num">${tag}</td><td>${breed}</td><td>${gender}</td><td>${birth}</td><td><span class="badge ok">${status}</span></td><td class="row-actions">${canDelete?`<button class="btn btn-outline btn-small" onclick="deleteCattle('${id}')">حذف</button>`:''}</td></tr>`;
+    }).join('');
+}
+
+function renderMilkTable(list) {
+    const tbody = document.getElementById('milkTableBody');
+    if (!list || !list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">لا توجد سجلات</td></tr>'; return; }
+    tbody.innerHTML = list.map(m => `<tr><td>${fmtDate(pick(m, ['loggedAt']))}</td><td>${Number(pick(m, ['shift'], 0)) === 1 ? 'مسائية' : 'صباحية'}</td><td class="num">${pick(m, ['cattleTagNumber'], '—')}</td><td class="num">${pick(m, ['amountInLiters'], '—')}</td></tr>`).join('');
+}
+
+function renderVaccTable(list) {
+    const tbody = document.getElementById('vaccTableBody');
+    if (!list || !list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="5">لا توجد تطعيمات</td></tr>'; return; }
+    tbody.innerHTML = list.map(v => {
+        const id = pick(v, ['id']);
+        const administered = pick(v, ['administeredDate']);
+        let statusLabel = administered ? 'تم الإعطاء' : (new Date(pick(v, ['scheduledDate'])) < new Date() ? 'متأخر' : 'مجدول');
+        let cls = administered ? 'ok' : (statusLabel === 'متأخر' ? 'late' : 'pending');
+        const canComplete = !administered && (mode === 'live' && (currentRole === 'owner' || currentRole === 'vet'));
+        return `<tr><td class="num">${pick(v, ['cattleTagNumber'], '—')}</td><td>${pick(v, ['vaccineName'], '—')}</td><td>${fmtDate(pick(v, ['scheduledDate']))}</td><td><span class="badge ${cls}">${statusLabel}</span></td><td>${canComplete?`<button class="btn btn-outline btn-small" onclick="completeVacc('${id}')">تم الإعطاء</button>`:''}</td></tr>`;
+    }).join('');
+}
+
+function renderHealthTable(list) {
+    const tbody = document.getElementById('healthTableBody');
+    if (!list || !list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">لا توجد سجلات صحية</td></tr>'; return; }
+    tbody.innerHTML = list.map(h => `<tr><td class="num">${pick(h, ['cattleTagNumber'], '—')}</td><td>${pick(h, ['diagnosis'], '—')}</td><td>${pick(h, ['treatmentPlan'], '—')}</td><td>${pick(h, ['isContagious'], false) ? '<span class="badge late">نعم</span>' : '<span class="badge ok">لا</span>'}</td></tr>`).join('');
+}
+
+function renderStaffTable(list) {
+    const tbody = document.getElementById('staffTableBody');
+    if (!list || !list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="3">لا يوجد موظفون</td></tr>'; return; }
+    tbody.innerHTML = list.map(u => `<tr><td>${pick(u, ['fullName'], '—')}</td><td>${pick(u, ['email'], '—')}</td><td>${roleNames[ENUM.userRole[pick(u, ['role'], 0)]] || pick(u, ['role'])}</td></tr>`).join('');
+}
+
+function fillCattleSelects() {
+    const opts = cattleList.map(c => `<option value="${pick(c, ['id'])}">${pick(c, ['tagNumber'], '—')}</option>`).join('') || '<option value="">لا توجد ماشية</option>';
+    ['milkCow', 'vaccCow', 'healthCow'].forEach(id => document.getElementById(id).innerHTML = opts);
+}
+
+function fillVaccineTypeSelects() {
+    const opts = vaccineTypes.map(v => `<option value="${pick(v, ['id'])}">${pick(v, ['name'], '—')}</option>`).join('') || '<option value="">أضف نوع لقاح</option>';
+    document.getElementById('vaccType').innerHTML = opts;
+}
+
+// ============================================================
+// 7. MODE ENTRY POINTS
+// ============================================================
 function enterLiveMode(fullName, role) {
     mode = 'live';
-    currentRole = (role||'owner').toLowerCase();
-    // إخفاء عناصر الضيف
+    currentRole = (role || 'owner').toLowerCase();
     document.getElementById('guestBanner').style.display = 'none';
     document.getElementById('roleSwitcherWrap').style.display = 'none';
     document.getElementById('userChip').style.display = 'flex';
@@ -100,17 +311,11 @@ function enterLiveMode(fullName, role) {
     document.getElementById('btnLogin').style.display = 'none';
     document.getElementById('btnRegister').style.display = 'none';
     document.getElementById('btnLogout').style.display = 'inline-block';
-    document.body.classList.remove('guest-mode');
-    // إخفاء بطاقة المميزات (لأن المستخدم مسجل)
     document.getElementById('featuresCard').style.display = 'none';
-    // مسح جميع البيانات القديمة
     clearAllData();
-    // تطبيق الصلاحيات
     applyRolePermissions();
-    // تحميل البيانات الحقيقية
+    // تحميل كل البيانات بما فيها المستشعرات
     loadAllData();
-    // تعيين المستشعرات إلى قيم افتراضية (سيتم تحديثها لاحقاً إذا وفرت API)
-    updateSensors(5, 5);
 }
 
 function enterGuestMode() {
@@ -122,40 +327,26 @@ function enterGuestMode() {
     document.getElementById('btnLogin').style.display = 'inline-block';
     document.getElementById('btnRegister').style.display = 'inline-block';
     document.getElementById('btnLogout').style.display = 'none';
-    document.body.classList.add('guest-mode');
     document.getElementById('featuresCard').style.display = 'block';
     applyRolePermissions();
     loadMockData();
 }
 
-function applyRolePermissions() {
-    document.querySelectorAll('[data-roles]').forEach(el => {
-        const allowed = el.dataset.roles.split(',');
-        const ok = allowed.includes(currentRole);
-        el.disabled = !ok;
-        el.classList.toggle('locked', !ok);
-        el.title = ok ? '' : '🔒 غير متاح لدور ' + (roleNames[currentRole]||'');
-    });
-    const navStaff = document.getElementById('navStaff');
-    if (currentRole === 'owner') navStaff.classList.remove('hidden-role');
-    else navStaff.classList.add('hidden-role');
-}
-document.getElementById('roleSwitcher').addEventListener('change', function() {
-    if (mode !== 'guest') return;
-    currentRole = this.value;
-    applyRolePermissions();
-    showToast('تعاين كـ: ' + roleNames[currentRole]);
-});
-
-// ===== MOCK DATA =====
+// ============================================================
+// 8. LOAD MOCK (guest only)
+// ============================================================
 function loadMockData() {
     cattleList = MOCK.cattle;
-    vaccineTypes = [{id:'vt1',name:'الحمى القلاعية'},{id:'vt2',name:'البروسيلا'},{id:'vt3',name:'الجمرة الخبيثة'}];
-    alerts = [{id:'a1',text:'ارتفاع الحرارة — #A102 (8.7/10)',time:'الآن',active:true},{id:'a2',text:'حركة منخفضة — #A245 (2.1/10)',time:'منذ 5د',active:true}];
+    vaccineTypes = [{ id: 'vt1', name: 'الحمى القلاعية' }, { id: 'vt2', name: 'البروسيلا' }, { id: 'vt3', name: 'الجمرة الخبيثة' }];
+    alerts = [{ id: 'a1', text: 'ارتفاع الحرارة — #A102 (8.7/10)', time: 'الآن', active: true }, { id: 'a2', text: 'حركة منخفضة — #A245 (2.1/10)', time: 'منذ 5د', active: true }];
     criticalCount = 2;
     sensorTemp = 6.2;
     sensorMove = 4.8;
-    renderAllTables();
+    renderCattleTable(cattleList);
+    renderMilkTable(MOCK.milk);
+    renderVaccTable(MOCK.vaccinations);
+    renderHealthTable(MOCK.health);
+    renderStaffTable(MOCK.staff);
     fillCattleSelects();
     fillVaccineTypeSelects();
     updateStats(248, '1,840', criticalCount);
@@ -167,88 +358,243 @@ function loadMockData() {
     applyRolePermissions();
 }
 
-function renderAllTables() {
-    renderCattleTable(cattleList);
-    renderMilkTable(MOCK.milk);
-    renderVaccTable(MOCK.vaccinations);
-    renderHealthTable(MOCK.health);
-    renderStaffTable(MOCK.staff);
+// ============================================================
+// 9. LOAD REAL DATA (live only)
+// ============================================================
+async function loadAllData() {
+    document.getElementById('syncTime').textContent = 'جارِ التحديث...';
+    try {
+        await Promise.all([
+            loadCattle(),
+            loadMilk(),
+            loadVaccinations(),
+            loadHealth(),
+            loadVaccineTypes(),
+            loadStaff(),
+            loadTelemetry() // ⭐ جلب بيانات المستشعرات من API
+        ]);
+    } catch (e) { showToast('خطأ في التحميل', true); }
+    document.getElementById('syncTime').textContent = new Date().toLocaleTimeString('ar-EG');
 }
 
-function renderCattleTable(list){const tbody=document.getElementById('cattleTableBody');if(!list||!list.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">لا توجد ماشية</td></tr>';return;}tbody.innerHTML=list.map(c=>{const id=pick(c,['id']);const tag=pick(c,['tagNumber'],'—');const breed=pick(c,['breed'],'—');const gender=pick(c,['gender'],0)==1?'أنثى':'ذكر';const birth=fmtDate(pick(c,['birthDate']));const status=ENUM.cattleStatus[pick(c,['status'],0)]||'نشطة';const canDelete=(mode==='live'&&(currentRole==='owner'||currentRole==='vet'));return `<tr><td class="num">${tag}</td><td>${breed}</td><td>${gender}</td><td>${birth}</td><td><span class="badge ok">${status}</span></td><td class="row-actions">${canDelete?`<button class="btn btn-outline btn-small" onclick="deleteCattle('${id}')">حذف</button>`:''}</td></tr>`;}).join('');}
-function renderMilkTable(list){const tbody=document.getElementById('milkTableBody');if(!list||!list.length){tbody.innerHTML='<tr class="empty-row"><td colspan="4">لا توجد سجلات</td></tr>';return;}tbody.innerHTML=list.map(m=>`<tr><td>${fmtDate(pick(m,['loggedAt']))}</td><td>${Number(pick(m,['shift'],0))===1?'مسائية':'صباحية'}</td><td class="num">${pick(m,['cattleTagNumber'],'—')}</td><td class="num">${pick(m,['amountInLiters'],'—')}</td></tr>`).join('');}
-function renderVaccTable(list){const tbody=document.getElementById('vaccTableBody');if(!list||!list.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">لا توجد تطعيمات</td></tr>';return;}tbody.innerHTML=list.map(v=>{const id=pick(v,['id']);const administered=pick(v,['administeredDate']);let statusLabel=administered?'تم الإعطاء':(new Date(pick(v,['scheduledDate']))<new Date()?'متأخر':'مجدول');let cls=administered?'ok':(statusLabel==='متأخر'?'late':'pending');const canComplete=!administered&&(mode==='live'&&(currentRole==='owner'||currentRole==='vet'));return `<tr><td class="num">${pick(v,['cattleTagNumber'],'—')}</td><td>${pick(v,['vaccineName'],'—')}</td><td>${fmtDate(pick(v,['scheduledDate']))}</td><td><span class="badge ${cls}">${statusLabel}</span></td><td>${canComplete?`<button class="btn btn-outline btn-small" onclick="completeVacc('${id}')">تم الإعطاء</button>`:''}</td></tr>`;}).join('');}
-function renderHealthTable(list){const tbody=document.getElementById('healthTableBody');if(!list||!list.length){tbody.innerHTML='<tr class="empty-row"><td colspan="4">لا توجد سجلات صحية</td></tr>';return;}tbody.innerHTML=list.map(h=>`<tr><td class="num">${pick(h,['cattleTagNumber'],'—')}</td><td>${pick(h,['diagnosis'],'—')}</td><td>${pick(h,['treatmentPlan'],'—')}</td><td>${pick(h,['isContagious'],false)?'<span class="badge late">نعم</span>':'<span class="badge ok">لا</span>'}</td></tr>`).join('');}
-function renderStaffTable(list){const tbody=document.getElementById('staffTableBody');if(!list||!list.length){tbody.innerHTML='<tr class="empty-row"><td colspan="3">لا يوجد موظفون</td></tr>';return;}tbody.innerHTML=list.map(u=>`<tr><td>${pick(u,['fullName'],'—')}</td><td>${pick(u,['email'],'—')}</td><td>${roleNames[ENUM.userRole[pick(u,['role'],0)]]||pick(u,['role'])}</td></tr>`).join('');}
-function fillCattleSelects(){const opts=cattleList.map(c=>`<option value="${pick(c,['id'])}">${pick(c,['tagNumber'],'—')}</option>`).join('')||'<option value="">لا توجد ماشية</option>';['milkCow','vaccCow','healthCow'].forEach(id=>document.getElementById(id).innerHTML=opts);}
-function fillVaccineTypeSelects(){const opts=vaccineTypes.map(v=>`<option value="${pick(v,['id'])}">${pick(v,['name'],'—')}</option>`).join('')||'<option value="">أضف نوع لقاح</option>';document.getElementById('vaccType').innerHTML=opts;}
-function updateStats(cattleCount,dailyMilk,critical){document.getElementById('statCattle').textContent=cattleCount||'—';document.getElementById('statMilk').textContent=dailyMilk||'—';document.getElementById('statCritical').textContent=critical||0;}
-function updateTopProducers(list){const el=document.getElementById('topProducers');if(!list||!list.length){el.innerHTML='<div class="empty-row">لا توجد بيانات</div>';return;}el.innerHTML=list.map(p=>`<div class="producer-row"><span>🐄 #${pick(p,['tagNumber'],'—')}</span><span class="liters num">${Number(pick(p,['totalLiters'],0)).toFixed(1)} لتر</span></div>`).join('');}
-function updateWeeklySummary(values){const el=document.getElementById('milkSummaryText');if(!values||!values.length){el.textContent='—';return;}const total=values.reduce((a,b)=>a+b,0);const avg=Math.round(total/values.length);el.textContent=`📊 إجمالي الأسبوع: ${total} لتر | المعدل اليومي: ${avg} لتر`;}
-function updateSensors(temp,move){const colorTemp=temp>=9?'#A85234':temp>=7?'#C79A45':'#3C6B41';const colorMove=move>=9?'#A85234':move>=7?'#C79A45':'#3C6B41';document.getElementById('gaugeTempVal').textContent=temp.toFixed(1)+'/10';document.getElementById('gaugeMoveVal').textContent=move.toFixed(1)+'/10';document.getElementById('gaugeTempVal').style.color=colorTemp;document.getElementById('gaugeMoveVal').style.color=colorMove;document.getElementById('gaugeTempBar').style.width=(temp*10)+'%';document.getElementById('gaugeTempBar').style.background=colorTemp;document.getElementById('gaugeMoveBar').style.width=(move*10)+'%';document.getElementById('gaugeMoveBar').style.background=colorMove;}
-function renderAlerts(list){const container=document.getElementById('alertsList');const dash=document.getElementById('dashRecentAlerts');if(!list||!list.length){container.innerHTML='<div class="empty-row">🎉 لا توجد تنبيهات</div>';dash.innerHTML='<div class="empty-row">لا توجد تنبيهات</div>';return;}const html=list.map(a=>`<div class="alert-item"><span class="dot ${a.active?'red':'gray'}"></span><div class="body"><div><strong>${a.text}</strong></div><div class="meta">${a.time} · <span class="badge ${a.active?'active':'ok'}">${a.active?'نشط':'تم الحل'}</span></div></div>${a.active?`<div class="alert-actions"><button class="btn btn-outline btn-small" onclick="resolveAlert('${a.id}')">إصلاح</button></div>`:''}</div>`).join('');container.innerHTML=html;dash.innerHTML=list.slice(0,3).map(a=>`<div class="alert-item"><span class="dot ${a.active?'red':'gray'}"></span><div class="body"><div><strong>${a.text}</strong></div><div class="meta">${a.time} · <span class="badge ${a.active?'active':'ok'}">${a.active?'نشط':'تم الحل'}</span></div></div>${a.active?`<div class="alert-actions"><button class="btn btn-outline btn-small" onclick="resolveAlert('${a.id}')">إصلاح</button></div>`:''}</div>`).join('');}
+async function loadCattle() {
+    try {
+        const data = await apiFetch(EP.cattle + '?Page=1&PageSize=50');
+        const list = asArray(data);
+        cattleList = list;
+        renderCattleTable(list);
+        fillCattleSelects();
+        document.getElementById('statCattle').textContent = list.length;
+        return list;
+    } catch (err) {
+        showToast('تعذر تحميل الماشية: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true);
+        return [];
+    }
+}
 
-// ===== CRUD =====
-async function deleteCattle(id){if(mode!=='live'){openModal('loginRequiredModal');return;}if(!confirm('تأكيد الحذف؟'))return;try{await apiFetch(EP.cattleById(id),{method:'DELETE'});showToast('تم الحذف ✓');loadCattle();}catch(err){showToast('تعذر الحذف: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
-async function handleAddCattle(e){e.preventDefault();if(mode!=='live'){openModal('loginRequiredModal');return false;}const errEl=document.getElementById('cattleErrors');errEl.innerHTML='';const payload={tagNumber:document.getElementById('cattleTag').value,breed:document.getElementById('cattleBreed').value,gender:Number(document.getElementById('cattleGender').value),birthDate:new Date(document.getElementById('cattleBirth').value).toISOString(),fatherTagNumber:null,motherTagNumber:null};try{await apiFetch(EP.cattle,{method:'POST',body:payload});showToast('✅ تمت الإضافة');document.getElementById('cattleFormBox').style.display='none';document.getElementById('cattleForm').reset();loadCattle();}catch(err){const msgs=err.parsedErrors||['فشل الإضافة'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-async function handleAddMilk(e){e.preventDefault();if(mode!=='live'){openModal('loginRequiredModal');return false;}const errEl=document.getElementById('milkErrors');errEl.innerHTML='';const payload={cattleId:document.getElementById('milkCow').value,amountInLiters:Number(document.getElementById('milkQty').value),shift:Number(document.getElementById('milkShift').value),loggedAt:new Date().toISOString()};try{await apiFetch(EP.milk,{method:'POST',body:payload});showToast('✅ تم التسجيل');document.getElementById('milkFormBox').style.display='none';document.getElementById('milkForm').reset();loadMilk();}catch(err){const msgs=err.parsedErrors||['فشل التسجيل'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-async function handleAddVaccineType(e){e.preventDefault();if(mode!=='live'){openModal('loginRequiredModal');return false;}const errEl=document.getElementById('vtErrors');errEl.innerHTML='';const payload={name:document.getElementById('vtName').value,targetAgeInMonths:Number(document.getElementById('vtAge').value),dosage:Number(document.getElementById('vtDosage').value),intervalInDays:document.getElementById('vtInterval').value?Number(document.getElementById('vtInterval').value):null};try{await apiFetch(EP.vaccines,{method:'POST',body:payload});showToast('✅ تم إضافة اللقاح');document.getElementById('vtFormBox').style.display='none';document.getElementById('vtForm').reset();loadVaccineTypes();}catch(err){const msgs=err.parsedErrors||['فشل الإضافة'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-async function handleAddVacc(e){e.preventDefault();if(mode!=='live'){openModal('loginRequiredModal');return false;}const errEl=document.getElementById('vaccErrors');errEl.innerHTML='';const payload={cattleId:document.getElementById('vaccCow').value,vaccineId:document.getElementById('vaccType').value,scheduledDate:new Date(document.getElementById('vaccDate').value).toISOString()};try{await apiFetch(EP.vaccinations,{method:'POST',body:payload});showToast('✅ تمت الجدولة');document.getElementById('vaccFormBox').style.display='none';document.getElementById('vaccForm').reset();loadVaccinations();}catch(err){const msgs=err.parsedErrors||['فشل الجدولة'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-async function completeVacc(id){if(mode!=='live'){openModal('loginRequiredModal');return;}try{await apiFetch(EP.vaccAdminister(id),{method:'POST',body:new Date().toISOString()});showToast('✅ تم الإعطاء');loadVaccinations();}catch(err){showToast('تعذر الإتمام: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
-async function handleAddHealth(e){e.preventDefault();if(mode!=='live'){openModal('loginRequiredModal');return false;}const errEl=document.getElementById('healthErrors');errEl.innerHTML='';const payload={cattleId:document.getElementById('healthCow').value,diagnosis:document.getElementById('healthDiag').value,treatmentPlan:document.getElementById('healthTreat').value,vetNotes:document.getElementById('healthNotes').value||null,isContagious:document.getElementById('healthContagious').checked};try{await apiFetch(EP.healthLogs,{method:'POST',body:payload});showToast('✅ تم إضافة السجل');document.getElementById('healthFormBox').style.display='none';document.getElementById('healthForm').reset();loadHealth();}catch(err){const msgs=err.parsedErrors||['فشل الإضافة'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
-async function handleAddStaff(e){e.preventDefault();if(mode!=='live'){openModal('loginRequiredModal');return false;}const errEl=document.getElementById('staffErrors');errEl.innerHTML='';const roleVal=document.getElementById('staffRole').value;const roleInt=Number(Object.keys(ENUM.userRole).find(k=>ENUM.userRole[k]===roleVal));const payload={fullName:document.getElementById('staffName').value,email:document.getElementById('staffEmail').value,password:document.getElementById('staffPassword').value,role:roleInt};try{await apiFetch(EP.users,{method:'POST',body:payload});showToast('✅ تم إضافة الموظف');document.getElementById('staffFormBox').style.display='none';document.getElementById('staffForm').reset();loadStaff();}catch(err){const msgs=err.parsedErrors||['فشل الإضافة'];errEl.innerHTML=msgs.map(m=>`<div class="field-error">• ${m}</div>`).join('');}return false;}
+async function loadMilk() {
+    try {
+        const data = await apiFetch(EP.milk + '?Page=1&PageSize=20');
+        const list = asArray(data);
+        renderMilkTable(list);
+        const today = new Date();
+        const from = new Date(today);
+        from.setHours(0, 0, 0, 0);
+        const to = new Date(today);
+        to.setHours(23, 59, 59, 999);
+        try {
+            const s = await apiFetch(EP.milkSummary + `?from=${from.toISOString()}&to=${to.toISOString()}`);
+            document.getElementById('statMilk').textContent = Number(pick(s, ['totalLiters'], 0)).toLocaleString('en-US');
+        } catch (_) { document.getElementById('statMilk').textContent = '—'; }
+        try {
+            const top = await apiFetch(EP.milkTop + '?Top=5');
+            updateTopProducers(asArray(top));
+        } catch (_) { updateTopProducers([]); }
+        const values = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const f = new Date(d);
+            f.setHours(0, 0, 0, 0);
+            const t = new Date(d);
+            t.setHours(23, 59, 59, 999);
+            try {
+                const s = await apiFetch(EP.milkSummary + `?from=${f.toISOString()}&to=${t.toISOString()}`);
+                values.push(Number(pick(s, ['totalLiters'], 0)));
+            } catch (_) { values.push(0); }
+        }
+        updateWeeklySummary(values);
+    } catch (err) {
+        showToast('تعذر تحميل الحليب: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true);
+    }
+}
 
-function resolveAlert(id){const alert=alerts.find(a=>a.id===id);if(alert){alert.active=false;alert.time='الآن';criticalCount=Math.max(0,criticalCount-1);renderAlerts(alerts);document.getElementById('statCritical').textContent=criticalCount;showToast('✅ تم إصلاح التنبيه');}}
+async function loadVaccinations() {
+    try {
+        const data = await apiFetch(EP.vaccinations + '?Page=1&PageSize=20');
+        renderVaccTable(asArray(data));
+    } catch (err) {
+        showToast('تعذر تحميل التطعيمات: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true);
+    }
+}
 
-// ===== SENSOR SIMULATION (only in guest mode) =====
+async function loadHealth() {
+    try {
+        const data = await apiFetch(EP.healthLogs + '?Page=1&PageSize=20');
+        renderHealthTable(asArray(data));
+    } catch (err) {
+        showToast('تعذر تحميل السجلات الصحية: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true);
+    }
+}
+
+async function loadVaccineTypes() {
+    try {
+        const data = await apiFetch(EP.vaccines + '?Page=1&PageSize=20');
+        vaccineTypes = asArray(data);
+        fillVaccineTypeSelects();
+    } catch (err) {
+        showToast('تعذر تحميل أنواع اللقاحات: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true);
+    }
+}
+
+async function loadStaff() {
+    if (currentRole !== 'owner') return;
+    try {
+        const data = await apiFetch(EP.users + '?Page=1&PageSize=20');
+        renderStaffTable(asArray(data));
+    } catch (err) {
+        showToast('تعذر تحميل الموظفين: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true);
+    }
+}
+
+// ⭐⭐⭐ دالة جلب بيانات المستشعرات من الخادم (الحل الأساسي للمشكلة) ⭐⭐⭐
+async function loadTelemetry() {
+    try {
+        const data = await apiFetch(EP.telemetry);
+        let temp = 5, move = 5;
+        // التعامل مع تنسيقات مختلفة للإرجاع (مصفوفة أو كائن)
+        if (Array.isArray(data) && data.length > 0) {
+            const latest = data[0];
+            temp = Number(latest.temperature || latest.temp || 5);
+            move = Number(latest.movement || latest.move || 5);
+        } else if (data && typeof data === 'object') {
+            temp = Number(data.temperature || data.temp || 5);
+            move = Number(data.movement || data.move || 5);
+        } else {
+            throw new Error('تنسيق بيانات المستشعرات غير متوقع');
+        }
+        // التأكد من القيم في النطاق المناسب
+        temp = Math.max(0, Math.min(10, temp));
+        move = Math.max(0, Math.min(10, move));
+        sensorTemp = temp;
+        sensorMove = move;
+        updateSensors(temp, move);
+        console.log('📡 تم تحديث المستشعرات من الخادم:', { temp, move });
+    } catch (err) {
+        console.warn('تعذر جلب المستشعرات:', err);
+        // عرض خطأ في واجهة المستشعرات بدلاً من بيانات وهمية
+        document.getElementById('gaugeTempVal').textContent = '—';
+        document.getElementById('gaugeMoveVal').textContent = '—';
+        document.getElementById('gaugeTempBar').style.width = '0%';
+        document.getElementById('gaugeMoveBar').style.width = '0%';
+        // إظهار رسالة خطأ إذا كان المستخدم مسجلاً (حتى لا يفاجأ بغياب البيانات)
+        if (mode === 'live') {
+            showToast('تعذر جلب بيانات المستشعرات من الخادم', true);
+        }
+    }
+}
+
+// دالة لتحديث المستشعرات يدوياً (الزر الجديد)
+async function refreshTelemetry() {
+    if (mode === 'live') {
+        await loadTelemetry();
+        showToast('تم تحديث بيانات المستشعرات');
+    } else {
+        // في وضع الضيف، نعيد تحميل البيانات التجريبية
+        loadMockData();
+        showToast('تم تحديث البيانات التجريبية');
+    }
+}
+
+// ============================================================
+// 10. CRUD HANDLERS
+// ============================================================
+async function deleteCattle(id) { if (mode !== 'live') { openModal('loginRequiredModal'); return; } if (!confirm('تأكيد الحذف؟')) return; try { await apiFetch(EP.cattleById(id), { method: 'DELETE' }); showToast('تم الحذف ✓'); loadCattle(); } catch (err) { showToast('تعذر الحذف: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true); } }
+async function handleAddCattle(e) { e.preventDefault(); if (mode !== 'live') { openModal('loginRequiredModal'); return false; } const errEl = document.getElementById('cattleErrors'); errEl.innerHTML = ''; const payload = { tagNumber: document.getElementById('cattleTag').value, breed: document.getElementById('cattleBreed').value, gender: Number(document.getElementById('cattleGender').value), birthDate: new Date(document.getElementById('cattleBirth').value).toISOString(), fatherTagNumber: null, motherTagNumber: null }; try { await apiFetch(EP.cattle, { method: 'POST', body: payload }); showToast('✅ تمت الإضافة'); document.getElementById('cattleFormBox').style.display = 'none'; document.getElementById('cattleForm').reset(); loadCattle(); } catch (err) { const msgs = err.parsedErrors || ['فشل الإضافة']; errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join(''); } return false; }
+async function handleAddMilk(e) { e.preventDefault(); if (mode !== 'live') { openModal('loginRequiredModal'); return false; } const errEl = document.getElementById('milkErrors'); errEl.innerHTML = ''; const payload = { cattleId: document.getElementById('milkCow').value, amountInLiters: Number(document.getElementById('milkQty').value), shift: Number(document.getElementById('milkShift').value), loggedAt: new Date().toISOString() }; try { await apiFetch(EP.milk, { method: 'POST', body: payload }); showToast('✅ تم التسجيل'); document.getElementById('milkFormBox').style.display = 'none'; document.getElementById('milkForm').reset(); loadMilk(); } catch (err) { const msgs = err.parsedErrors || ['فشل التسجيل']; errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join(''); } return false; }
+async function handleAddVaccineType(e) { e.preventDefault(); if (mode !== 'live') { openModal('loginRequiredModal'); return false; } const errEl = document.getElementById('vtErrors'); errEl.innerHTML = ''; const payload = { name: document.getElementById('vtName').value, targetAgeInMonths: Number(document.getElementById('vtAge').value), dosage: Number(document.getElementById('vtDosage').value), intervalInDays: document.getElementById('vtInterval').value ? Number(document.getElementById('vtInterval').value) : null }; try { await apiFetch(EP.vaccines, { method: 'POST', body: payload }); showToast('✅ تم إضافة اللقاح'); document.getElementById('vtFormBox').style.display = 'none'; document.getElementById('vtForm').reset(); loadVaccineTypes(); } catch (err) { const msgs = err.parsedErrors || ['فشل الإضافة']; errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join(''); } return false; }
+async function handleAddVacc(e) { e.preventDefault(); if (mode !== 'live') { openModal('loginRequiredModal'); return false; } const errEl = document.getElementById('vaccErrors'); errEl.innerHTML = ''; const payload = { cattleId: document.getElementById('vaccCow').value, vaccineId: document.getElementById('vaccType').value, scheduledDate: new Date(document.getElementById('vaccDate').value).toISOString() }; try { await apiFetch(EP.vaccinations, { method: 'POST', body: payload }); showToast('✅ تمت الجدولة'); document.getElementById('vaccFormBox').style.display = 'none'; document.getElementById('vaccForm').reset(); loadVaccinations(); } catch (err) { const msgs = err.parsedErrors || ['فشل الجدولة']; errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join(''); } return false; }
+async function completeVacc(id) { if (mode !== 'live') { openModal('loginRequiredModal'); return; } try { await apiFetch(EP.vaccAdminister(id), { method: 'POST', body: new Date().toISOString() }); showToast('✅ تم الإعطاء'); loadVaccinations(); } catch (err) { showToast('تعذر الإتمام: ' + (err.parsedErrors ? err.parsedErrors.join(', ') : err.message), true); } }
+async function handleAddHealth(e) { e.preventDefault(); if (mode !== 'live') { openModal('loginRequiredModal'); return false; } const errEl = document.getElementById('healthErrors'); errEl.innerHTML = ''; const payload = { cattleId: document.getElementById('healthCow').value, diagnosis: document.getElementById('healthDiag').value, treatmentPlan: document.getElementById('healthTreat').value, vetNotes: document.getElementById('healthNotes').value || null, isContagious: document.getElementById('healthContagious').checked }; try { await apiFetch(EP.healthLogs, { method: 'POST', body: payload }); showToast('✅ تم إضافة السجل'); document.getElementById('healthFormBox').style.display = 'none'; document.getElementById('healthForm').reset(); loadHealth(); } catch (err) { const msgs = err.parsedErrors || ['فشل الإضافة']; errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join(''); } return false; }
+async function handleAddStaff(e) { e.preventDefault(); if (mode !== 'live') { openModal('loginRequiredModal'); return false; } const errEl = document.getElementById('staffErrors'); errEl.innerHTML = ''; const roleVal = document.getElementById('staffRole').value; const roleInt = Number(Object.keys(ENUM.userRole).find(k => ENUM.userRole[k] === roleVal)); const payload = { fullName: document.getElementById('staffName').value, email: document.getElementById('staffEmail').value, password: document.getElementById('staffPassword').value, role: roleInt }; try { await apiFetch(EP.users, { method: 'POST', body: payload }); showToast('✅ تم إضافة الموظف'); document.getElementById('staffFormBox').style.display = 'none'; document.getElementById('staffForm').reset(); loadStaff(); } catch (err) { const msgs = err.parsedErrors || ['فشل الإضافة']; errEl.innerHTML = msgs.map(m => `<div class="field-error">• ${m}</div>`).join(''); } return false; }
+
+function resolveAlert(id) { const alert = alerts.find(a => a.id === id); if (alert) { alert.active = false; alert.time = 'الآن'; criticalCount = Math.max(0, criticalCount - 1); renderAlerts(alerts); document.getElementById('statCritical').textContent = criticalCount; showToast('✅ تم إصلاح التنبيه'); } }
+
+// محاكاة المستشعرات فقط في وضع الضيف (لأن الحي يعتمد على API)
 function tickSensors() {
-    if (mode !== 'guest') return; // لا تعمل في الوضع الحي
-    const temp = Math.max(1, Math.min(10, Math.round((5 + (Math.random()-0.5)*6)*10)/10));
-    const move = Math.max(1, Math.min(10, Math.round((5 + (Math.random()-0.5)*6)*10)/10));
-    sensorTemp = temp; sensorMove = move;
+    if (mode !== 'guest') return;
+    const temp = Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10));
+    const move = Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10));
+    sensorTemp = temp;
+    sensorMove = move;
     updateSensors(temp, move);
     if ((temp >= 8.5 || move >= 8.5) && cattleList.length) {
         const cow = cattleList[Math.floor(Math.random() * cattleList.length)];
         const metric = temp >= move ? 'درجة الحرارة' : 'مستوى الحركة';
         const val = temp >= move ? temp : move;
-        const newAlert = { id: 'a'+Date.now()+Math.random().toString(36).substr(2,4),
-            text: `🚨 ارتفاع ${metric} — #${pick(cow,['tagNumber'],'???')} (${val.toFixed(1)}/10)`,
-            time: 'الآن', active: true };
+        const newAlert = { id: 'a' + Date.now() + Math.random().toString(36).substr(2, 4), text: `🚨 ارتفاع ${metric} — #${pick(cow, ['tagNumber'], '???')} (${val.toFixed(1)}/10)`, time: 'الآن', active: true };
         alerts = [newAlert, ...alerts];
         if (alerts.length > 20) alerts.pop();
-        criticalCount = alerts.filter(a=>a.active).length;
+        criticalCount = alerts.filter(a => a.active).length;
         renderAlerts(alerts);
         document.getElementById('statCritical').textContent = criticalCount;
     }
 }
 
-// ===== UI HELPERS =====
-function openCattleForm(){if(mode!=='live'){openModal('loginRequiredModal');return;}document.getElementById('cattleFormBox').style.display='block';document.getElementById('cattleForm').reset();document.getElementById('cattleErrors').innerHTML='';}
-function openMilkForm(){if(mode!=='live'){openModal('loginRequiredModal');return;}document.getElementById('milkFormBox').style.display='block';document.getElementById('milkForm').reset();document.getElementById('milkErrors').innerHTML='';}
-function openVaccineTypeForm(){if(mode!=='live'){openModal('loginRequiredModal');return;}document.getElementById('vtFormBox').style.display='block';document.getElementById('vtForm').reset();document.getElementById('vtErrors').innerHTML='';}
-function openVaccinationForm(){if(mode!=='live'){openModal('loginRequiredModal');return;}document.getElementById('vaccFormBox').style.display='block';document.getElementById('vaccForm').reset();document.getElementById('vaccErrors').innerHTML='';document.getElementById('vaccDate').valueAsDate=new Date();}
-function openHealthForm(){if(mode!=='live'){openModal('loginRequiredModal');return;}document.getElementById('healthFormBox').style.display='block';document.getElementById('healthForm').reset();document.getElementById('healthErrors').innerHTML='';}
-function openStaffForm(){if(mode!=='live'){openModal('loginRequiredModal');return;}document.getElementById('staffFormBox').style.display='block';document.getElementById('staffForm').reset();document.getElementById('staffErrors').innerHTML='';}
-function refreshAll(){if(mode==='live')loadAllData();else{loadMockData();showToast('تم تحديث التجريبي');}}
+// ============================================================
+// 11. UI HELPERS
+// ============================================================
+function openCattleForm() { if (mode !== 'live') { openModal('loginRequiredModal'); return; } document.getElementById('cattleFormBox').style.display = 'block'; document.getElementById('cattleForm').reset(); document.getElementById('cattleErrors').innerHTML = ''; }
+function openMilkForm() { if (mode !== 'live') { openModal('loginRequiredModal'); return; } document.getElementById('milkFormBox').style.display = 'block'; document.getElementById('milkForm').reset(); document.getElementById('milkErrors').innerHTML = ''; }
+function openVaccineTypeForm() { if (mode !== 'live') { openModal('loginRequiredModal'); return; } document.getElementById('vtFormBox').style.display = 'block'; document.getElementById('vtForm').reset(); document.getElementById('vtErrors').innerHTML = ''; }
+function openVaccinationForm() { if (mode !== 'live') { openModal('loginRequiredModal'); return; } document.getElementById('vaccFormBox').style.display = 'block'; document.getElementById('vaccForm').reset(); document.getElementById('vaccErrors').innerHTML = ''; document.getElementById('vaccDate').valueAsDate = new Date(); }
+function openHealthForm() { if (mode !== 'live') { openModal('loginRequiredModal'); return; } document.getElementById('healthFormBox').style.display = 'block'; document.getElementById('healthForm').reset(); document.getElementById('healthErrors').innerHTML = ''; }
+function openStaffForm() { if (mode !== 'live') { openModal('loginRequiredModal'); return; } document.getElementById('staffFormBox').style.display = 'block'; document.getElementById('staffForm').reset(); document.getElementById('staffErrors').innerHTML = ''; }
+function refreshAll() { if (mode === 'live') loadAllData(); else { loadMockData(); showToast('تم تحديث التجريبي'); } }
 
-// ===== LOAD REAL DATA =====
-async function loadAllData(){document.getElementById('syncTime').textContent='جارِ التحديث...';try{await Promise.all([loadCattle(),loadMilk(),loadVaccinations(),loadHealth(),loadVaccineTypes(),loadStaff()]);}catch(e){showToast('خطأ في التحميل',true);}document.getElementById('syncTime').textContent=new Date().toLocaleTimeString('ar-EG');}
-async function loadCattle(){try{const data=await apiFetch(EP.cattle+'?Page=1&PageSize=50');const list=asArray(data);cattleList=list;renderCattleTable(list);fillCattleSelects();document.getElementById('statCattle').textContent=list.length;return list;}catch(err){showToast('تعذر تحميل الماشية: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);return[];}}
-async function loadMilk(){try{const data=await apiFetch(EP.milk+'?Page=1&PageSize=20');const list=asArray(data);renderMilkTable(list);const today=new Date();const from=new Date(today);from.setHours(0,0,0,0);const to=new Date(today);to.setHours(23,59,59,999);try{const s=await apiFetch(EP.milkSummary+`?from=${from.toISOString()}&to=${to.toISOString()}`);document.getElementById('statMilk').textContent=Number(pick(s,['totalLiters'],0)).toLocaleString('en-US');}catch(_){document.getElementById('statMilk').textContent='—';}try{const top=await apiFetch(EP.milkTop+'?Top=5');updateTopProducers(asArray(top));}catch(_){updateTopProducers([]);}const values=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const f=new Date(d);f.setHours(0,0,0,0);const t=new Date(d);t.setHours(23,59,59,999);try{const s=await apiFetch(EP.milkSummary+`?from=${f.toISOString()}&to=${t.toISOString()}`);values.push(Number(pick(s,['totalLiters'],0)));}catch(_){values.push(0);}}updateWeeklySummary(values);}catch(err){showToast('تعذر تحميل الحليب: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
-async function loadVaccinations(){try{const data=await apiFetch(EP.vaccinations+'?Page=1&PageSize=20');renderVaccTable(asArray(data));}catch(err){showToast('تعذر تحميل التطعيمات: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
-async function loadHealth(){try{const data=await apiFetch(EP.healthLogs+'?Page=1&PageSize=20');renderHealthTable(asArray(data));}catch(err){showToast('تعذر تحميل السجلات الصحية: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
-async function loadVaccineTypes(){try{const data=await apiFetch(EP.vaccines+'?Page=1&PageSize=20');vaccineTypes=asArray(data);fillVaccineTypeSelects();}catch(err){showToast('تعذر تحميل أنواع اللقاحات: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
-async function loadStaff(){if(currentRole!=='owner')return;try{const data=await apiFetch(EP.users+'?Page=1&PageSize=20');renderStaffTable(asArray(data));}catch(err){showToast('تعذر تحميل الموظفين: '+(err.parsedErrors?err.parsedErrors.join(', '):err.message),true);}}
+// ============================================================
+// 12. INIT
+// ============================================================
+document.querySelectorAll('.nav-item').forEach(btn => { btn.addEventListener('click', function() { switchView(this.dataset.view); }); });
+document.getElementById('cattleBirth').valueAsDate = new Date();
 
-// ===== INIT =====
-document.querySelectorAll('.nav-item').forEach(btn=>{btn.addEventListener('click',function(){switchView(this.dataset.view);});});
-document.getElementById('cattleBirth').valueAsDate=new Date();
-async function pingApi(){const dot=document.getElementById('apiStatusDot');const text=document.getElementById('apiStatusText');if(!isLoggedIn()){dot.className='status-dot';text.textContent='وضع المعاينة';return;}try{await fetch(API_BASE+EP.cattle+'?Page=1&PageSize=1',{method:'GET',headers:{'Authorization':'Bearer '+getToken()}});dot.className='status-dot on';text.textContent='✅ متصل';}catch(e){dot.className='status-dot off';text.textContent='❌ غير متصل';}}
-if(isLoggedIn()){const role=localStorage.getItem('hs_role')||'owner';const name=localStorage.getItem('hs_name')||'';enterLiveMode(name,role);}else{enterGuestMode();}
-setInterval(tickSensors,4000);
-setInterval(pingApi,20000);
-setInterval(()=>{if(mode==='live')loadMilk();},60000);
-console.log('🚀 هيردسمارت جاهز (متجاوب، تم إصلاح ظهور البيانات التجريبية بعد الدخول)');
+async function pingApi() {
+    const dot = document.getElementById('apiStatusDot');
+    const text = document.getElementById('apiStatusText');
+    if (!isLoggedIn()) { dot.className = 'status-dot'; text.textContent = 'وضع المعاينة'; return; }
+    try {
+        await fetch(API_BASE + EP.cattle + '?Page=1&PageSize=1', { method: 'GET', headers: { 'Authorization': 'Bearer ' + getToken() } });
+        dot.className = 'status-dot on';
+        text.textContent = '✅ متصل';
+    } catch (e) {
+        dot.className = 'status-dot off';
+        text.textContent = '❌ غير متصل';
+    }
+}
+
+if (isLoggedIn()) {
+    const role = localStorage.getItem('hs_role') || 'owner';
+    const name = localStorage.getItem('hs_name') || '';
+    enterLiveMode(name, role);
+} else {
+    enterGuestMode();
+}
+
+setInterval(tickSensors, 4000);
+setInterval(pingApi, 20000);
+setInterval(() => { if (mode === 'live') loadMilk(); }, 60000);
+
+console.log('🚀 هيردسمارت جاهز - المستشعرات تتصل بالـ API الحقيقي!');
 </script>
 </body>
 </html>
