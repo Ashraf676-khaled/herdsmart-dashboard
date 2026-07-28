@@ -62,6 +62,8 @@
     .badge.ok { background: #DEEAD9; color: var(--green-deep); }
     .badge.pending { background: #F1E3BE; color: var(--gold); }
     .badge.active { background: #F3DAD1; color: var(--rust); }
+    .badge.sold { background: #E7E2CC; color: #6B6547; }
+    .badge.dead { background: #EAD6D6; color: #8A3A3A; }
     .field { margin-bottom: 14px; }
     .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
     .field input, .field select { width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: .9rem; color: var(--ink); }
@@ -146,10 +148,6 @@
     .pw-strength-bar { height: 5px; border-radius: 4px; background: var(--line); margin-top: 8px; overflow: hidden; }
     .pw-strength-fill { height: 100%; border-radius: 4px; transition: width .3s ease, background .3s ease; }
 
-    /* ===== CATTLE BADGE ===== */
-    .badge.sold { background: #E7E2CC; color: #6B6547; }
-    .badge.dead { background: #EAD6D6; color: #8A3A3A; }
-
     /* ===== FEATURE HERO (GUEST) ===== */
     .feature-hero { background: linear-gradient(135deg, var(--green-deep), var(--green) 120%); border-radius: 16px; padding: 26px 24px; margin-bottom: 20px; color: #F3EEDE; position: relative; overflow: hidden; }
     .feature-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 85% 20%, rgba(199,154,69,.25), transparent 55%); }
@@ -179,6 +177,7 @@
     .nav-item { transition: background .18s ease, color .18s ease, padding-right .18s ease; }
     .nav-item:hover:not(.active) { padding-right: 18px; }
     tbody tr { transition: background .15s ease; }
+    .gender-ic { font-size: .9rem; }
   </style>
 </head>
 <body>
@@ -209,22 +208,20 @@
       milkSummary: '/milk/summary'
     };
 
-    // تعريف الصلاحيات لكل دور
+    // تعريف الصلاحيات حسب الـ Controllers
+    // ملاحظة: بعض الإجراءات لها قيود إضافية (مثل إضافة لقاح فقط للـ Vet)
     const ROLES_DEF = {
-      FarmOwner: ['create', 'edit', 'delete', 'administer', 'view', 'manageStaff'],
-      Admin: ['create', 'edit', 'delete', 'administer', 'view', 'manageStaff'],
-      Veterinarian: ['create', 'edit', 'administer', 'view'],
-      Worker: ['view'],
+      FarmOwner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'view', 'manageStaff', 'create_vaccination', 'edit_vaccination', 'administer_vaccination', 'create_health', 'view_health'],
+      Veterinarian: ['create_cattle', 'edit_cattle', 'view', 'create_vaccine', 'create_vaccination', 'edit_vaccination', 'administer_vaccination', 'create_health', 'edit_health', 'view_health'],
+      Worker: ['view', 'create_milk'],
       Guest: ['view']
     };
     const roleNames = {
       FarmOwner: 'مالك المزرعة',
-      Admin: 'مدير',
       Veterinarian: 'بيطري',
       Worker: 'عامل',
       Guest: 'ضيف'
     };
-    const VACCINE_CREATOR_ROLE = 'Veterinarian';
 
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
     const CATTLE_STATUS_MAP = {
@@ -392,7 +389,7 @@
       const [showHealthForm, setShowHealthForm] = useState(false);
       const [showCattleForm, setShowCattleForm] = useState(false);
 
-      // حساب الصلاحيات
+      // حساب الصلاحيات بناءً على الدور الحالي
       const permissions = useMemo(() => {
         const perms = ROLES_DEF[currentRole] || ROLES_DEF.Guest || ['view'];
         return perms;
@@ -403,7 +400,6 @@
       // ======== تحميل البيانات ========
       const loadData = useCallback(async () => {
         if (isLoggedIn()) {
-          // وضع المستخدم الحقيقي: تحميل من API فقط
           setLoading(true);
           setLoadError(false);
           const safe = (promise, fallback) => promise.catch(() => fallback);
@@ -454,14 +450,14 @@
             setLoadError(true);
           } finally { setLoading(false); }
         } else {
-          // وضع الضيف: بيانات تجريبية فقط
+          // وضع الضيف: بيانات تجريبية
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
           setCattleOptions(MOCK.cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
           setCattleList(MOCK.cattle);
           setCattleTotal(MOCK.cattle.length);
-          // نضع staffList فارغة مبدئياً، سنستخدم useMemo لحسابها بناءً على الدور
+          // staffList ستُحسب لاحقاً بناءً على currentRole
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
@@ -499,10 +495,6 @@
         }
       }, []);
 
-      // ======== تحديث staffList عند تغيير الدور في وضع الضيف ========
-      // ولكن useMemo يقوم بذلك تلقائياً، لكن يجب تمرير effectiveStaffList إلى Context.
-      // وسنستخدم effectiveStaffList في مكان staffList في Context.
-
       const handleRoleChange = (e) => {
         const newRole = e.target.value;
         setCurrentRole(newRole);
@@ -520,8 +512,8 @@
         cattleOptions,
         cattleList, setCattleList,
         cattleTotal,
-        staffList: effectiveStaffList, // استخدم القيمة المحسوبة
-        setStaffList, // نحتفظ بها لكن لا نستخدمها في الضيف
+        staffList: effectiveStaffList,
+        setStaffList,
         weeklyMilk,
         topProducers,
         dailyMilk,
@@ -570,7 +562,7 @@
     }
 
     // ============================================================
-    // 6.1 ACTION BUTTON — يظهر دائماً، معطل مع رسالة إذا لم يملك صلاحية
+    // 6.1 ACTION BUTTON
     // ============================================================
     function ActionButton({ allowed, reason, onClick, children, className = '', small = true }) {
       if (allowed) {
@@ -881,7 +873,7 @@
 
       const handleAdd = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة ماشية', true); return; }
+        if (!hasPermission('create_cattle')) { showToast('⚠️ ليس لديك صلاحية لإضافة ماشية', true); return; }
         if (!validate()) return;
         try {
           const payload = {
@@ -904,7 +896,7 @@
       };
 
       const handleStatusChange = async (cattle, newStatus) => {
-        if (!hasPermission('edit')) { showToast('⚠️ ليس لديك صلاحية لتعديل حالة الماشية', true); return; }
+        if (!hasPermission('edit_cattle')) { showToast('⚠️ ليس لديك صلاحية لتعديل حالة الماشية', true); return; }
         setSavingStatusId(cattle.id);
         try {
           await axiosInstance.put(EP.cattleStatus(cattle.id), { id: cattle.id, newStatus: Number(newStatus) });
@@ -913,6 +905,19 @@
         } catch (err) {
           showToast('فشل تحديث الحالة: ' + (err.response?.data?.message || err.message), true);
         } finally { setSavingStatusId(null); }
+      };
+
+      const handleDelete = async (id) => {
+        if (!hasPermission('delete_cattle')) { showToast('⚠️ ليس لديك صلاحية لحذف الماشية', true); return; }
+        if (!confirm('تأكيد حذف هذه الماشية؟')) return;
+        try {
+          await axiosInstance.delete(EP.cattleOne(id));
+          setCattleList(cattleList.filter(c => c.id !== id));
+          showToast('✅ تم حذف الماشية');
+          loadData();
+        } catch (err) {
+          showToast('فشل الحذف: ' + (err.response?.data?.message || err.message), true);
+        }
       };
 
       const filtered = cattleList.filter(c => {
@@ -935,8 +940,8 @@
           <div className="view-head">
             <div><h1>🐮 إدارة الماشية</h1><p>سجل كامل لقطيع المزرعة — {cattleTotal} رأس {isRealData ? '' : '(بيانات تجريبية)'}</p></div>
             <ActionButton
-              allowed={hasPermission('create')}
-              reason="إضافة ماشية جديدة متاحة لمالك المزرعة والمدير والطبيب البيطري فقط"
+              allowed={hasPermission('create_cattle')}
+              reason="إضافة ماشية متاحة لمالك المزرعة والبيطري فقط"
               className="btn-solid"
               onClick={() => setShowCattleForm(true)}
             >
@@ -944,7 +949,7 @@
             </ActionButton>
           </div>
 
-          {showCattleForm && hasPermission('create') && (
+          {showCattleForm && hasPermission('create_cattle') && (
             <div className="card-box">
               <h4>تسجيل رأس ماشية جديد</h4>
               <form onSubmit={handleAdd}>
@@ -1004,10 +1009,10 @@
               </span>
             </h4>
             <table>
-              <thead><tr><th>رقم التاج</th><th>السلالة</th><th>الجنس</th><th>العمر</th><th>الأب/الأم</th><th>الحالة</th></tr></thead>
+              <thead><tr><th>رقم التاج</th><th>السلالة</th><th>الجنس</th><th>العمر</th><th>الأب/الأم</th><th>الحالة</th><th>إجراءات</th></tr></thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan="6"><div className="empty-state"><div className="es-ic">🐄</div><div className="es-title">لا توجد نتائج</div><div className="es-sub">جرّب تعديل البحث أو الفلتر، أو سجّل أول رأس ماشية.</div></div></td></tr>
+                  <tr><td colSpan="7"><div className="empty-state"><div className="es-ic">🐄</div><div className="es-title">لا توجد نتائج</div><div className="es-sub">جرّب تعديل البحث أو الفلتر، أو سجّل أول رأس ماشية.</div></div></td></tr>
                 ) : filtered.map(c => (
                   <tr key={c.id}>
                     <td><strong>{c.tagNumber}</strong></td>
@@ -1016,7 +1021,7 @@
                     <td>{ageLabel(c.birthDate)}</td>
                     <td style={{ fontSize: '.78rem', color: 'var(--ink-soft)' }}>{c.fatherTagNumber || '—'} / {c.motherTagNumber || '—'}</td>
                     <td>
-                      {hasPermission('edit') ? (
+                      {hasPermission('edit_cattle') ? (
                         <select
                           value={c.status} disabled={savingStatusId === c.id}
                           onChange={e => handleStatusChange(c, e.target.value)}
@@ -1026,6 +1031,11 @@
                         </select>
                       ) : (
                         <span className={`badge ${CATTLE_STATUS_MAP[c.status]?.cls || 'ok'}`}>{CATTLE_STATUS_MAP[c.status]?.label || '—'}</span>
+                      )}
+                    </td>
+                    <td>
+                      {hasPermission('delete_cattle') && (
+                        <button className="btn btn-outline btn-small" onClick={() => handleDelete(c.id)}>حذف</button>
                       )}
                     </td>
                   </tr>
@@ -1094,11 +1104,15 @@
         return Object.keys(err).length === 0;
       };
 
-      const canCreateVaccine = currentRole === VACCINE_CREATOR_ROLE;
+      // صلاحيات خاصة
+      const canCreateVaccine = hasPermission('create_vaccine');
+      const canCreateVaccination = hasPermission('create_vaccination');
+      const canAdminister = hasPermission('administer_vaccination');
+      const canCreateHealth = hasPermission('create_health');
 
       const handleAddVaccine = async (e) => {
         e.preventDefault();
-        if (!canCreateVaccine) { showToast('⚠️ إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط', true); return; }
+        if (!canCreateVaccine) { showToast('⚠️ إضافة اللقاحات مسموح للبيطري فقط', true); return; }
         if (!validateVaccine()) return;
         try {
           const payload = {
@@ -1120,7 +1134,7 @@
 
       const handleAddVaccination = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true); return; }
+        if (!canCreateVaccination) { showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true); return; }
         if (!validateVaccination()) return;
         try {
           const payload = {
@@ -1140,7 +1154,7 @@
       };
 
       const handleAdminister = async (id) => {
-        if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لتسجيل الإعطاء', true); return; }
+        if (!canAdminister) { showToast('⚠️ إعطاء التطعيم مسموح للبيطري فقط', true); return; }
         try {
           await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
           showToast('✅ تم تسجيل الإعطاء');
@@ -1152,7 +1166,7 @@
 
       const handleAddHealth = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة سجل صحي', true); return; }
+        if (!canCreateHealth) { showToast('⚠️ إضافة سجل صحي مسموح للبيطري فقط', true); return; }
         if (!validateHealth()) return;
         try {
           const payload = {
@@ -1187,7 +1201,7 @@
               أنواع اللقاحات
               <ActionButton
                 allowed={canCreateVaccine}
-                reason="إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط (حتى مالك المزرعة لا يملك هذا الإجراء)"
+                reason="إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط"
                 className="btn-solid"
                 onClick={() => setShowVaccineForm(true)}
               >
@@ -1261,15 +1275,15 @@
             <h4>
               التطعيمات
               <ActionButton
-                allowed={hasPermission('create')}
-                reason="جدولة التطعيمات متاحة لمالك المزرعة والمدير والطبيب البيطري فقط"
+                allowed={canCreateVaccination}
+                reason="جدولة التطعيمات متاحة لمالك المزرعة والبيطري"
                 className="btn-solid"
                 onClick={() => setShowVaccinationForm(true)}
               >
                 + جدولة تطعيم
               </ActionButton>
             </h4>
-            {showVaccinationForm && hasPermission('create') && (
+            {showVaccinationForm && canCreateVaccination && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>جدولة تطعيم جديد</h4>
                 <form onSubmit={handleAddVaccination}>
@@ -1324,10 +1338,15 @@
                       <td>{new Date(v.scheduledDate).toLocaleDateString('ar-EG')}</td>
                       <td><span className={`badge ${v.administeredDate ? 'ok' : 'pending'}`}>{v.administeredDate ? 'تم الإعطاء' : 'مجدول'}</span></td>
                       <td>
-                        {!v.administeredDate && hasPermission('administer') && (
-                          <button className="btn btn-outline btn-small" onClick={() => handleAdminister(v.id)}>
+                        {!v.administeredDate && (
+                          <ActionButton
+                            allowed={canAdminister}
+                            reason="إعطاء التطعيم مسموح للبيطري فقط"
+                            className="btn-outline"
+                            onClick={() => handleAdminister(v.id)}
+                          >
                             تم الإعطاء
-                          </button>
+                          </ActionButton>
                         )}
                       </td>
                     </tr>
@@ -1342,15 +1361,15 @@
             <h4>
               السجلات الصحية
               <ActionButton
-                allowed={hasPermission('create')}
-                reason="إضافة سجل صحي متاحة لمالك المزرعة والمدير والطبيب البيطري فقط"
+                allowed={canCreateHealth}
+                reason="إضافة سجل صحي مسموح للبيطري فقط"
                 className="btn-solid"
                 onClick={() => setShowHealthForm(true)}
               >
                 + إضافة سجل صحي
               </ActionButton>
             </h4>
-            {showHealthForm && hasPermission('create') && (
+            {showHealthForm && canCreateHealth && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>إضافة سجل صحي جديد</h4>
                 <form onSubmit={handleAddHealth}>
@@ -1431,7 +1450,7 @@
     }
 
     // ============================================================
-    // 10. STAFF MANAGEMENT — يظهر للمالك فقط مع بيانات تجريبية في وضع الضيف
+    // 10. STAFF MANAGEMENT
     // ============================================================
     function StaffManagement() {
       const { staffList, setStaffList, hasPermission, loadData, isRealData } = useAuth();
@@ -1476,7 +1495,7 @@
             <div><h1>👥 إدارة الموظفين</h1><p>إضافة وإدارة أطباء بيطريين وعمال</p></div>
             <ActionButton
               allowed={hasPermission('manageStaff')}
-              reason="إدارة الموظفين متاحة لمالك المزرعة والمدير فقط"
+              reason="إدارة الموظفين متاحة لمالك المزرعة فقط"
               className="btn-solid"
               onClick={() => setShowForm(true)}
             >
@@ -1566,7 +1585,10 @@
       const { alerts, setAlerts, hasPermission, isRealData } = useAuth();
 
       const resolveAlert = (id) => {
-        if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true); return; }
+        if (!hasPermission('administer_vaccination')) { // استخدام صلاحية الإعطاء كصلاحية لإصلاح التنبيه (نفس المبدأ)
+          showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true);
+          return;
+        }
         setAlerts(alerts.map(a => a.id === id ? { ...a, active: false, time: 'تم الإصلاح' } : a));
         showToast('✅ تم إصلاح التنبيه');
       };
@@ -1594,8 +1616,8 @@
                   <div className="alert-actions">
                     {a.active && (
                       <ActionButton
-                        allowed={hasPermission('administer')}
-                        reason="إصلاح التنبيهات متاح لمالك المزرعة والمدير والطبيب البيطري فقط"
+                        allowed={hasPermission('administer_vaccination')}
+                        reason="إصلاح التنبيهات متاح لمالك المزرعة والبيطري"
                         className="btn-outline"
                         onClick={() => resolveAlert(a.id)}
                       >
