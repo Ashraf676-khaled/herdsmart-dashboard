@@ -230,11 +230,10 @@
       milkSummary: '/milk/summary'
     };
 
-    // تعريف الصلاحيات لكل دور — الأدوار مطابقة تماماً لأدوار الـ API (Owner / Vet / Worker)
-    // حتى لا يقع أي مستخدم حقيقي في صلاحيات "ضيف" بالخطأ بسبب اختلاف تسمية الدور.
+    // تعريف الصلاحيات لكل دور – مع إضافة صلاحية منفصلة للتطعيم (schedule_vaccination) للبيطري فقط
     const ROLES_DEF = {
-      Owner: ['create', 'edit', 'delete', 'administer', 'view', 'manageStaff'],
-      Vet: ['create', 'edit', 'administer', 'view'],
+      Owner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'view', 'manageStaff', 'administer'],
+      Vet: ['create_cattle', 'edit_cattle', 'view', 'create_vaccine', 'schedule_vaccination', 'administer', 'create_health', 'edit_health'],
       Worker: ['view'],
       Guest: ['view']
     };
@@ -244,19 +243,16 @@
       Worker: 'عامل',
       Guest: 'ضيف'
     };
-    // إضافة "نوع لقاح" جديد هي مهمة طبية بحتة (تحديد الجرعة والفاصل الزمني حسب البروتوكول الطبي)
-    // لذلك تقتصر على الدور الطبي فقط، ولا يملكها حتى مالك المزرعة.
-    const VACCINE_CREATOR_ROLE = 'Vet';
-    // تسجيل "تم الإعطاء" للتطعيم [POST /vaccinations/{id}/administer] مقصور على البيطري فقط
-    // في الـ API (Authorize Roles="Vet")، حتى لو مالك المزرعة عنده صلاحية "create/edit" عمومًا.
-    const VACCINATION_ADMINISTER_ROLE = 'Vet';
-    // إنشاء/تعديل السجلات الصحية [POST|PUT /health-logs] مقصور على البيطري فقط في الـ API
-    // (Authorize Roles="Vet") — مالك المزرعة يقدر يشوف السجلات بس مش يضيف/يعدّل.
-    const HEALTH_LOG_EDITOR_ROLE = 'Vet';
-    // حذف رأس ماشية إجراء حساس، بيفضل مقصور على مالك المزرعة فقط.
-    const CATTLE_DELETE_ROLE = 'Owner';
 
-    // خرائط عرض لتعدادات الماشية (Gender / CattleStatus أرقام في الـ API)
+    // الأدوار المسموح لها بحذف الماشية (فقط المالك)
+    const CATTLE_DELETE_ROLE = 'Owner';
+    // إضافة لقاحات (للبيطري فقط)
+    const VACCINE_CREATOR_ROLE = 'Vet';
+    // إعطاء التطعيم (للبيطري فقط)
+    const VACCINATION_ADMINISTER_ROLE = 'Vet';
+    // تعديل السجلات الصحية (للبيطري فقط)
+    const HEALTH_LOG_EDITOR_ROLE = 'Vet';
+
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
     const CATTLE_STATUS_MAP = {
       0: { label: 'نشطة', cls: 'ok' },
@@ -267,7 +263,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA (فقط للضيف)
+    // 2. MOCK DATA (فقط للضيف) — تم تعديل c3: ذكر → حالة نشطة بدلاً من حامل
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -287,7 +283,8 @@
       cattle: [
         { id: 'c1', tagNumber: 'A102', breed: 'هولشتاين', gender: 0, birthDate: '2023-02-11T00:00:00', status: 0, fatherTagNumber: null, motherTagNumber: 'A050' },
         { id: 'c2', tagNumber: 'A245', breed: 'بلدي', gender: 0, birthDate: '2022-08-03T00:00:00', status: 0, fatherTagNumber: 'A010', motherTagNumber: null },
-        { id: 'c3', tagNumber: 'A310', breed: 'جيرسي', gender: 0, birthDate: '2023-11-20T00:00:00', status: 2, fatherTagNumber: null, motherTagNumber: null },
+        // c3: ذكر (gender:0) — كان status:2 (حامل) ← غيرناه إلى نشط (0) لأنه لا يمكن أن يكون ذكراً حاملاً
+        { id: 'c3', tagNumber: 'A310', breed: 'جيرسي', gender: 0, birthDate: '2023-11-20T00:00:00', status: 0, fatherTagNumber: null, motherTagNumber: null },
         { id: 'c4', tagNumber: 'A088', breed: 'هولشتاين', gender: 1, birthDate: '2021-05-14T00:00:00', status: 1, fatherTagNumber: null, motherTagNumber: null }
       ],
       staff: [
@@ -375,8 +372,6 @@
       setTimeout(() => el.remove(), 4000);
     }
 
-    // رسالة خطأ عربية موحّدة — تستخدم رسالة الـ API لو موجودة وواضحة،
-    // وإلا ترجع رسالة عربية افتراضية بدل رسائل axios التقنية بالإنجليزي (زي "Network Error").
     function errMsg(err, fallback = 'حدث خطأ غير متوقع، حاول مرة أخرى') {
       const apiMsg = err?.response?.data?.message || err?.response?.data?.title;
       return apiMsg || fallback;
@@ -386,7 +381,6 @@
     function isLoggedIn() { return !!getToken(); }
     function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
     function logout() { clearSession(); window.location.reload(); }
-    // مصدر واحد لحفظ الجلسة، يُستخدم بعد الدخول أو إنشاء الحساب مباشرةً
     function persistSession(data) {
       localStorage.setItem('hs_token', data.accessToken);
       localStorage.setItem('hs_refreshToken', data.refreshToken);
@@ -409,27 +403,22 @@
       const [user, setUser] = useState(null);
       const [activeView, setActiveView] = useState('dashboard');
       const [loading, setLoading] = useState(false);
-      // ⚠️ قائمة "تجربة كـ" في التوب بار مفيهاش خيار Guest أصلاً (Owner/Vet/Worker فقط)،
-      // فلو الحالة الابتدائية كانت 'Guest' هيظهر الـ select بصريًا على أول خيار (مالك المزرعة)
-      // بينما currentRole الحقيقي لسه 'Guest' → صلاحيات ناقصة (زي عدم ظهور "الموظفين") لحد
-      // ما المستخدم يغيّر الاختيار يدويًا فعليًا. علشان كده الحالة الابتدائية للضيف = 'Owner'
-      // من أول تحميل، مطابقة لما هو ظاهر فعليًا في الـ select.
       const [currentRole, setCurrentRole] = useState('Owner');
-      const [isRealData, setIsRealData] = useState(false); // علم لتمييز البيانات الحقيقية
+      const [isRealData, setIsRealData] = useState(false);
 
       // --- بيانات الجداول ---
       const [vaccines, setVaccines] = useState([]);
       const [vaccinations, setVaccinations] = useState([]);
       const [healthLogs, setHealthLogs] = useState([]);
-      const [cattleOptions, setCattleOptions] = useState([]); // { id, tagNumber } — لاستخدام القوائم المنسدلة
-      const [cattleList, setCattleList] = useState([]); // السجلات الكاملة لصفحة إدارة الماشية
-      const [cattleTotal, setCattleTotal] = useState(0); // العدد الحقيقي من الـ API (totalCount)
+      const [cattleOptions, setCattleOptions] = useState([]);
+      const [cattleList, setCattleList] = useState([]);
+      const [cattleTotal, setCattleTotal] = useState(0);
       const [staffList, setStaffList] = useState([]);
       const [weeklyMilk, setWeeklyMilk] = useState([]);
       const [topProducers, setTopProducers] = useState([]);
       const [alerts, setAlerts] = useState([]);
       const [dailyMilk, setDailyMilk] = useState('—');
-      const [loadError, setLoadError] = useState(false); // فشل تحميل بيانات حقيقية (بدون رجوع لبيانات وهمية)
+      const [loadError, setLoadError] = useState(false);
 
       // --- حالة النماذج ---
       const [showVaccineForm, setShowVaccineForm] = useState(false);
@@ -445,12 +434,9 @@
 
       const hasPermission = useCallback((action) => permissions.includes(action), [permissions]);
 
-      // تحميل البيانات (حقيقية أو تجريبية)
-      // ⚠️ قاعدة أساسية: أي مستخدم مسجّل دخول حقيقي لا يرى بيانات تجريبية إطلاقاً،
-      // حتى لو فشل أحد الطلبات — نعرض حالة فارغة/خطأ حقيقية بدل بيانات وهمية مضللة.
+      // تحميل البيانات
       const loadData = useCallback(async () => {
         if (isLoggedIn()) {
-          // وضع المستخدم الحقيقي: تحميل من API فقط
           setLoading(true);
           setLoadError(false);
           const safe = (promise, fallback) => promise.catch(() => fallback);
@@ -474,7 +460,6 @@
             setStaffList(staff);
             setTopProducers(milkTop);
 
-            // إنتاج آخر 7 أيام — تُجلب بالتوازي بدل التسلسل
             const days = Array.from({ length: 7 }, (_, idx) => 6 - idx).map(i => {
               const d = new Date(); d.setDate(d.getDate() - i);
               const from = new Date(d); from.setHours(0, 0, 0, 0);
@@ -489,12 +474,9 @@
             setWeeklyMilk(weeklyResults);
             setDailyMilk(weeklyResults.length ? weeklyResults[weeklyResults.length - 1].toLocaleString('en-US') : '0');
 
-            // لا يوجد حالياً Endpoint حقيقي للتنبيهات اللحظية للمستشعرات في الـ API،
-            // لذلك تُترك فارغة لحساب حقيقي بدل عرض تنبيهات وهمية قد تُربك المستخدم.
             setAlerts([]);
             setIsRealData(true);
           } catch (e) {
-            // فشل عام غير متوقع (شبكة/مصادقة) — لا نعرض بيانات وهمية، فقط حالة خطأ فارغة
             showToast('تعذر تحميل بعض البيانات: ' + errMsg(e), true);
             setVaccines([]); setVaccinations([]); setHealthLogs([]);
             setCattleList([]); setCattleOptions([]); setCattleTotal(0);
@@ -504,14 +486,14 @@
             setLoadError(true);
           } finally { setLoading(false); }
         } else {
-          // وضع الضيف: بيانات تجريبية فقط، وواضح أنها كذلك في كل الواجهة
+          // وضع الضيف: بيانات تجريبية
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
           setCattleOptions(MOCK.cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
           setCattleList(MOCK.cattle);
           setCattleTotal(MOCK.cattle.length);
-          setStaffList(MOCK.staff); // بيانات موظفين تجريبية للضيف — تُعرض ضمن صلاحياته
+          setStaffList(MOCK.staff);
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
@@ -522,7 +504,6 @@
         }
       }, []);
 
-      // تهيئة المستخدم والدور
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
@@ -531,18 +512,14 @@
           setCurrentRole(primaryRole);
           const name = localStorage.getItem('hs_name') || 'مستخدم';
           setUser({ name, roles });
-          loadData(); // تحميل البيانات الحقيقية فوراً
+          loadData();
         } else {
-          setCurrentRole('Owner'); // مطابق لأول خيار في select "تجربة كـ"
+          setCurrentRole('Owner');
           setUser({ name: 'ضيف', roles: ['Guest'] });
-          loadData(); // تحميل البيانات التجريبية
+          loadData();
         }
       }, []);
 
-      // ملاحظة: تسجيل الدخول الفعلي يتم عبر AuthModal (في Root) الذي يحفظ التوكن
-      // ثم يعيد تحميل الصفحة — هذا يضمن مصدراً واحداً للحقيقة بدل تكرار المنطق.
-
-      // تغيير الدور (في وضع الضيف فقط)
       const handleRoleChange = (e) => {
         const newRole = e.target.value;
         setCurrentRole(newRole);
@@ -609,9 +586,7 @@
     }
 
     // ============================================================
-    // 6.1 ACTION BUTTON — يظهر دائماً، لكن يتحول لرصاصي وغير قابل
-    // للنقر مع توضيح السبب لو المستخدم لا يملك الصلاحية، بدل إخفائه
-    // تماماً (شفافية أفضل للمستخدم من إخفاء الأزرار بدون تفسير).
+    // 6.1 ACTION BUTTON
     // ============================================================
     function ActionButton({ allowed, reason, onClick, children, className = '', small = true }) {
       if (allowed) {
@@ -680,7 +655,6 @@
         { id: 'health', icon: '💉', label: 'الطبي والتطعيمات' },
         { id: 'alerts', icon: '📡', label: 'التنبيهات' }
       ];
-      // إضافة الموظفين فقط إذا كان لديه صلاحية manageStaff
       if (hasPermission('manageStaff')) {
         items.push({ id: 'staff', icon: '👥', label: 'الموظفين' });
       }
@@ -702,7 +676,7 @@
     }
 
     // ============================================================
-    // 8. DASHBOARD (لوحة التحكم)
+    // 8. DASHBOARD
     // ============================================================
     const FEATURES = [
       { icon: '🐮', title: 'إدارة الماشية', desc: 'سجل كامل لكل رأس: السلالة، النسب، الحالة الصحية' },
@@ -731,13 +705,11 @@
       const activeAlerts = alerts.filter(a => a.active).length;
       const isGuest = currentRole === 'Guest' || !isLoggedIn();
 
-      // محاكاة المستشعرات — تظهر فقط في الوضع التجريبي كعرض توضيحي لما سيحدث
-      // عند ربط أجهزة استشعار حقيقية بالمزرعة (لا تُعرض بيانات مزيفة لحساب حقيقي).
       const [temp, setTemp] = useState(6.5);
       const [move, setMove] = useState(5.2);
 
       useEffect(() => {
-        if (isRealData) return; // بدون محاكاة على البيانات الحقيقية
+        if (isRealData) return;
         const interval = setInterval(() => {
           setTemp(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
           setMove(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
@@ -896,7 +868,7 @@
     }
 
     // ============================================================
-    // 8.5 CATTLE MANAGEMENT (إدارة الماشية)
+    // 8.5 CATTLE MANAGEMENT
     // ============================================================
     function CattleManagement() {
       const {
@@ -926,7 +898,7 @@
 
       const handleAdd = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة ماشية', true); return; }
+        if (!hasPermission('create_cattle')) { showToast('⚠️ ليس لديك صلاحية لإضافة ماشية', true); return; }
         if (!validate()) return;
         try {
           const payload = {
@@ -949,7 +921,7 @@
       };
 
       const handleStatusChange = async (cattle, newStatus) => {
-        if (!hasPermission('edit')) { showToast('⚠️ ليس لديك صلاحية لتعديل حالة الماشية', true); return; }
+        if (!hasPermission('edit_cattle')) { showToast('⚠️ ليس لديك صلاحية لتعديل حالة الماشية', true); return; }
         setSavingStatusId(cattle.id);
         try {
           await axiosInstance.put(EP.cattleStatus(cattle.id), { id: cattle.id, newStatus: Number(newStatus) });
@@ -961,6 +933,8 @@
       };
 
       const handleDelete = async (cattle) => {
+        // منع الحذف في وضع الضيف (بيانات تجريبية)
+        if (!isRealData) { showToast('⚠️ لا يمكن حذف بيانات تجريبية', true); return; }
         if (currentRole !== CATTLE_DELETE_ROLE) { showToast('⚠️ حذف الماشية مسؤولية مالك المزرعة فقط', true); return; }
         if (!window.confirm(`هل أنت متأكد من حذف رأس الماشية رقم ${cattle.tagNumber}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
         setDeletingId(cattle.id);
@@ -994,7 +968,7 @@
           <div className="view-head">
             <div><h1>🐮 إدارة الماشية</h1><p>سجل كامل لقطيع المزرعة — {cattleTotal} رأس {isRealData ? '' : '(بيانات تجريبية)'}</p></div>
             <ActionButton
-              allowed={hasPermission('create')}
+              allowed={hasPermission('create_cattle') && isRealData}
               reason="إضافة ماشية جديدة متاحة لمالك المزرعة والطبيب البيطري فقط"
               className="btn-solid"
               onClick={() => setShowCattleForm(true)}
@@ -1003,7 +977,7 @@
             </ActionButton>
           </div>
 
-          {showCattleForm && hasPermission('create') && (
+          {showCattleForm && hasPermission('create_cattle') && isRealData && (
             <div className="card-box">
               <h4>تسجيل رأس ماشية جديد</h4>
               <form onSubmit={handleAdd}>
@@ -1076,7 +1050,7 @@
                     <td>{ageLabel(c.birthDate)}</td>
                     <td style={{ fontSize: '.78rem', color: 'var(--ink-soft)' }}>{c.fatherTagNumber || '—'} / {c.motherTagNumber || '—'}</td>
                     <td>
-                      {hasPermission('edit') ? (
+                      {hasPermission('edit_cattle') && isRealData ? (
                         <select
                           value={c.status} disabled={savingStatusId === c.id}
                           onChange={e => handleStatusChange(c, e.target.value)}
@@ -1090,7 +1064,7 @@
                     </td>
                     <td>
                       <ActionButton
-                        allowed={currentRole === CATTLE_DELETE_ROLE}
+                        allowed={currentRole === CATTLE_DELETE_ROLE && isRealData}
                         reason="حذف الماشية مسؤولية مالك المزرعة فقط"
                         className="btn-outline"
                         onClick={() => handleDelete(c)}
@@ -1109,7 +1083,7 @@
     }
 
     // ============================================================
-    // 9. HEALTH MANAGEMENT (الجدول الطبي)
+    // 9. HEALTH MANAGEMENT (الجدول الطبي) — جدولة التطعيم للبيطري فقط
     // ============================================================
     function HealthManagement() {
       const {
@@ -1123,7 +1097,8 @@
         showVaccineForm, setShowVaccineForm,
         showVaccinationForm, setShowVaccinationForm,
         showHealthForm, setShowHealthForm,
-        loadData
+        loadData,
+        isRealData
       } = useAuth();
 
       const [vaccineForm, setVaccineForm] = useState({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
@@ -1166,7 +1141,10 @@
         return Object.keys(err).length === 0;
       };
 
-      const canCreateVaccine = currentRole === VACCINE_CREATOR_ROLE;
+      const canCreateVaccine = currentRole === VACCINE_CREATOR_ROLE && isRealData;
+      const canScheduleVaccination = hasPermission('schedule_vaccination') && isRealData;
+      const canAdminister = currentRole === VACCINATION_ADMINISTER_ROLE && isRealData;
+      const canEditHealth = currentRole === HEALTH_LOG_EDITOR_ROLE && isRealData;
 
       const handleAddVaccine = async (e) => {
         e.preventDefault();
@@ -1192,7 +1170,7 @@
 
       const handleAddVaccination = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true); return; }
+        if (!canScheduleVaccination) { showToast('⚠️ جدولة التطعيم متاحة للطبيب البيطري فقط', true); return; }
         if (!validateVaccination()) return;
         try {
           const payload = {
@@ -1212,7 +1190,7 @@
       };
 
       const handleAdminister = async (id) => {
-        if (currentRole !== VACCINATION_ADMINISTER_ROLE) { showToast('⚠️ تسجيل إعطاء اللقاح مسؤولية الطبيب البيطري فقط', true); return; }
+        if (!canAdminister) { showToast('⚠️ تسجيل إعطاء اللقاح مسؤولية الطبيب البيطري فقط', true); return; }
         try {
           await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
           showToast('✅ تم تسجيل الإعطاء');
@@ -1222,12 +1200,10 @@
         }
       };
 
-      const canEditHealthLog = currentRole === HEALTH_LOG_EDITOR_ROLE;
-
       const handleAddHealth = async (e) => {
         e.preventDefault();
-        if (submittingHealth) return; // منع إرسال مزدوج (دبل كليك) يسبب رسالتي خطأ مكررة
-        if (!canEditHealthLog) { showToast('⚠️ إضافة السجلات الصحية مسؤولية الطبيب البيطري فقط', true); return; }
+        if (!canEditHealth) { showToast('⚠️ إضافة السجلات الصحية مسؤولية الطبيب البيطري فقط', true); return; }
+        if (submittingHealth) return;
         if (!validateHealth()) return;
         setSubmittingHealth(true);
         try {
@@ -1265,7 +1241,7 @@
               أنواع اللقاحات
               <ActionButton
                 allowed={canCreateVaccine}
-                reason="إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط (حتى مالك المزرعة لا يملك هذا الإجراء)"
+                reason="إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط"
                 className="btn-solid"
                 onClick={() => setShowVaccineForm(true)}
               >
@@ -1336,20 +1312,20 @@
             </div>
           </div>
 
-          {/* التطعيمات */}
+          {/* التطعيمات — جدولة متاحة للبيطري فقط (حتى مالك المزرعة لا يملكها) */}
           <div className="card-box">
             <h4>
               التطعيمات
               <ActionButton
-                allowed={hasPermission('create')}
-                reason="جدولة التطعيمات متاحة لمالك المزرعة والطبيب البيطري فقط"
+                allowed={canScheduleVaccination}
+                reason="جدولة التطعيمات متاحة للطبيب البيطري فقط"
                 className="btn-solid"
                 onClick={() => setShowVaccinationForm(true)}
               >
                 + جدولة تطعيم
               </ActionButton>
             </h4>
-            {showVaccinationForm && hasPermission('create') && (
+            {showVaccinationForm && canScheduleVaccination && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>جدولة تطعيم جديد</h4>
                 <form onSubmit={handleAddVaccination}>
@@ -1407,7 +1383,7 @@
                       <td>
                         {!v.administeredDate && (
                           <ActionButton
-                            allowed={currentRole === VACCINATION_ADMINISTER_ROLE}
+                            allowed={canAdminister}
                             reason="تسجيل إعطاء اللقاح متاح للطبيب البيطري فقط"
                             className="btn-outline"
                             onClick={() => handleAdminister(v.id)}
@@ -1429,15 +1405,15 @@
             <h4>
               السجلات الصحية
               <ActionButton
-                allowed={canEditHealthLog}
-                reason="إضافة السجلات الصحية مسؤولية الطبيب البيطري فقط (حتى مالك المزرعة لا يملك هذا الإجراء)"
+                allowed={canEditHealth}
+                reason="إضافة السجلات الصحية مسؤولية الطبيب البيطري فقط"
                 className="btn-solid"
                 onClick={() => setShowHealthForm(true)}
               >
                 + إضافة سجل صحي
               </ActionButton>
             </h4>
-            {showHealthForm && canEditHealthLog && (
+            {showHealthForm && canEditHealth && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>إضافة سجل صحي جديد</h4>
                 <form onSubmit={handleAddHealth}>
@@ -1523,7 +1499,7 @@
     // 10. STAFF MANAGEMENT (للمالك فقط)
     // ============================================================
     function StaffManagement() {
-      const { staffList, setStaffList, hasPermission, loadData } = useAuth();
+      const { staffList, setStaffList, hasPermission, loadData, isRealData } = useAuth();
       const [showForm, setShowForm] = useState(false);
       const [formData, setFormData] = useState({ fullName: '', email: '', password: '', role: 'Vet' });
       const [errors, setErrors] = useState({});
@@ -1540,6 +1516,7 @@
       const handleAdd = async (e) => {
         e.preventDefault();
         if (!hasPermission('manageStaff')) { showToast('⚠️ ليس لديك صلاحية لإدارة الموظفين', true); return; }
+        if (!isRealData) { showToast('⚠️ لا يمكن تعديل بيانات تجريبية', true); return; }
         if (!validate()) return;
         try {
           const payload = {
@@ -1564,7 +1541,7 @@
           <div className="view-head">
             <div><h1>👥 إدارة الموظفين</h1><p>إضافة وإدارة أطباء بيطريين وعمال</p></div>
             <ActionButton
-              allowed={hasPermission('manageStaff')}
+              allowed={hasPermission('manageStaff') && isRealData}
               reason="إدارة الموظفين متاحة لمالك المزرعة فقط"
               className="btn-solid"
               onClick={() => setShowForm(true)}
@@ -1573,7 +1550,7 @@
             </ActionButton>
           </div>
 
-          {showForm && hasPermission('manageStaff') && (
+          {showForm && hasPermission('manageStaff') && isRealData && (
             <div className="card-box">
               <h4>إضافة موظف جديد</h4>
               <form onSubmit={handleAdd}>
@@ -1658,20 +1635,6 @@
         showToast('✅ تم إصلاح التنبيه');
       };
 
-      const ResolveButton = ({ alert }) => {
-        if (!alert.active) return null;
-        return (
-          <ActionButton
-            allowed={hasPermission('administer')}
-            reason="إصلاح التنبيهات متاح لمالك المزرعة والطبيب البيطري فقط"
-            className="btn-outline"
-            onClick={() => resolveAlert(alert.id)}
-          >
-            إصلاح التنبيه
-          </ActionButton>
-        );
-      };
-
       return (
         <div>
           <div className="view-head">
@@ -1693,7 +1656,16 @@
                     <div className="meta">{a.time} · <span className={`badge ${a.active ? 'active' : 'ok'}`}>{a.active ? 'نشط' : 'تم الحل'}</span></div>
                   </div>
                   <div className="alert-actions">
-                    <ResolveButton alert={a} />
+                    {a.active && (
+                      <ActionButton
+                        allowed={hasPermission('administer') && isRealData}
+                        reason="إصلاح التنبيهات متاح لمالك المزرعة والطبيب البيطري فقط"
+                        className="btn-outline"
+                        onClick={() => resolveAlert(a.id)}
+                      >
+                        إصلاح التنبيه
+                      </ActionButton>
+                    )}
                   </div>
                 </div>
               ))
@@ -1706,7 +1678,6 @@
     // ============================================================
     // 12. AUTH MODAL
     // ============================================================
-    // شروط قوة كلمة المرور — تُعرض كقائمة بالعربي وتتحول للأخضر فور تحققها
     const PASSWORD_RULES = [
       { key: 'len', label: '8 أحرف على الأقل', test: (p) => p.length >= 8 },
       { key: 'upper', label: 'حرف إنجليزي كبير واحد على الأقل (A-Z)', test: (p) => /[A-Z]/.test(p) },
