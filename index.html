@@ -173,6 +173,7 @@
       .form-grid-2, .form-grid-3, .gauge-grid { grid-template-columns: 1fr; }
       .content { padding: 16px 12px; }
       .panel-grid { grid-template-columns: 1fr !important; }
+      .feature-grid { grid-template-columns: 1fr 1fr; }
     }
     @media(max-width: 480px) {
       .view-head { flex-direction: column; align-items: flex-start; }
@@ -181,9 +182,29 @@
       .card-box h4 > span { width: 100%; display: flex; flex-direction: column; }
       .card-box h4 input, .card-box h4 select { width: 100%; }
       .modal-actions .btn { flex: 1 1 100%; }
-      .top-right { width: 100%; justify-content: flex-start; }
+      .top-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 4px; }
       .form-grid-3 > .field, .form-grid-2 > .field { width: 100%; }
       .tip-wrap .tip-bubble { white-space: normal; max-width: 150px; text-align: center; line-height: 1.4; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: 1fr; }
+      .modal { padding: 16px; max-width: 95%; }
+      .topbar { padding: 0 12px; gap: 4px; }
+      .brand { font-size: 1rem; }
+      .brand .mark { width: 28px; height: 28px; font-size: .8rem; }
+      .top-right .status-badge { font-size: .6rem; padding: 2px 8px; }
+      .user-chip { font-size: .7rem; padding: 2px 10px; }
+      .btn { padding: 5px 10px; font-size: .7rem; }
+      .btn-small { padding: 3px 8px; font-size: .6rem; }
+      .content { padding: 12px; }
+      .card-box { padding: 14px; }
+      .view-head h1 { font-size: 1.1rem; }
+      .feature-hero { padding: 16px; }
+      .feature-hero h2 { font-size: 1rem; }
+    }
+    @media(max-width: 360px) {
+      .topbar .brand { font-size: .85rem; }
+      .topbar .brand .mark { width: 24px; height: 24px; font-size: .7rem; }
+      .top-right .btn { font-size: .6rem; padding: 4px 8px; }
     }
   </style>
 </head>
@@ -364,9 +385,33 @@
       setTimeout(() => el.remove(), 4000);
     }
 
+    // ===== ترجمة الأخطاء بالعربية =====
     function errMsg(err, fallback = 'حدث خطأ غير متوقع، حاول مرة أخرى') {
-      const apiMsg = err?.response?.data?.message || err?.response?.data?.title;
-      return apiMsg || fallback;
+      if (!err) return fallback;
+      // رسائل من السيرفر
+      const data = err.response?.data;
+      if (data) {
+        if (data.message) return data.message;
+        if (data.title) return data.title;
+        if (data.errors && typeof data.errors === 'object') {
+          const msgs = Object.values(data.errors).flat().filter(Boolean);
+          if (msgs.length) return msgs.join(' | ');
+        }
+      }
+      // رسائل axios
+      if (err.message) {
+        const msg = err.message;
+        // ترجمة بعض الأخطاء الشائعة
+        if (msg.includes('Network Error')) return 'تعذر الاتصال بالخادم، تحقق من اتصال الإنترنت';
+        if (msg.includes('timeout')) return 'انتهت مهلة الاتصال، حاول مرة أخرى';
+        if (msg.includes('401')) return 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+        if (msg.includes('403')) return 'ليس لديك صلاحية لتنفيذ هذا الإجراء';
+        if (msg.includes('404')) return 'العنصر المطلوب غير موجود';
+        if (msg.includes('409')) return 'هذه البيانات مسجّلة بالفعل';
+        if (msg.includes('500')) return 'حدث خطأ في الخادم، حاول مرة أخرى لاحقاً';
+        return msg;
+      }
+      return fallback;
     }
 
     function getToken() { return localStorage.getItem('hs_token'); }
@@ -374,15 +419,11 @@
     function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
     function logout() { clearSession(); window.location.reload(); }
 
-    // ===== 1. decodeToken / persistSession المُعدّلان =====
     function decodeToken(token) {
       try {
         const d = jwtDecode(token);
-
-        // إذا كان الدور موجوداً مباشرة في `role` أو `roles`، نأخذه أولاً
         let rawRole = d.role || d.roles || null;
         if (!rawRole) {
-          // وإلا نبحث في Claims المعروفة
           const roleClaims = [
             d['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
             d['http://schemas.microsoft.com/ws/2008/06/identity/claims/roles'],
@@ -393,13 +434,9 @@
             if (claim) { rawRole = claim; break; }
           }
         }
-
         let roles = [];
-        if (Array.isArray(rawRole)) {
-          roles = rawRole;
-        } else if (rawRole !== undefined && rawRole !== null) {
-          roles = [rawRole];
-        }
+        if (Array.isArray(rawRole)) roles = rawRole;
+        else if (rawRole !== undefined && rawRole !== null) roles = [rawRole];
 
         roles = roles.map(r => {
           if (typeof r === 'number') return ROLE_INT_MAP[r] || String(r);
@@ -407,11 +444,9 @@
             const n = Number(r);
             if (!isNaN(n)) return ROLE_INT_MAP[n] || r;
             const low = r.toLowerCase();
-            if (low === 'owner') return 'Owner';
+            if (low === 'owner' || low === 'farmowner') return 'Owner';
             if (low === 'vet') return 'Vet';
             if (low === 'worker') return 'Worker';
-            // إذا كان النص "FarmOwner" -> نحوله إلى "Owner"
-            if (low === 'farmowner') return 'Owner';
             return r;
           }
           return String(r);
@@ -425,11 +460,7 @@
           d.sub ||
           'مستخدم';
 
-        return {
-          roles,
-          primaryRole: roles[0] || 'Guest',
-          name
-        };
+        return { roles, primaryRole: roles[0] || 'Guest', name };
       } catch {
         return { roles: ['Guest'], primaryRole: 'Guest', name: 'ضيف' };
       }
@@ -439,29 +470,21 @@
       localStorage.setItem('hs_token', data.accessToken);
       if (data.refreshToken) localStorage.setItem('hs_refreshToken', data.refreshToken);
 
-      // أولاً: نستخدم الدور من استجابة الدخول إن وجد
       let primaryRole = data.role || 'Guest';
       let name = data.fullName || 'مستخدم';
 
-      // إذا لم يكن الدور موجوداً في الاستجابة، نحاول استخراجه من التوكن
       if (!data.role) {
         const decoded = decodeToken(data.accessToken);
         primaryRole = decoded.primaryRole || 'Guest';
         name = decoded.name || data.fullName || 'مستخدم';
       } else {
-        // حتى لو جاء من الاستجابة، نتأكد من تطابقه مع الخريطة
         const roleKey = typeof primaryRole === 'string' ? primaryRole : ROLE_INT_MAP[primaryRole];
-        if (roleKey && roleNames[roleKey]) {
-          primaryRole = roleKey;
-        } else {
-          // قد يكون رقمياً
+        if (roleKey && roleNames[roleKey]) primaryRole = roleKey;
+        else {
           const numRole = Number(primaryRole);
-          if (!isNaN(numRole) && ROLE_INT_MAP[numRole]) {
-            primaryRole = ROLE_INT_MAP[numRole];
-          }
+          if (!isNaN(numRole) && ROLE_INT_MAP[numRole]) primaryRole = ROLE_INT_MAP[numRole];
         }
       }
-
       localStorage.setItem('hs_role', primaryRole);
       localStorage.setItem('hs_name', name);
     }
@@ -530,9 +553,8 @@
       const [activeView, setActiveView] = useState('dashboard');
       const [loading, setLoading] = useState(false);
 
-      // ===== 2. فصل الدور الحقيقي عن التجريبي =====
-      const [currentRole, setCurrentRole] = useState('Guest');    // الحقيقي من التوكن
-      const [demoRole, setDemoRole] = useState('Owner');         // التجريبي للضيف
+      const [currentRole, setCurrentRole] = useState('Guest');
+      const [demoRole, setDemoRole] = useState('Owner');
       const [isRealData, setIsRealData] = useState(false);
       const [loadError, setLoadError] = useState(false);
 
@@ -553,7 +575,6 @@
       const [showHealthForm, setShowHealthForm] = useState(false);
       const [showCattleForm, setShowCattleForm] = useState(false);
 
-      // ===== 3. effectiveRole =====
       const effectiveRole = isLoggedIn() ? currentRole : demoRole;
 
       const permissions = useMemo(() => {
@@ -636,32 +657,20 @@
         }
       }, []);
 
-      // ===== 4. useEffect الأول (معدّل لاستخدام الدور المخزن) =====
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
-          // استخدم الدور المخزن مسبقاً في localStorage إذا كان متاحاً
           const storedRole = localStorage.getItem('hs_role');
           let decoded = null;
-          try {
-            decoded = decodeToken(token);
-          } catch (e) {
-            // في حالة فك التشفير، نستخدم المخزن
-          }
+          try { decoded = decodeToken(token); } catch (e) {}
           let primaryRole = storedRole || 'Guest';
           let name = localStorage.getItem('hs_name') || 'مستخدم';
-
-          // إذا كان الدور من التوكن مختلفاً عن المخزن، نأخذ من التوكن (الأحدث)
           if (decoded && decoded.primaryRole && decoded.primaryRole !== 'Guest') {
             primaryRole = decoded.primaryRole;
             name = decoded.name || name;
           }
-
           setCurrentRole(primaryRole);
-          setUser({
-            name: name,
-            roles: decoded ? decoded.roles : [primaryRole]
-          });
+          setUser({ name, roles: decoded ? decoded.roles : [primaryRole] });
         } else {
           setCurrentRole('Guest');
           setDemoRole('Owner');
@@ -670,7 +679,6 @@
         loadData();
       }, []);
 
-      // ===== 5. handleRoleChange (يمنع تغيير الدور الحقيقي) =====
       const handleRoleChange = (e) => {
         const newRole = e.target.value;
         if (isLoggedIn()) return;
@@ -851,7 +859,13 @@
                 ))}
               </div>
               <div className="modal-actions" style={{ marginTop: '18px', maxWidth: '260px' }}>
-                <button className="btn btn-solid" style={{ background: '#fff', color: 'var(--green-deep)' }} onClick={() => window.openAuthModal('register')}>ابدأ الآن مجاناً</button>
+                <button
+                  className="btn btn-solid"
+                  style={{ background: '#fff', color: 'var(--green-deep)' }}
+                  onClick={() => window.openAuthModal('register')}
+                >
+                  ابدأ الآن مجاناً
+                </button>
               </div>
             </div>
           )}
@@ -1688,6 +1702,7 @@
           if (tab === 'login') {
             await onLogin(email, password);
             document.getElementById('authModal').classList.add('hidden');
+            // لا نعيد تحميل الصفحة هنا، سنقوم بإعادة تحميلها بعد persistSession في Root
           } else {
             const res = await axiosInstance.post(EP.register, { farmName, ownerName, email, password });
             if (res.data.accessToken) {
