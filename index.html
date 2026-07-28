@@ -18,6 +18,8 @@
     :root { --bg: #F3EEDE; --sidebar: #1F3A26; --card: #FFFDF5; --ink: #202A1E; --ink-soft: #5A6553; --green: #3C6B41; --green-deep: #1F3A26; --gold: #C79A45; --rust: #A85234; --line: #E1D6B4; --radius: 12px; }
     .num { font-family: 'JetBrains Mono', monospace; }
     button, input, select { font-family: inherit; cursor: pointer; }
+
+    /* ===== TOPBAR ===== */
     .topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--card); border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 30; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.2rem; color: var(--green-deep); }
     .brand .mark { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(155deg, var(--green), var(--green-deep)); display: flex; align-items: center; justify-content: center; color: #fff; }
@@ -26,7 +28,7 @@
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #C9BE9C; }
     .status-dot.on { background: var(--green); animation: pulseGreen 2s infinite; }
     @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(60, 107, 65, .5); } 70% { box-shadow: 0 0 0 8px rgba(60, 107, 65, 0); } 100% { box-shadow: 0 0 0 0 rgba(60, 107, 65, 0); } }
-    .user-chip { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 14px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--green-deep); }
+    .user-chip { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 14px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--green-deep); flex-shrink: 0; }
     .user-chip .role-tag { font-size: .65rem; font-weight: 700; background: var(--gold); color: var(--green-deep); padding: 2px 10px; border-radius: 999px; }
     .btn { padding: 8px 16px; border-radius: 9px; font-weight: 700; font-size: .8rem; border: 1.5px solid transparent; transition: all 0.2s; position: relative; overflow: hidden; }
     .btn-solid { background: var(--green-deep); color: #fff; }
@@ -36,25 +38,35 @@
     .btn-small { padding: 4px 10px; font-size: .7rem; border-radius: 6px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(0.6); pointer-events: auto; transform: none !important; }
     .btn:disabled:hover { background: transparent !important; color: inherit !important; transform: none !important; }
-    .app-body { display: flex; height: calc(100vh - 64px); }
-    .sidebar { width: 220px; background: #1F3A26; color: #EFE9D6; padding: 16px 10px; flex: none; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+    .hamburger { display: none; background: none; border: none; font-size: 1.6rem; color: var(--green-deep); padding: 4px 8px; cursor: pointer; }
+    .hamburger:focus { outline: none; }
+
+    /* ===== SIDEBAR ===== */
+    .app-body { display: flex; height: calc(100vh - 64px); position: relative; }
+    .sidebar { width: 220px; background: #1F3A26; color: #EFE9D6; padding: 16px 10px; flex: none; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; transition: transform .3s ease; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; }
+    .sidebar-overlay.open { display: block; }
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; color: #D9D3B8; font-weight: 600; font-size: .9rem; background: transparent; border: none; width: 100%; text-align: right; transition: all .2s; }
     .nav-item:hover { background: #2B4B33; color: #fff; padding-right: 18px; }
     .nav-item.active { background: var(--gold); color: var(--green-deep); }
     .nav-item.hidden-role { display: none; }
     .nav-icon { font-size: 1rem; }
     .sidebar-foot { margin-top: auto; font-size: .7rem; color: #93A088; padding: 10px 14px; }
-    .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+    /* ===== CONTENT ===== */
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px; width: 100%; overflow-x: hidden; }
     .view { display: none; animation: fadein .3s ease; }
     .view.active { display: block; }
     @keyframes fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .view-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
     .view-head h1 { font-size: 1.4rem; color: var(--green-deep); font-weight: 900; }
     .view-head p { color: var(--ink-soft); font-size: .85rem; }
-    .card-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; transition: box-shadow .25s, transform .25s; }
+
+    /* ===== CARDS & TABLES ===== */
+    .card-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; transition: box-shadow .25s, transform .25s; width: 100%; overflow-x: auto; }
     .card-box:hover { box-shadow: 0 10px 24px -14px rgba(31, 58, 38, .25); }
     .card-box h4 { color: var(--green-deep); margin-bottom: 14px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-    .table-scroll { overflow-x: auto; }
+    .table-scroll { overflow-x: auto; width: 100%; }
     table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 500px; }
     th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: .75rem; padding: 8px 8px; border-bottom: 1px solid var(--line); }
     td { padding: 8px 8px; border-bottom: 1px solid var(--line); }
@@ -62,12 +74,16 @@
     tbody tr { transition: background .15s; }
     tbody tr:hover { background: #FAF6E8; }
     .empty-row td { color: var(--ink-soft); text-align: center; padding: 20px; }
+
+    /* ===== BADGES ===== */
     .badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: .7rem; font-weight: 700; }
     .badge.ok { background: #DEEAD9; color: var(--green-deep); }
     .badge.pending { background: #F1E3BE; color: var(--gold); }
     .badge.active { background: #F3DAD1; color: var(--rust); }
     .badge.sold { background: #E7E2CC; color: #6B6547; }
     .badge.dead { background: #EAD6D6; color: #8A3A3A; }
+
+    /* ===== FORMS ===== */
     .field { margin-bottom: 14px; }
     .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
     .field input, .field select { width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: .9rem; color: var(--ink); transition: border-color .2s, box-shadow .2s; }
@@ -79,19 +95,22 @@
     .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
     .modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
     .modal-actions .btn { flex: 1; text-align: center; }
+
+    /* ===== TOAST ===== */
     #toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none; }
     .toast { background: var(--green-deep); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .85rem; font-weight: 600; box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .35); animation: toastin .3s ease; pointer-events: auto; text-align: center; }
     .toast.error { background: var(--rust); }
     @keyframes toastin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== GUEST BANNER ===== */
     .guest-banner { background: linear-gradient(90deg, #8A6417, #C79A45); color: #fff; padding: 8px 20px; display: flex; align-items: center; justify-content: center; gap: 14px; font-size: .85rem; font-weight: 700; flex-wrap: wrap; text-align: center; }
     .guest-banner button { padding: 4px 16px; border-radius: 999px; font-size: .75rem; font-weight: 700; border: 1.5px solid #fff; background: transparent; color: #fff; transition: background .2s, color .2s; }
     .guest-banner button:hover { background: #fff; color: var(--gold); }
-    .hidden { display: none !important; }
-    .role-switch { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; font-size: .8rem; color: var(--ink-soft); font-weight: 700; }
-    .role-switch select { border: none; background: transparent; font-weight: 700; color: var(--green-deep); font-size: .85rem; }
+
+    /* ===== MODAL ===== */
     .modal-overlay { position: fixed; inset: 0; background: rgba(20, 26, 17, .55); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); padding: 16px; animation: modalFade .25s ease; }
-    @keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
     .modal-overlay.hidden { display: none; }
+    @keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
     .modal { background: var(--card); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; border: 1px solid var(--line); max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn .3s ease; }
     @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .modal-close { position: absolute; top: 12px; left: 12px; background: none; border: none; font-size: 1.2rem; color: var(--ink-soft); cursor: pointer; transition: transform .2s; }
@@ -99,7 +118,8 @@
     .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--bg); border-radius: 10px; padding: 4px; }
     .auth-tab { flex: 1; padding: 8px; text-align: center; border-radius: 8px; font-weight: 700; font-size: .85rem; color: var(--ink-soft); border: none; background: transparent; transition: all .2s; }
     .auth-tab.active { background: var(--green-deep); color: #fff; }
-    /* Dashboard */
+
+    /* ===== DASHBOARD ===== */
     .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px; }
     .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; transition: all .2s; animation: cardIn .4s ease backwards; cursor: default; }
     .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -12px rgba(31, 58, 38, .3); }
@@ -107,10 +127,8 @@
     .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--green-deep); }
     .stat-card .value.rust { color: var(--rust); }
     .stat-card .sub { font-size: .7rem; color: var(--ink-soft); margin-top: 4px; }
-    .stat-row .stat-card:nth-child(1) { animation-delay: .02s; }
-    .stat-row .stat-card:nth-child(2) { animation-delay: .08s; }
-    .stat-row .stat-card:nth-child(3) { animation-delay: .14s; }
     @keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .gauge { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; text-align: center; }
     .gauge .g-label { font-size: .75rem; color: var(--ink-soft); font-weight: 700; margin-bottom: 4px; }
@@ -130,7 +148,6 @@
     .alert-item .body { flex: 1; }
     .live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; color: var(--rust); }
     .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rust); animation: pulse 1.8s infinite; }
-    .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 
     /* ===== TOOLTIP ===== */
     .tip-wrap { position: relative; display: inline-flex; }
@@ -140,10 +157,7 @@
       border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease;
       z-index: 20; box-shadow: 0 6px 16px -6px rgba(0,0,0,.4);
     }
-    .tip-wrap .tip-bubble::after {
-      content: ''; position: absolute; top: 100%; right: 50%; transform: translateX(50%);
-      border: 5px solid transparent; border-top-color: var(--green-deep);
-    }
+    .tip-wrap .tip-bubble::after { content: ''; position: absolute; top: 100%; right: 50%; transform: translateX(50%); border: 5px solid transparent; border-top-color: var(--green-deep); }
     .tip-wrap:hover .tip-bubble, .tip-wrap:focus-within .tip-bubble { opacity: 1; transform: translateX(50%) translateY(0); }
     .btn.locked { background: #E7E2CC; color: #8C8567; border-color: #E7E2CC; filter: none; opacity: 1; }
     .btn.locked:hover { background: #E7E2CC !important; color: #8C8567 !important; transform: none !important; }
@@ -158,7 +172,7 @@
     .pw-strength-bar { height: 5px; border-radius: 4px; background: var(--line); margin-top: 8px; overflow: hidden; }
     .pw-strength-fill { height: 100%; border-radius: 4px; transition: width .3s, background .3s; }
 
-    /* ===== FEATURE SHOWCASE ===== */
+    /* ===== FEATURES ===== */
     .feature-hero { background: linear-gradient(135deg, var(--green-deep), var(--green) 120%); border-radius: 16px; padding: 26px 24px; margin-bottom: 20px; color: #F3EEDE; position: relative; overflow: hidden; }
     .feature-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 85% 20%, rgba(199,154,69,.25), transparent 55%); }
     .feature-hero h2 { font-size: 1.25rem; font-weight: 900; margin-bottom: 6px; position: relative; }
@@ -173,70 +187,46 @@
     .gender-ic { font-size: .9rem; }
 
     /* ===== ANIMATIONS ===== */
-    .cow-walk {
-      position: fixed; bottom: 20px; left: -60px; font-size: 2.8rem; z-index: 45;
-      animation: cowWalk 18s linear infinite; pointer-events: none;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,.15));
-    }
-    @keyframes cowWalk {
-      0% { left: -60px; transform: scaleX(1); }
-      45% { left: calc(100% + 20px); transform: scaleX(1); }
-      50% { left: calc(100% + 20px); transform: scaleX(-1); }
-      95% { left: -60px; transform: scaleX(-1); }
-      100% { left: -60px; transform: scaleX(1); }
-    }
+    .cow-walk { position: fixed; bottom: 20px; left: -60px; font-size: 2.8rem; z-index: 45; animation: cowWalk 18s linear infinite; pointer-events: none; filter: drop-shadow(0 4px 12px rgba(0,0,0,.15)); }
+    @keyframes cowWalk { 0% { left: -60px; transform: scaleX(1); } 45% { left: calc(100% + 20px); transform: scaleX(1); } 50% { left: calc(100% + 20px); transform: scaleX(-1); } 95% { left: -60px; transform: scaleX(-1); } 100% { left: -60px; transform: scaleX(1); } }
     .milk-drop { display: inline-block; animation: milkDrop 1.2s ease-in-out infinite; }
     @keyframes milkDrop { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(4px) scale(1.1); } }
-    .pulse-icon { animation: pulseIcon 2s ease-in-out infinite; display: inline-block; }
-    @keyframes pulseIcon { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+    /* ===== ROLE SWITCH ===== */
+    .role-switch { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; font-size: .8rem; color: var(--ink-soft); font-weight: 700; flex-shrink: 0; }
+    .role-switch select { border: none; background: transparent; font-weight: 700; color: var(--green-deep); font-size: .85rem; }
+
+    /* ===== HAMBURGER OVERLAY ===== */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; }
+    .sidebar-overlay.open { display: block; }
 
     /* ===== MEDIA QUERIES ===== */
-    @media(max-width: 1024px) {
-      .panel-grid { grid-template-columns: 1fr; }
-    }
+    @media(max-width: 1024px) { .panel-grid { grid-template-columns: 1fr; } }
     @media(max-width: 768px) {
-      .sidebar { width: 60px; padding: 12px 6px; }
-      .nav-item span.label { display: none; }
-      .nav-item { justify-content: center; padding: 12px 8px; }
-      .nav-item:hover:not(.active) { padding-right: 8px; }
-      .content { padding: 16px 12px; }
-      .stat-row { grid-template-columns: 1fr 1fr; }
-      .top-right .user-chip { display: none; }
-      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
-      .gauge-grid { grid-template-columns: 1fr 1fr; }
-      .feature-grid { grid-template-columns: 1fr 1fr; }
-      .modal { padding: 16px; max-width: 95%; }
-      .cow-walk { font-size: 2rem; bottom: 10px; }
-    }
-    @media(max-width: 480px) {
-      .topbar { padding: 0 10px; height: 56px; }
-      .brand { font-size: .9rem; }
-      .brand .mark { width: 28px; height: 28px; font-size: .9rem; }
+      .hamburger { display: block; }
+      .sidebar { position: fixed; top: 64px; right: 0; bottom: 0; width: 260px; transform: translateX(100%); z-index: 50; padding: 16px; }
+      .sidebar.open { transform: translateX(0); }
+      .topbar { height: 56px; padding: 0 12px; }
+      .brand { font-size: 1rem; }
+      .brand .mark { width: 28px; height: 28px; font-size: .8rem; }
       .top-right .status-badge { font-size: .6rem; padding: 2px 8px; }
+      .top-right .user-chip { display: none; }
+      .content { padding: 12px; }
+      .stat-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-card { padding: 12px; }
+      .stat-card .value { font-size: 1.4rem; }
+      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; gap: 10px; }
+      .gauge-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .card-box { padding: 14px; }
+      .card-box h4 { font-size: .85rem; flex-direction: column; align-items: stretch; }
+      .card-box h4 > span { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+      .modal-actions .btn { flex: 1 1 100%; }
+      .modal-actions { flex-direction: column; }
       .guest-banner { font-size: .7rem; padding: 6px 12px; flex-direction: column; gap: 6px; }
       .guest-banner .banner-actions { flex-wrap: wrap; justify-content: center; }
       .view-head { flex-direction: column; align-items: flex-start; }
       .view-head h1 { font-size: 1.1rem; }
       .view-head p { font-size: .75rem; }
-      .stat-row { grid-template-columns: 1fr; gap: 10px; }
-      .stat-card { padding: 12px; }
-      .stat-card .value { font-size: 1.4rem; }
-      .card-box { padding: 14px; }
-      .card-box h4 { font-size: .85rem; flex-direction: column; align-items: stretch; }
-      .card-box h4 > span { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-      .card-box h4 input, .card-box h4 select { width: 100%; }
-      .gauge-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .gauge { padding: 10px; }
-      .gauge .g-value { font-size: 1.2rem; }
-      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; gap: 10px; }
-      .field { margin-bottom: 10px; }
-      .modal-actions .btn { flex: 1 1 100%; }
-      .modal-actions { flex-direction: column; }
-      .top-right .role-switch { font-size: .7rem; padding: 2px 8px; }
-      .top-right .role-switch select { font-size: .75rem; }
-      .btn { padding: 6px 12px; font-size: .7rem; }
-      .btn-small { padding: 3px 8px; font-size: .6rem; }
-      .cow-walk { font-size: 1.6rem; bottom: 6px; }
       .feature-hero { padding: 16px; }
       .feature-hero h2 { font-size: 1rem; }
       .feature-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -244,21 +234,36 @@
       .feature-chip .fc-ic { font-size: 1rem; }
       .feature-chip .fc-title { font-size: .7rem; }
       .feature-chip .fc-desc { font-size: .6rem; }
+      .cow-walk { font-size: 2rem; bottom: 10px; }
+      .role-switch { font-size: .7rem; padding: 2px 8px; }
+      .role-switch select { font-size: .75rem; }
+      .btn { padding: 6px 12px; font-size: .7rem; }
+      .btn-small { padding: 3px 8px; font-size: .6rem; }
       .table-scroll { overflow-x: auto; }
       table { font-size: .75rem; min-width: 400px; }
       th, td { padding: 6px; }
       .tip-wrap .tip-bubble { white-space: normal; max-width: 140px; text-align: center; line-height: 1.3; font-size: .6rem; }
+      .modal { padding: 16px; max-width: 95%; }
     }
-    @media(max-width: 360px) {
-      .topbar { padding: 0 6px; }
-      .brand { font-size: .8rem; gap: 4px; }
-      .brand .mark { width: 24px; height: 24px; font-size: .8rem; }
+    @media(max-width: 480px) {
+      .topbar { padding: 0 8px; height: 50px; }
+      .brand { font-size: .85rem; gap: 4px; }
+      .brand .mark { width: 24px; height: 24px; font-size: .7rem; }
       .top-right { gap: 4px; }
-      .status-badge { font-size: .5rem; padding: 1px 6px; }
-      .btn { padding: 4px 8px; font-size: .6rem; }
-      .stat-card .value { font-size: 1.2rem; }
+      .top-right .status-badge { display: none; }
+      .stat-row { grid-template-columns: 1fr; }
       .gauge-grid { grid-template-columns: 1fr; }
-      .cow-walk { font-size: 1.2rem; }
+      .content { padding: 8px; }
+      .card-box { padding: 10px; }
+      .cow-walk { font-size: 1.4rem; bottom: 6px; }
+      .hamburger { font-size: 1.3rem; }
+      .guest-banner { font-size: .65rem; padding: 4px 8px; }
+      .guest-banner button { font-size: .6rem; padding: 2px 10px; }
+      .modal { padding: 12px; max-width: 100%; }
+      .modal-close { font-size: 1rem; }
+      .field { margin-bottom: 8px; }
+      .field label { font-size: .7rem; }
+      .field input, .field select { padding: 6px 8px; font-size: .8rem; }
     }
     .loading-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 40px 20px; color: var(--ink-soft); font-size: .85rem; font-weight: 700; }
     .spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--green); animation: spin .8s linear infinite; }
@@ -267,12 +272,12 @@
     .empty-state .es-ic { font-size: 1.8rem; margin-bottom: 8px; }
     .empty-state .es-title { font-weight: 700; color: var(--green-deep); font-size: .9rem; margin-bottom: 3px; }
     .empty-state .es-sub { font-size: .75rem; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <div id="toast-wrap"></div>
-  <!-- بقرة تمشي في الخلفية -->
   <div class="cow-walk">🐄</div>
 
   <script type="text/babel">
@@ -313,7 +318,6 @@
       Guest: 'ضيف'
     };
 
-    // خريطة الأدوار الرقمية إلى أسماء (حسب الـ API)
     const ROLE_INT_MAP = { 0: 'Owner', 1: 'Vet', 2: 'Worker' };
     const ROLE_STRING_TO_INT = { Owner: 0, Vet: 1, Worker: 2 };
 
@@ -325,39 +329,22 @@
       return roleNames[role] || role;
     }
 
-    // ===== فك تشفير JWT بشكل صحيح مع دعم جميع تنسيقات الـ Claims =====
     function decodeToken(token) {
       try {
         const decoded = jwtDecode(token);
-        // محاولة استخراج الدور من عدة مصادر محتملة
-        let roles = decoded.roles || 
-                    decoded.role || 
-                    decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
-                    decoded['role'] || 
-                    [];
+        let roles = decoded.roles || decoded.role || 
+                    decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || [];
         if (!Array.isArray(roles)) roles = [roles];
-        // تحويل الأدوار الرقمية إلى نصوص
         roles = roles.map(r => {
           if (typeof r === 'number') return ROLE_INT_MAP[r] || r;
           return r;
         });
-        // استخراج الاسم من الـ Claims
         const name = decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
                      decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/name'] ||
-                     decoded['name'] ||
-                     decoded['unique_name'] ||
-                     'مستخدم';
+                     decoded['name'] || decoded['unique_name'] || 'مستخدم';
         return { roles: roles.length ? roles : ['Guest'], name };
-      } catch (e) { 
-        return { roles: ['Guest'], name: 'ضيف' }; 
-      }
+      } catch (e) { return { roles: ['Guest'], name: 'ضيف' }; }
     }
-
-    // الأدوار المسموح بها لإجراءات محددة
-    const CATTLE_DELETE_ROLE = 'Owner';
-    const VACCINE_CREATOR_ROLE = 'Vet';
-    const VACCINATION_ADMINISTER_ROLE = 'Vet';
-    const HEALTH_LOG_EDITOR_ROLE = 'Vet';
 
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
     const CATTLE_STATUS_MAP = {
@@ -369,7 +356,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA (فقط للضيف)
+    // 2. MOCK DATA
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -394,8 +381,7 @@
       ],
       staff: [
         { id: 's1', fullName: 'د. كريم عادل', email: 'kareem@farm.com', role: 'Vet' },
-        { id: 's2', fullName: 'أميرة فوزي', email: 'amira@farm.com', role: 'Worker' },
-        { id: 's3', fullName: 'محمود الجندي', email: 'mahmoud@farm.com', role: 'Worker' }
+        { id: 's2', fullName: 'أميرة فوزي', email: 'amira@farm.com', role: 'Worker' }
       ],
       weeklyMilk: [1620, 1710, 1690, 1780, 1750, 1810, 1840],
       topProducers: [
@@ -520,6 +506,7 @@
       const [currentRole, setCurrentRole] = useState('Owner');
       const [isRealData, setIsRealData] = useState(false);
       const [userName, setUserName] = useState('');
+      const [sidebarOpen, setSidebarOpen] = useState(false);
 
       // --- بيانات الجداول ---
       const [vaccines, setVaccines] = useState([]);
@@ -608,7 +595,7 @@
           setCattleOptions(MOCK.cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
           setCattleList(MOCK.cattle);
           setCattleTotal(MOCK.cattle.length);
-          setStaffList(MOCK.staff);
+          setStaffList([]);
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
@@ -619,7 +606,7 @@
         }
       }, []);
 
-      // ===== تهيئة المستخدم من التوكن =====
+      // تهيئة المستخدم من التوكن
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
@@ -643,6 +630,9 @@
         setCurrentRole(newRole);
         showToast(`تم التبديل إلى دور: ${roleNames[newRole]}`);
       };
+
+      const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+      const closeSidebar = () => setSidebarOpen(false);
 
       const contextValue = {
         user,
@@ -669,7 +659,10 @@
         handleRoleChange,
         logout,
         isRealData,
-        loadError
+        loadError,
+        sidebarOpen,
+        toggleSidebar,
+        closeSidebar
       };
 
       return (
@@ -726,48 +719,59 @@
     }
 
     // ============================================================
-    // 7. TOPBAR & SIDEBAR
+    // 7. TOPBAR
     // ============================================================
     function Topbar() {
-      const { user, userName, currentRole, handleRoleChange } = useAuth();
+      const { user, userName, currentRole, handleRoleChange, toggleSidebar, sidebarOpen } = useAuth();
       const isGuest = currentRole === 'Guest' || !isLoggedIn();
 
       return (
-        <header className="topbar">
-          <div className="brand"><span className="mark">🐄</span> هيردسمارت</div>
-          <div className="top-right">
-            <span className="status-badge"><span className="status-dot on"></span> {isLoggedIn() ? 'متصل' : 'تجريبي'}</span>
-            {isGuest && (
-              <div className="role-switch">
-                <span>🧑‍🌾 تجربة كـ:</span>
-                <select value={currentRole} onChange={handleRoleChange}>
-                  <option value="Owner">مالك المزرعة</option>
-                  <option value="Vet">بيطري</option>
-                  <option value="Worker">عامل</option>
-                </select>
-              </div>
-            )}
-            {user && !isGuest && (
-              <span className="user-chip">
-                👋 <strong>{userName || user.name || 'مستخدم'}</strong>
-                <span className="role-tag">{roleNames[currentRole] || currentRole}</span>
-              </span>
-            )}
-            {isLoggedIn() ? (
-              <button className="btn btn-outline btn-small" onClick={() => { window.logout(); }}>خروج</button>
-            ) : (
-              <>
-                <button className="btn btn-outline btn-small" onClick={() => window.openAuthModal()}>دخول</button>
-                <button className="btn btn-solid btn-small" onClick={() => window.openAuthModal()}>حساب جديد</button>
-              </>
-            )}
-          </div>
-        </header>
+        <>
+          <header className="topbar">
+            <div className="brand">
+              <span className="mark">🐄</span> هيردسمارت
+            </div>
+            <div className="top-right">
+              <span className="status-badge"><span className="status-dot on"></span> {isLoggedIn() ? 'متصل' : 'تجريبي'}</span>
+              {isGuest && (
+                <div className="role-switch">
+                  <span>🧑‍🌾</span>
+                  <select value={currentRole} onChange={handleRoleChange}>
+                    <option value="Owner">مالك</option>
+                    <option value="Vet">بيطري</option>
+                    <option value="Worker">عامل</option>
+                  </select>
+                </div>
+              )}
+              {user && !isGuest && (
+                <span className="user-chip">
+                  👋 <strong>{userName || user.name || 'مستخدم'}</strong>
+                  <span className="role-tag">{roleNames[currentRole] || currentRole}</span>
+                </span>
+              )}
+              {isLoggedIn() ? (
+                <button className="btn btn-outline btn-small" onClick={() => { window.logout(); }}>خروج</button>
+              ) : (
+                <>
+                  <button className="btn btn-outline btn-small" onClick={() => window.openAuthModal()}>دخول</button>
+                  <button className="btn btn-solid btn-small" onClick={() => window.openAuthModal()}>حساب جديد</button>
+                </>
+              )}
+              <button className="hamburger" onClick={toggleSidebar} aria-label="القائمة">
+                {sidebarOpen ? '✕' : '☰'}
+              </button>
+            </div>
+          </header>
+          {sidebarOpen && <div className="sidebar-overlay open" onClick={() => { const ctx = useAuth(); ctx.closeSidebar(); }}></div>}
+        </>
       );
     }
 
+    // ============================================================
+    // 7.1 SIDEBAR
+    // ============================================================
     function Sidebar({ activeView, setActiveView }) {
-      const { hasPermission } = useAuth();
+      const { hasPermission, sidebarOpen, closeSidebar } = useAuth();
       const items = [
         { id: 'dashboard', icon: '📊', label: 'لوحة التحكم' },
         { id: 'cattle', icon: '🐮', label: 'الماشية' },
@@ -777,13 +781,19 @@
       if (hasPermission('manageStaff')) {
         items.push({ id: 'staff', icon: '👥', label: 'الموظفين' });
       }
+
+      const handleNavClick = (id) => {
+        setActiveView(id);
+        closeSidebar();
+      };
+
       return (
-        <aside className="sidebar">
+        <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           {items.map(item => (
             <button
               key={item.id}
               className={`nav-item ${activeView === item.id ? 'active' : ''}`}
-              onClick={() => setActiveView(item.id)}
+              onClick={() => handleNavClick(item.id)}
             >
               <span className="nav-icon">{item.icon}</span>
               <span className="label">{item.label}</span>
@@ -814,7 +824,6 @@
         dailyMilk,
         weeklyMilk,
         alerts,
-        hasPermission,
         isRealData,
         loading,
         currentRole
@@ -1263,10 +1272,10 @@
         return Object.keys(err).length === 0;
       };
 
-      const canCreateVaccine = currentRole === VACCINE_CREATOR_ROLE && isRealData;
+      const canCreateVaccine = currentRole === 'Vet' && isRealData;
       const canScheduleVaccination = hasPermission('schedule_vaccination') && isRealData;
-      const canAdminister = currentRole === VACCINATION_ADMINISTER_ROLE && isRealData;
-      const canEditHealth = currentRole === HEALTH_LOG_EDITOR_ROLE && isRealData;
+      const canAdminister = currentRole === 'Vet' && isRealData;
+      const canEditHealth = currentRole === 'Vet' && isRealData;
 
       const handleAddVaccine = async (e) => {
         e.preventDefault();
