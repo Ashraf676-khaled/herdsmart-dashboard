@@ -1,1016 +1,1069 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>هيردسمارت | الجدول الطبي والتطعيمات</title>
-    
-    <!-- خطوط Google -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
-    <!-- React & Babel (للكتابة في ملف واحد) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Axios & jwt-decode -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@4.0.0/build/jwt-decode.min.js"></script>
-
-    <style>
-        /* ===== CSS الشامل ===== */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #F3EEDE; color: #202A1E; font-family: 'Tajawal', sans-serif; min-height: 100vh; overflow-x: hidden; }
-        :root { --bg: #F3EEDE; --sidebar: #1F3A26; --card: #FFFDF5; --ink: #202A1E; --ink-soft: #5A6553; --green: #3C6B41; --green-deep: #1F3A26; --gold: #C79A45; --rust: #A85234; --line: #E1D6B4; --radius: 12px; }
-        .num { font-family: 'JetBrains Mono', monospace; }
-        button, input, select { font-family: inherit; cursor: pointer; }
-        .topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--card); border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; }
-        .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.2rem; color: var(--green-deep); }
-        .brand .mark { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(155deg, var(--green), var(--green-deep)); display: flex; align-items: center; justify-content: center; color: #fff; }
-        .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .status-badge { display: flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 700; color: var(--ink-soft); background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #C9BE9C; }
-        .status-dot.on { background: var(--green); animation: pulseGreen 2s infinite; }
-        @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(60,107,65,.5); } 70% { box-shadow: 0 0 0 8px rgba(60,107,65,0); } 100% { box-shadow: 0 0 0 0 rgba(60,107,65,0); } }
-        .user-chip { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 14px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--green-deep); }
-        .user-chip .role-tag { font-size: .65rem; font-weight: 700; background: var(--gold); color: var(--green-deep); padding: 2px 10px; border-radius: 999px; }
-        .btn { padding: 8px 16px; border-radius: 9px; font-weight: 700; font-size: .8rem; border: 1.5px solid transparent; }
-        .btn-solid { background: var(--green-deep); color: #fff; }
-        .btn-solid:hover { background: var(--green); }
-        .btn-outline { background: transparent; border-color: var(--green-deep); color: var(--green-deep); }
-        .btn-outline:hover { background: var(--green-deep); color: #fff; }
-        .btn-small { padding: 4px 10px; font-size: .7rem; border-radius: 6px; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(0.6); }
-        .app-body { display: flex; height: calc(100vh - 64px); }
-        .sidebar { width: 220px; background: var(--sidebar); color: #EFE9D6; padding: 16px 10px; flex: none; display: flex; flex-direction: column; gap: 4px; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; color: #D9D3B8; font-weight: 600; font-size: .9rem; background: transparent; border: none; width: 100%; text-align: right; }
-        .nav-item:hover { background: #2B4B33; color: #fff; }
-        .nav-item.active { background: var(--gold); color: var(--green-deep); }
-        .nav-item.hidden-role { display: none; }
-        .sidebar-foot { margin-top: auto; font-size: .7rem; color: #93A088; padding: 10px 14px; }
-        .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadein .25s ease; }
-        @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .view-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .view-head h1 { font-size: 1.4rem; color: var(--green-deep); font-weight: 900; }
-        .view-head p { color: var(--ink-soft); font-size: .85rem; }
-        .card-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; overflow-x: auto; }
-        .card-box h4 { color: var(--green-deep); margin-bottom: 14px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 500px; }
-        th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: .75rem; padding: 8px 8px; border-bottom: 1px solid var(--line); }
-        td { padding: 8px 8px; border-bottom: 1px solid var(--line); }
-        tr:last-child td { border-bottom: none; }
-        tbody tr:hover { background: #FAF6E8; }
-        .empty-row td { color: var(--ink-soft); text-align: center; padding: 20px; }
-        .badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: .7rem; font-weight: 700; }
-        .badge.ok { background: #DEEAD9; color: var(--green-deep); }
-        .badge.pending { background: #F1E3BE; color: var(--gold); }
-        .field { margin-bottom: 14px; }
-        .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
-        .field input, .field select { width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: .9rem; color: var(--ink); }
-        .field input:disabled, .field select:disabled { background: #f0f0f0; opacity: 0.6; cursor: not-allowed; }
-        .field input:focus, .field select:focus { outline: none; border-color: var(--green); }
-        .field-error { color: var(--rust); font-size: .75rem; margin-top: 4px; display: block; }
-        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-        .modal-actions .btn { flex: 1; text-align: center; }
-        @media(max-width: 768px) { .sidebar { width: 60px; } .nav-item span.label { display: none; } .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; } .content { padding: 16px 12px; } }
-        #toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none; }
-        .toast { background: var(--green-deep); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .85rem; font-weight: 600; box-shadow: 0 10px 24px -8px rgba(0,0,0,.35); animation: toastin .3s ease; pointer-events: auto; text-align: center; }
-        .toast.error { background: var(--rust); }
-        @keyframes toastin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .guest-banner { background: linear-gradient(90deg, #8A6417, #C79A45); color: #fff; padding: 8px 20px; display: flex; align-items: center; justify-content: center; gap: 14px; font-size: .85rem; font-weight: 700; flex-wrap: wrap; text-align: center; }
-        .guest-banner button { padding: 4px 16px; border-radius: 999px; font-size: .75rem; font-weight: 700; border: 1.5px solid #fff; background: transparent; color: #fff; }
-        .guest-banner button:hover { background: #fff; color: var(--gold); }
-        .hidden { display: none !important; }
-        /* المودال */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(20,26,17,.55); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); padding: 16px; }
-        .modal-overlay.hidden { display: none; }
-        .modal { background: var(--card); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; border: 1px solid var(--line); max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn .3s; }
-        @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .modal-close { position: absolute; top: 12px; left: 12px; background: none; border: none; font-size: 1.2rem; color: var(--ink-soft); cursor: pointer; }
-        .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--bg); border-radius: 10px; padding: 4px; }
-        .auth-tab { flex: 1; padding: 8px; text-align: center; border-radius: 8px; font-weight: 700; font-size: .85rem; color: var(--ink-soft); border: none; background: transparent; }
-        .auth-tab.active { background: var(--green-deep); color: #fff; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>هيردسمارت | الجدول الطبي والتطعيمات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@4.0.0/build/jwt-decode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F3EEDE; color: #202A1E; font-family: 'Tajawal', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    :root { --bg: #F3EEDE; --sidebar: #1F3A26; --card: #FFFDF5; --ink: #202A1E; --ink-soft: #5A6553; --green: #3C6B41; --green-deep: #1F3A26; --gold: #C79A45; --rust: #A85234; --line: #E1D6B4; --radius: 12px; }
+    .num { font-family: 'JetBrains Mono', monospace; }
+    button, input, select { font-family: inherit; cursor: pointer; }
+    .topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--card); border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.2rem; color: var(--green-deep); }
+    .brand .mark { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(155deg, var(--green), var(--green-deep)); display: flex; align-items: center; justify-content: center; color: #fff; }
+    .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .status-badge { display: flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 700; color: var(--ink-soft); background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #C9BE9C; }
+    .status-dot.on { background: var(--green); animation: pulseGreen 2s infinite; }
+    @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(60,107,65,.5); } 70% { box-shadow: 0 0 0 8px rgba(60,107,65,0); } 100% { box-shadow: 0 0 0 0 rgba(60,107,65,0); } }
+    .user-chip { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 14px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--green-deep); }
+    .user-chip .role-tag { font-size: .65rem; font-weight: 700; background: var(--gold); color: var(--green-deep); padding: 2px 10px; border-radius: 999px; }
+    .btn { padding: 8px 16px; border-radius: 9px; font-weight: 700; font-size: .8rem; border: 1.5px solid transparent; transition: all 0.2s; }
+    .btn-solid { background: var(--green-deep); color: #fff; }
+    .btn-solid:hover:not(:disabled) { background: var(--green); }
+    .btn-outline { background: transparent; border-color: var(--green-deep); color: var(--green-deep); }
+    .btn-outline:hover:not(:disabled) { background: var(--green-deep); color: #fff; }
+    .btn-small { padding: 4px 10px; font-size: .7rem; border-radius: 6px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(0.6); pointer-events: auto; }
+    .btn:disabled:hover { background: transparent !important; color: inherit !important; }
+    .app-body { display: flex; height: calc(100vh - 64px); }
+    .sidebar { width: 220px; background: #1F3A26; color: #EFE9D6; padding: 16px 10px; flex: none; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; color: #D9D3B8; font-weight: 600; font-size: .9rem; background: transparent; border: none; width: 100%; text-align: right; }
+    .nav-item:hover { background: #2B4B33; color: #fff; }
+    .nav-item.active { background: var(--gold); color: var(--green-deep); }
+    .nav-item.hidden-role { display: none; }
+    .sidebar-foot { margin-top: auto; font-size: .7rem; color: #93A088; padding: 10px 14px; }
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+    .view { display: none; }
+    .view.active { display: block; animation: fadein .25s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .view-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .view-head h1 { font-size: 1.4rem; color: var(--green-deep); font-weight: 900; }
+    .view-head p { color: var(--ink-soft); font-size: .85rem; }
+    .card-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; overflow-x: auto; }
+    .card-box h4 { color: var(--green-deep); margin-bottom: 14px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 500px; }
+    th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: .75rem; padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    td { padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #FAF6E8; }
+    .empty-row td { color: var(--ink-soft); text-align: center; padding: 20px; }
+    .badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: .7rem; font-weight: 700; }
+    .badge.ok { background: #DEEAD9; color: var(--green-deep); }
+    .badge.pending { background: #F1E3BE; color: var(--gold); }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
+    .field input, .field select { width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: .9rem; color: var(--ink); }
+    .field input:disabled, .field select:disabled { background: #f0f0f0; opacity: 0.6; cursor: not-allowed; }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--green); }
+    .field-error { color: var(--rust); font-size: .75rem; margin-top: 4px; display: block; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .modal-actions .btn { flex: 1; text-align: center; }
+    @media(max-width: 768px) { .sidebar { width: 60px; } .nav-item span.label { display: none; } .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; } .content { padding: 16px 12px; } }
+    #toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none; }
+    .toast { background: var(--green-deep); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .85rem; font-weight: 600; box-shadow: 0 10px 24px -8px rgba(0,0,0,.35); animation: toastin .3s ease; pointer-events: auto; text-align: center; }
+    .toast.error { background: var(--rust); }
+    @keyframes toastin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .guest-banner { background: linear-gradient(90deg, #8A6417, #C79A45); color: #fff; padding: 8px 20px; display: flex; align-items: center; justify-content: center; gap: 14px; font-size: .85rem; font-weight: 700; flex-wrap: wrap; text-align: center; }
+    .guest-banner button { padding: 4px 16px; border-radius: 999px; font-size: .75rem; font-weight: 700; border: 1.5px solid #fff; background: transparent; color: #fff; }
+    .guest-banner button:hover { background: #fff; color: var(--gold); }
+    .hidden { display: none !important; }
+    .role-switch { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; font-size: .8rem; color: var(--ink-soft); font-weight: 700; }
+    .role-switch select { border: none; background: transparent; font-weight: 700; color: var(--green-deep); font-size: .85rem; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(20,26,17,.55); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); padding: 16px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: var(--card); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; border: 1px solid var(--line); max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn .3s; }
+    @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .modal-close { position: absolute; top: 12px; left: 12px; background: none; border: none; font-size: 1.2rem; color: var(--ink-soft); cursor: pointer; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--bg); border-radius: 10px; padding: 4px; }
+    .auth-tab { flex: 1; padding: 8px; text-align: center; border-radius: 8px; font-weight: 700; font-size: .85rem; color: var(--ink-soft); border: none; background: transparent; }
+    .auth-tab.active { background: var(--green-deep); color: #fff; }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
-    <div id="toast-wrap"></div>
+  <div id="root"></div>
+  <div id="toast-wrap"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useCallback, createContext, useContext } = React;
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback, createContext, useContext } = React;
 
-        // ============================================================
-        // 1. CONFIG & CONTEXT
-        // ============================================================
-        const API_BASE = 'https://herdsmart.runasp.net/api';
-        const EP = {
-            login: '/Auth/login',
-            register: '/Auth/register',
-            refresh: '/Auth/refresh-token',
-            vaccines: '/vaccines',
-            vaccinations: '/vaccinations',
-            vaccAdminister: id => `/vaccinations/${id}/administer`,
-            healthLogs: '/health-logs',
-            cattle: '/cattle',
-            users: '/users'
-        };
+    // ============================================================
+    // 1. CONFIG & RBAC
+    // ============================================================
+    const API_BASE = 'https://herdsmart.runasp.net/api';
+    const EP = {
+      login: '/Auth/login',
+      register: '/Auth/register',
+      refresh: '/Auth/refresh-token',
+      vaccines: '/vaccines',
+      vaccinations: '/vaccinations',
+      vaccAdminister: id => `/vaccinations/${id}/administer`,
+      healthLogs: '/health-logs',
+      cattle: '/cattle',
+      users: '/users'
+    };
 
-        // ============================================================
-        // 2. RBAC CONFIG
-        // ============================================================
-        const ROLES_DEF = {
-            FarmOwner: ['create', 'edit', 'delete', 'administer', 'view'],
-            Admin: ['create', 'edit', 'delete', 'administer', 'view'],
-            Veterinarian: ['create', 'edit', 'administer', 'view'],
-            Worker: ['view'] // فقط عرض
-        };
-        const roleNames = { FarmOwner: 'مالك المزرعة', Admin: 'مدير', Veterinarian: 'بيطري', Worker: 'عامل' };
+    // تعريف الصلاحيات لكل دور
+    const ROLES_DEF = {
+      FarmOwner: ['create', 'edit', 'delete', 'administer', 'view'],
+      Admin: ['create', 'edit', 'delete', 'administer', 'view'],
+      Veterinarian: ['create', 'edit', 'administer', 'view'],
+      Worker: ['view']
+    };
+    const roleNames = {
+      FarmOwner: 'مالك المزرعة',
+      Admin: 'مدير',
+      Veterinarian: 'بيطري',
+      Worker: 'عامل',
+      Guest: 'ضيف'
+    };
 
-        // ============================================================
-        // 3. AXIOS INSTANCE
-        // ============================================================
-        const axiosInstance = axios.create({ baseURL: API_BASE, headers: { 'Content-Type': 'application/json' } });
-        axiosInstance.interceptors.request.use(config => {
-            const token = localStorage.getItem('hs_token');
-            if (token) config.headers.Authorization = `Bearer ${token}`;
-            return config;
-        });
+    // ============================================================
+    // 2. AXIOS INSTANCE
+    // ============================================================
+    const axiosInstance = axios.create({ baseURL: API_BASE, headers: { 'Content-Type': 'application/json' } });
+    axiosInstance.interceptors.request.use(config => {
+      const token = localStorage.getItem('hs_token');
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
 
-        let isRefreshing = false;
-        let failedQueue = [];
-        const processQueue = (error, token = null) => {
-            failedQueue.forEach(prom => { if (error) prom.reject(error); else prom.resolve(token); });
-            failedQueue = [];
-        };
-        axiosInstance.interceptors.response.use(
-            res => res,
-            async error => {
-                const originalRequest = error.config;
-                if (error.response?.status === 401 && !originalRequest._retry) {
-                    if (isRefreshing) {
-                        return new Promise((resolve, reject) => {
-                            failedQueue.push({ resolve, reject });
-                        }).then(token => {
-                            originalRequest.headers.Authorization = `Bearer ${token}`;
-                            return axiosInstance(originalRequest);
-                        }).catch(err => Promise.reject(err));
-                    }
-                    originalRequest._retry = true;
-                    isRefreshing = true;
-                    const refreshToken = localStorage.getItem('hs_refreshToken');
-                    if (!refreshToken) { isRefreshing = false; window.logout(); return Promise.reject(error); }
-                    try {
-                        const res = await axios.post(API_BASE + EP.refresh, {
-                            refreshToken,
-                            accessToken: localStorage.getItem('hs_token')
-                        });
-                        const newToken = res.data.accessToken;
-                        localStorage.setItem('hs_token', newToken);
-                        if (res.data.refreshToken) localStorage.setItem('hs_refreshToken', res.data.refreshToken);
-                        processQueue(null, newToken);
-                        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                        return axiosInstance(originalRequest);
-                    } catch (e) {
-                        processQueue(e, null);
-                        window.logout();
-                        showToast('انتهت الجلسة، يرجى تسجيل الدخول مجدداً', true);
-                        return Promise.reject(e);
-                    } finally { isRefreshing = false; }
-                }
-                if (error.response?.status === 401) window.logout();
-                return Promise.reject(error);
-            }
+    let isRefreshing = false;
+    let failedQueue = [];
+    const processQueue = (error, token = null) => {
+      failedQueue.forEach(prom => { if (error) prom.reject(error); else prom.resolve(token); });
+      failedQueue = [];
+    };
+    axiosInstance.interceptors.response.use(
+      res => res,
+      async error => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+              failedQueue.push({ resolve, reject });
+            }).then(token => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              return axiosInstance(originalRequest);
+            }).catch(err => Promise.reject(err));
+          }
+          originalRequest._retry = true;
+          isRefreshing = true;
+          const refreshToken = localStorage.getItem('hs_refreshToken');
+          if (!refreshToken) { isRefreshing = false; window.logout(); return Promise.reject(error); }
+          try {
+            const res = await axios.post(API_BASE + EP.refresh, {
+              refreshToken,
+              accessToken: localStorage.getItem('hs_token')
+            });
+            const newToken = res.data.accessToken;
+            localStorage.setItem('hs_token', newToken);
+            if (res.data.refreshToken) localStorage.setItem('hs_refreshToken', res.data.refreshToken);
+            processQueue(null, newToken);
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return axiosInstance(originalRequest);
+          } catch (e) {
+            processQueue(e, null);
+            window.logout();
+            showToast('انتهت الجلسة، يرجى تسجيل الدخول مجدداً', true);
+            return Promise.reject(e);
+          } finally { isRefreshing = false; }
+        }
+        if (error.response?.status === 401) window.logout();
+        return Promise.reject(error);
+      }
+    );
+
+    // ============================================================
+    // 3. HELPERS
+    // ============================================================
+    function showToast(msg, isError = false) {
+      const wrap = document.getElementById('toast-wrap');
+      const el = document.createElement('div');
+      el.className = `toast ${isError ? 'error' : ''}`;
+      el.textContent = msg;
+      wrap.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
+
+    function getToken() { return localStorage.getItem('hs_token'); }
+    function isLoggedIn() { return !!getToken(); }
+    function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
+    function logout() { clearSession(); window.location.reload(); }
+
+    function decodeToken(token) {
+      try {
+        const decoded = jwtDecode(token);
+        const roles = decoded.roles || decoded.role || [];
+        return Array.isArray(roles) ? roles : [roles];
+      } catch (e) { return []; }
+    }
+
+    // ============================================================
+    // 4. MOCK DATA
+    // ============================================================
+    const MOCK = {
+      vaccines: [
+        { id: 'v1', name: 'الحمى القلاعية', targetAgeInMonths: 3, dosage: 2, intervalInDays: null },
+        { id: 'v2', name: 'البروسيلا', targetAgeInMonths: 6, dosage: 1.5, intervalInDays: 30 },
+        { id: 'v3', name: 'الجمرة الخبيثة', targetAgeInMonths: 12, dosage: 3, intervalInDays: null }
+      ],
+      vaccinations: [
+        { id: 'vc1', cattleTagNumber: 'A102', vaccineName: 'الحمى القلاعية', scheduledDate: '2026-07-10T00:00:00', administeredDate: null },
+        { id: 'vc2', cattleTagNumber: 'A245', vaccineName: 'البروسيلا', scheduledDate: '2026-08-01T00:00:00', administeredDate: null },
+        { id: 'vc3', cattleTagNumber: 'A088', vaccineName: 'الجمرة الخبيثة', scheduledDate: '2026-06-15T00:00:00', administeredDate: '2026-06-15T00:00:00' }
+      ],
+      healthLogs: [
+        { id: 'h1', cattleTagNumber: 'A088', diagnosis: 'التهاب الضرع', treatmentPlan: 'مضاد حيوي موضعي 5 أيام', isContagious: false },
+        { id: 'h2', cattleTagNumber: 'A245', diagnosis: 'عرج خفيف', treatmentPlan: 'راحة وتقليم الأظلاف', isContagious: false }
+      ],
+      cattle: [
+        { id: 'c1', tagNumber: 'A102' },
+        { id: 'c2', tagNumber: 'A245' },
+        { id: 'c3', tagNumber: 'A310' },
+        { id: 'c4', tagNumber: 'A088' }
+      ]
+    };
+
+    // ============================================================
+    // 5. MAIN APP
+    // ============================================================
+    function App() {
+      const [user, setUser] = useState(null);
+      const [activeView, setActiveView] = useState('health');
+      const [loading, setLoading] = useState(false);
+      const [currentRole, setCurrentRole] = useState('Guest');
+
+      // بيانات الجداول
+      const [vaccines, setVaccines] = useState([]);
+      const [vaccinations, setVaccinations] = useState([]);
+      const [healthLogs, setHealthLogs] = useState([]);
+      const [cattleOptions, setCattleOptions] = useState([]);
+
+      // حالة النماذج
+      const [showVaccineForm, setShowVaccineForm] = useState(false);
+      const [showVaccinationForm, setShowVaccinationForm] = useState(false);
+      const [showHealthForm, setShowHealthForm] = useState(false);
+
+      // حساب الصلاحيات بناءً على الدور الحالي
+      const permissions = useMemo(() => {
+        const perms = ROLES_DEF[currentRole] || ROLES_DEF.Guest || ['view'];
+        return perms;
+      }, [currentRole]);
+
+      const hasPermission = useCallback((action) => permissions.includes(action), [permissions]);
+
+      // تحميل البيانات (حقيقية أو تجريبية)
+      const loadData = useCallback(async () => {
+        if (isLoggedIn()) {
+          setLoading(true);
+          try {
+            const [vacs, vaccs, logs, cattle] = await Promise.all([
+              axiosInstance.get(EP.vaccines + '?Page=1&PageSize=50').then(r => r.data.items || []),
+              axiosInstance.get(EP.vaccinations + '?Page=1&PageSize=50').then(r => r.data.items || []),
+              axiosInstance.get(EP.healthLogs + '?Page=1&PageSize=50').then(r => r.data.items || []),
+              axiosInstance.get(EP.cattle + '?Page=1&PageSize=50').then(r => r.data.items || [])
+            ]);
+            setVaccines(vacs);
+            setVaccinations(vaccs);
+            setHealthLogs(logs);
+            setCattleOptions(cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
+          } catch (e) {
+            showToast('تعذر تحميل البيانات: ' + (e.response?.data?.message || e.message), true);
+            // في حال فشل التحميل، نستخدم البيانات التجريبية
+            setVaccines(MOCK.vaccines);
+            setVaccinations(MOCK.vaccinations);
+            setHealthLogs(MOCK.healthLogs);
+            setCattleOptions(MOCK.cattle);
+          } finally { setLoading(false); }
+        } else {
+          // وضع الضيف: بيانات تجريبية
+          setVaccines(MOCK.vaccines);
+          setVaccinations(MOCK.vaccinations);
+          setHealthLogs(MOCK.healthLogs);
+          setCattleOptions(MOCK.cattle);
+          setLoading(false);
+        }
+      }, []);
+
+      // تهيئة المستخدم والدور
+      useEffect(() => {
+        if (isLoggedIn()) {
+          const token = getToken();
+          const roles = decodeToken(token);
+          const primaryRole = roles[0] || 'FarmOwner';
+          setCurrentRole(primaryRole);
+          // تحديث اسم المستخدم
+          const name = localStorage.getItem('hs_name') || 'مستخدم';
+          setUser({ name, roles });
+          loadData();
+        } else {
+          // ضيف
+          setCurrentRole('Guest');
+          setUser({ name: 'ضيف', roles: ['Guest'] });
+          loadData();
+        }
+      }, []);
+
+      // تسجيل الدخول
+      const handleLogin = async (email, password) => {
+        try {
+          const res = await axiosInstance.post(EP.login, { email, password });
+          const data = res.data;
+          localStorage.setItem('hs_token', data.accessToken);
+          localStorage.setItem('hs_refreshToken', data.refreshToken);
+          localStorage.setItem('hs_role', data.role || 'FarmOwner');
+          localStorage.setItem('hs_name', data.fullName || 'مستخدم');
+          window.location.reload();
+        } catch (e) {
+          const msg = e.response?.data?.message || e.message;
+          showToast('فشل تسجيل الدخول: ' + msg, true);
+        }
+      };
+
+      // تغيير الدور (في وضع الضيف فقط)
+      const handleRoleChange = (e) => {
+        const newRole = e.target.value;
+        setCurrentRole(newRole);
+        // تحديث الصلاحيات تلقائياً
+        showToast(`تم التبديل إلى دور: ${roleNames[newRole]}`);
+      };
+
+      const contextValue = {
+        user,
+        currentRole,
+        hasPermission,
+        loading,
+        vaccines, setVaccines,
+        vaccinations, setVaccinations,
+        healthLogs, setHealthLogs,
+        cattleOptions,
+        showVaccineForm, setShowVaccineForm,
+        showVaccinationForm, setShowVaccinationForm,
+        showHealthForm, setShowHealthForm,
+        loadData,
+        handleLogin,
+        handleRoleChange,
+        logout
+      };
+
+      return (
+        <AuthProvider value={contextValue}>
+          <div className="app">
+            <Topbar />
+            <div className="app-body">
+              <Sidebar activeView={activeView} setActiveView={setActiveView} />
+              <main className="content">
+                {activeView === 'health' && <HealthManagement />}
+                {activeView === 'cattle' && <div className="card-box">صفحة الماشية (قيد التطوير)</div>}
+                {activeView === 'milk' && <div className="card-box">صفحة الحليب (قيد التطوير)</div>}
+                {activeView === 'alerts' && <AlertsPage />}
+              </main>
+            </div>
+          </div>
+        </AuthProvider>
+      );
+    }
+
+    // ============================================================
+    // 6. CONTEXT
+    // ============================================================
+    const AuthContext = createContext(null);
+    function AuthProvider({ children, value }) {
+      return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    }
+    function useAuth() {
+      const ctx = useContext(AuthContext);
+      if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+      return ctx;
+    }
+
+    // ============================================================
+    // 7. TOPBAR & SIDEBAR
+    // ============================================================
+    function Topbar() {
+      const { user, currentRole, handleRoleChange } = useAuth();
+      const isGuest = currentRole === 'Guest' || !isLoggedIn();
+
+      return (
+        <header className="topbar">
+          <div className="brand"><span className="mark">🐄</span> هيردسمارت</div>
+          <div className="top-right">
+            <span className="status-badge"><span className="status-dot on"></span> {isLoggedIn() ? 'متصل' : 'تجريبي'}</span>
+            {isGuest && (
+              <div className="role-switch">
+                <span>🧑‍🌾 تجربة كـ:</span>
+                <select value={currentRole} onChange={handleRoleChange}>
+                  <option value="FarmOwner">مالك المزرعة</option>
+                  <option value="Veterinarian">بيطري</option>
+                  <option value="Worker">عامل</option>
+                </select>
+              </div>
+            )}
+            {user && !isGuest && (
+              <span className="user-chip">
+                👋 <strong>{user.name}</strong>
+                <span className="role-tag">{roleNames[currentRole] || currentRole}</span>
+              </span>
+            )}
+            {isLoggedIn() ? (
+              <button className="btn btn-outline btn-small" onClick={() => { window.logout(); }}>خروج</button>
+            ) : (
+              <>
+                <button className="btn btn-outline btn-small" onClick={() => window.openAuthModal()}>دخول</button>
+                <button className="btn btn-solid btn-small" onClick={() => window.openAuthModal()}>حساب جديد</button>
+              </>
+            )}
+          </div>
+        </header>
+      );
+    }
+
+    function Sidebar({ activeView, setActiveView }) {
+      const items = [
+        { id: 'health', icon: '💉', label: 'الطبي والتطعيمات' },
+        { id: 'cattle', icon: '🐄', label: 'القطيع' },
+        { id: 'milk', icon: '🥛', label: 'الحليب' },
+        { id: 'alerts', icon: '📡', label: 'التنبيهات' }
+      ];
+      return (
+        <aside className="sidebar">
+          {items.map(item => (
+            <button
+              key={item.id}
+              className={`nav-item ${activeView === item.id ? 'active' : ''}`}
+              onClick={() => setActiveView(item.id)}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="label">{item.label}</span>
+            </button>
+          ))}
+          <div className="sidebar-foot">v1.0.0</div>
+        </aside>
+      );
+    }
+
+    // ============================================================
+    // 8. HEALTH MANAGEMENT (المطلوب)
+    // ============================================================
+    function HealthManagement() {
+      const {
+        currentRole,
+        hasPermission,
+        loading,
+        vaccines, setVaccines,
+        vaccinations, setVaccinations,
+        healthLogs, setHealthLogs,
+        cattleOptions,
+        showVaccineForm, setShowVaccineForm,
+        showVaccinationForm, setShowVaccinationForm,
+        showHealthForm, setShowHealthForm,
+        loadData
+      } = useAuth();
+
+      // حالة النماذج المحلية
+      const [vaccineForm, setVaccineForm] = useState({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
+      const [vaccineErrors, setVaccineErrors] = useState({});
+      const [vaccinationForm, setVaccinationForm] = useState({ cattleId: '', vaccineId: '', scheduledDate: '' });
+      const [vaccinationErrors, setVaccinationErrors] = useState({});
+      const [healthForm, setHealthForm] = useState({ cattleId: '', diagnosis: '', treatmentPlan: '', vetNotes: '', isContagious: false });
+      const [healthErrors, setHealthErrors] = useState({});
+
+      const vaccineOptions = vaccines.map(v => ({ id: v.id, name: v.name }));
+
+      // التحقق من الصحة
+      const validateVaccine = () => {
+        const err = {};
+        if (!vaccineForm.name.trim()) err.name = 'اسم اللقاح مطلوب';
+        const age = Number(vaccineForm.targetAgeInMonths);
+        if (isNaN(age) || age < 0) err.targetAgeInMonths = 'العمر يجب أن يكون 0 أو أكبر';
+        const dose = Number(vaccineForm.dosage);
+        if (isNaN(dose) || dose < 0) err.dosage = 'الجرعة يجب أن تكون 0 أو أكبر';
+        if (vaccineForm.intervalInDays && Number(vaccineForm.intervalInDays) < 0) err.intervalInDays = 'الفاصل يجب أن يكون 0 أو أكبر';
+        setVaccineErrors(err);
+        return Object.keys(err).length === 0;
+      };
+
+      const validateVaccination = () => {
+        const err = {};
+        if (!vaccinationForm.cattleId) err.cattleId = 'اختر بقرة';
+        if (!vaccinationForm.vaccineId) err.vaccineId = 'اختر لقاح';
+        if (!vaccinationForm.scheduledDate) err.scheduledDate = 'حدد التاريخ';
+        setVaccinationErrors(err);
+        return Object.keys(err).length === 0;
+      };
+
+      const validateHealth = () => {
+        const err = {};
+        if (!healthForm.cattleId) err.cattleId = 'اختر بقرة';
+        if (!healthForm.diagnosis.trim()) err.diagnosis = 'التشخيص مطلوب';
+        if (!healthForm.treatmentPlan.trim()) err.treatmentPlan = 'خطة العلاج مطلوبة';
+        setHealthErrors(err);
+        return Object.keys(err).length === 0;
+      };
+
+      // دوال الإرسال
+      const handleAddVaccine = async (e) => {
+        e.preventDefault();
+        if (!hasPermission('create')) {
+          showToast('⚠️ ليس لديك صلاحية لإضافة لقاح', true);
+          return;
+        }
+        if (!validateVaccine()) return;
+        try {
+          const payload = {
+            name: vaccineForm.name,
+            targetAgeInMonths: Number(vaccineForm.targetAgeInMonths),
+            dosage: Number(vaccineForm.dosage),
+            intervalInDays: vaccineForm.intervalInDays ? Number(vaccineForm.intervalInDays) : null
+          };
+          const res = await axiosInstance.post(EP.vaccines, payload);
+          setVaccines([...vaccines, res.data]);
+          setShowVaccineForm(false);
+          setVaccineForm({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
+          showToast('✅ تم إضافة اللقاح');
+        } catch (err) {
+          const msg = err.response?.data?.message || err.message;
+          showToast('فشل الإضافة: ' + msg, true);
+        }
+      };
+
+      const handleAddVaccination = async (e) => {
+        e.preventDefault();
+        if (!hasPermission('create')) {
+          showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true);
+          return;
+        }
+        if (!validateVaccination()) return;
+        try {
+          const payload = {
+            cattleId: vaccinationForm.cattleId,
+            vaccineId: vaccinationForm.vaccineId,
+            scheduledDate: new Date(vaccinationForm.scheduledDate).toISOString()
+          };
+          const res = await axiosInstance.post(EP.vaccinations, payload);
+          setVaccinations([...vaccinations, res.data]);
+          setShowVaccinationForm(false);
+          setVaccinationForm({ cattleId: '', vaccineId: '', scheduledDate: '' });
+          showToast('✅ تمت الجدولة');
+        } catch (err) {
+          const msg = err.response?.data?.message || err.message;
+          showToast('فشل الجدولة: ' + msg, true);
+        }
+      };
+
+      const handleAdminister = async (id) => {
+        if (!hasPermission('administer')) {
+          showToast('⚠️ ليس لديك صلاحية لتسجيل الإعطاء', true);
+          return;
+        }
+        try {
+          await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
+          showToast('✅ تم تسجيل الإعطاء');
+          await loadData();
+        } catch (err) {
+          const msg = err.response?.data?.message || err.message;
+          showToast('فشل الإعطاء: ' + msg, true);
+        }
+      };
+
+      const handleAddHealth = async (e) => {
+        e.preventDefault();
+        if (!hasPermission('create')) {
+          showToast('⚠️ ليس لديك صلاحية لإضافة سجل صحي', true);
+          return;
+        }
+        if (!validateHealth()) return;
+        try {
+          const payload = {
+            cattleId: healthForm.cattleId,
+            diagnosis: healthForm.diagnosis,
+            treatmentPlan: healthForm.treatmentPlan,
+            vetNotes: healthForm.vetNotes || null,
+            isContagious: healthForm.isContagious
+          };
+          const res = await axiosInstance.post(EP.healthLogs, payload);
+          setHealthLogs([...healthLogs, res.data]);
+          setShowHealthForm(false);
+          setHealthForm({ cattleId: '', diagnosis: '', treatmentPlan: '', vetNotes: '', isContagious: false });
+          showToast('✅ تم إضافة السجل الصحي');
+        } catch (err) {
+          const msg = err.response?.data?.message || err.message;
+          showToast('فشل الإضافة: ' + msg, true);
+        }
+      };
+
+      // زر مع صلاحية
+      const ActionButton = ({ action, children, onClick, className = '' }) => {
+        const disabled = !hasPermission(action);
+        return (
+          <button
+            type="button"
+            className={`btn ${className}`}
+            disabled={disabled}
+            onClick={onClick}
+            title={disabled ? 'هذه الميزة غير متاحة لصلاحيات حسابك الحالي' : ''}
+            style={disabled ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+          >
+            {children}
+          </button>
         );
+      };
 
-        // ============================================================
-        // 4. HELPERS
-        // ============================================================
-        function showToast(msg, isError = false) {
-            const wrap = document.getElementById('toast-wrap');
-            const el = document.createElement('div');
-            el.className = `toast ${isError ? 'error' : ''}`;
-            el.textContent = msg;
-            wrap.appendChild(el);
-            setTimeout(() => el.remove(), 4000);
-        }
+      if (loading) return <div className="card-box">جاري التحميل...</div>;
 
-        function getToken() { return localStorage.getItem('hs_token'); }
-        function isLoggedIn() { return !!getToken(); }
-        function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
-        function logout() { clearSession(); window.location.reload(); }
+      return (
+        <div>
+          <div className="view-head">
+            <div><h1>💉 الجدول الطبي والتطعيمات</h1><p>إدارة اللقاحات، التطعيمات، والسجلات الصحية</p></div>
+          </div>
 
-        // فك تشفير JWT
-        function decodeToken(token) {
-            try {
-                const decoded = jwtDecode(token);
-                const roles = decoded.roles || decoded.role || [];
-                return Array.isArray(roles) ? roles : [roles];
-            } catch (e) { return []; }
-        }
-
-        // ============================================================
-        // 5. MAIN APP
-        // ============================================================
-        function App() {
-            const [user, setUser] = useState(null); // { name, roles, permissions }
-            const [activeView, setActiveView] = useState('health');
-            const [loading, setLoading] = useState(false);
-            
-            // بيانات الجداول
-            const [vaccines, setVaccines] = useState([]);
-            const [vaccinations, setVaccinations] = useState([]);
-            const [healthLogs, setHealthLogs] = useState([]);
-            const [cattleOptions, setCattleOptions] = useState([]);
-
-            // حالة النماذج
-            const [showVaccineForm, setShowVaccineForm] = useState(false);
-            const [showVaccinationForm, setShowVaccinationForm] = useState(false);
-            const [showHealthForm, setShowHealthForm] = useState(false);
-
-            // منطق الصلاحيات
-            const hasPermission = useCallback((action) => {
-                if (!user) return false;
-                return user.permissions.includes(action);
-            }, [user]);
-
-            // تحميل البيانات
-            const loadData = useCallback(async () => {
-                if (!isLoggedIn()) return;
-                setLoading(true);
-                try {
-                    const [vacs, vaccs, logs, cattle] = await Promise.all([
-                        axiosInstance.get(EP.vaccines + '?Page=1&PageSize=50').then(r => r.data.items || []),
-                        axiosInstance.get(EP.vaccinations + '?Page=1&PageSize=50').then(r => r.data.items || []),
-                        axiosInstance.get(EP.healthLogs + '?Page=1&PageSize=50').then(r => r.data.items || []),
-                        axiosInstance.get(EP.cattle + '?Page=1&PageSize=50').then(r => r.data.items || [])
-                    ]);
-                    setVaccines(vacs);
-                    setVaccinations(vaccs);
-                    setHealthLogs(logs);
-                    setCattleOptions(cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
-                } catch (e) {
-                    showToast('تعذر تحميل البيانات: ' + (e.response?.data?.message || e.message), true);
-                } finally { setLoading(false); }
-            }, []);
-
-            // تسجيل الدخول
-            const handleLogin = async (email, password) => {
-                try {
-                    const res = await axiosInstance.post(EP.login, { email, password });
-                    const data = res.data;
-                    localStorage.setItem('hs_token', data.accessToken);
-                    localStorage.setItem('hs_refreshToken', data.refreshToken);
-                    localStorage.setItem('hs_role', data.role || 'FarmOwner');
-                    localStorage.setItem('hs_name', data.fullName || 'مستخدم');
-                    const roles = data.role ? [data.role] : ['FarmOwner'];
-                    const perms = roles.reduce((acc, r) => {
-                        const p = ROLES_DEF[r] || ROLES_DEF.FarmOwner;
-                        return [...new Set([...acc, ...p])];
-                    }, []);
-                    setUser({ name: data.fullName, roles, permissions: perms });
-                    showToast('✅ تم تسجيل الدخول');
-                    loadData();
-                } catch (e) {
-                    const msg = e.response?.data?.message || e.message;
-                    showToast('فشل تسجيل الدخول: ' + msg, true);
-                }
-            };
-
-            // تهيئة المستخدم من localStorage
-            useEffect(() => {
-                if (isLoggedIn()) {
-                    const token = getToken();
-                    const roles = decodeToken(token);
-                    const perms = roles.reduce((acc, r) => {
-                        const p = ROLES_DEF[r] || ROLES_DEF.FarmOwner;
-                        return [...new Set([...acc, ...p])];
-                    }, []);
-                    setUser({
-                        name: localStorage.getItem('hs_name') || 'مستخدم',
-                        roles: roles,
-                        permissions: perms
-                    });
-                    loadData();
-                } else {
-                    // ضيف (بيانات تجريبية)
-                    setUser({
-                        name: 'ضيف',
-                        roles: ['Guest'],
-                        permissions: ['view'] // فقط عرض
-                    });
-                    // تحميل بيانات وهمية للعرض
-                    setVaccines(MOCK.vaccines);
-                    setVaccinations(MOCK.vaccinations);
-                    setHealthLogs(MOCK.healthLogs);
-                    setCattleOptions(MOCK.cattle);
-                }
-            }, []);
-
-            // دوال النماذج (سيتم تمريرها للأبناء)
-            const contextValue = {
-                user,
-                hasPermission,
-                loading,
-                vaccines, setVaccines,
-                vaccinations, setVaccinations,
-                healthLogs, setHealthLogs,
-                cattleOptions,
-                showVaccineForm, setShowVaccineForm,
-                showVaccinationForm, setShowVaccinationForm,
-                showHealthForm, setShowHealthForm,
-                loadData,
-                handleLogin,
-                logout
-            };
-
-            return (
-                <AuthProvider value={contextValue}>
-                    <div className="app">
-                        <Topbar user={user} onLogin={() => {}} />
-                        <div className="app-body">
-                            <Sidebar activeView={activeView} setActiveView={setActiveView} />
-                            <main className="content">
-                                {activeView === 'health' && <HealthManagement />}
-                                {activeView === 'cattle' && <div>صفحة الماشية (قيد التطوير)</div>}
-                                {activeView === 'milk' && <div>صفحة الحليب (قيد التطوير)</div>}
-                                {activeView === 'alerts' && <div>صفحة التنبيهات (قيد التطوير)</div>}
-                            </main>
-                        </div>
+          {/* أنواع اللقاحات */}
+          <div className="card-box">
+            <h4>
+              أنواع اللقاحات
+              <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccineForm(true)}>
+                + إضافة لقاح
+              </ActionButton>
+            </h4>
+            {showVaccineForm && (
+              <div className="card-box" style={{ marginBottom: '16px' }}>
+                <h4>إضافة نوع لقاح جديد</h4>
+                <form onSubmit={handleAddVaccine}>
+                  <div className="form-grid-2">
+                    <div className="field">
+                      <label>اسم اللقاح *</label>
+                      <input
+                        type="text"
+                        value={vaccineForm.name}
+                        onChange={(e) => {
+                          setVaccineForm({ ...vaccineForm, name: e.target.value });
+                          if (vaccineErrors.name) setVaccineErrors({ ...vaccineErrors, name: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      />
+                      {vaccineErrors.name && <span className="field-error">{vaccineErrors.name}</span>}
                     </div>
-                </AuthProvider>
-            );
-        }
+                    <div className="field">
+                      <label>العمر المستهدف (شهر) *</label>
+                      <input
+                        type="number"
+                        value={vaccineForm.targetAgeInMonths}
+                        onChange={(e) => {
+                          setVaccineForm({ ...vaccineForm, targetAgeInMonths: e.target.value });
+                          if (vaccineErrors.targetAgeInMonths) setVaccineErrors({ ...vaccineErrors, targetAgeInMonths: undefined });
+                        }}
+                        min="0"
+                        step="1"
+                        disabled={!hasPermission('create')}
+                      />
+                      {vaccineErrors.targetAgeInMonths && <span className="field-error">{vaccineErrors.targetAgeInMonths}</span>}
+                    </div>
+                    <div className="field">
+                      <label>الجرعة *</label>
+                      <input
+                        type="number"
+                        value={vaccineForm.dosage}
+                        onChange={(e) => {
+                          setVaccineForm({ ...vaccineForm, dosage: e.target.value });
+                          if (vaccineErrors.dosage) setVaccineErrors({ ...vaccineErrors, dosage: undefined });
+                        }}
+                        min="0"
+                        step="0.1"
+                        disabled={!hasPermission('create')}
+                      />
+                      {vaccineErrors.dosage && <span className="field-error">{vaccineErrors.dosage}</span>}
+                    </div>
+                    <div className="field">
+                      <label>الفاصل الزمني (أيام)</label>
+                      <input
+                        type="number"
+                        value={vaccineForm.intervalInDays}
+                        onChange={(e) => {
+                          setVaccineForm({ ...vaccineForm, intervalInDays: e.target.value });
+                          if (vaccineErrors.intervalInDays) setVaccineErrors({ ...vaccineErrors, intervalInDays: undefined });
+                        }}
+                        min="0"
+                        step="1"
+                        disabled={!hasPermission('create')}
+                      />
+                      {vaccineErrors.intervalInDays && <span className="field-error">{vaccineErrors.intervalInDays}</span>}
+                    </div>
+                  </div>
+                  <div className="modal-actions">
+                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccine}>
+                      حفظ
+                    </ActionButton>
+                    <button type="button" className="btn btn-outline" onClick={() => setShowVaccineForm(false)}>إلغاء</button>
+                  </div>
+                </form>
+              </div>
+            )}
+            <table>
+              <thead><tr><th>الاسم</th><th>العمر (شهر)</th><th>الجرعة</th><th>الفاصل (يوم)</th></tr></thead>
+              <tbody>
+                {vaccines.length === 0 ? <tr><td colSpan="4" className="empty-row">لا توجد لقاحات</td></tr> :
+                  vaccines.map(v => <tr key={v.id}><td>{v.name}</td><td>{v.targetAgeInMonths}</td><td>{v.dosage}</td><td>{v.intervalInDays || '—'}</td></tr>)
+                }
+              </tbody>
+            </table>
+          </div>
 
-        // ============================================================
-        // 6. CONTEXT
-        // ============================================================
-        const AuthContext = React.createContext(null);
-        function AuthProvider({ children, value }) {
-            return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-        }
-        function useAuth() {
-            const ctx = useContext(AuthContext);
-            if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-            return ctx;
-        }
-
-        // ============================================================
-        // 7. TOPBAR & SIDEBAR
-        // ============================================================
-        function Topbar({ user }) {
-            return (
-                <header className="topbar">
-                    <div className="brand"><span className="mark">🐄</span> هيردسمارت</div>
-                    <div className="top-right">
-                        <span className="status-badge"><span className="status-dot on"></span> متصل</span>
-                        {user && (
-                            <span className="user-chip">
-                                👋 <strong>{user.name}</strong>
-                                <span className="role-tag">{roleNames[user.roles?.[0]] || user.roles?.[0] || 'ضيف'}</span>
-                            </span>
+          {/* التطعيمات */}
+          <div className="card-box">
+            <h4>
+              التطعيمات
+              <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccinationForm(true)}>
+                + جدولة تطعيم
+              </ActionButton>
+            </h4>
+            {showVaccinationForm && (
+              <div className="card-box" style={{ marginBottom: '16px' }}>
+                <h4>جدولة تطعيم جديد</h4>
+                <form onSubmit={handleAddVaccination}>
+                  <div className="form-grid-3">
+                    <div className="field">
+                      <label>البقرة *</label>
+                      <select
+                        value={vaccinationForm.cattleId}
+                        onChange={(e) => {
+                          setVaccinationForm({ ...vaccinationForm, cattleId: e.target.value });
+                          if (vaccinationErrors.cattleId) setVaccinationErrors({ ...vaccinationErrors, cattleId: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      >
+                        <option value="">اختر بقرة</option>
+                        {cattleOptions.map(c => <option key={c.id} value={c.id}>{c.tagNumber}</option>)}
+                      </select>
+                      {vaccinationErrors.cattleId && <span className="field-error">{vaccinationErrors.cattleId}</span>}
+                    </div>
+                    <div className="field">
+                      <label>نوع اللقاح *</label>
+                      <select
+                        value={vaccinationForm.vaccineId}
+                        onChange={(e) => {
+                          setVaccinationForm({ ...vaccinationForm, vaccineId: e.target.value });
+                          if (vaccinationErrors.vaccineId) setVaccinationErrors({ ...vaccinationErrors, vaccineId: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      >
+                        <option value="">اختر لقاح</option>
+                        {vaccineOptions.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+                      </select>
+                      {vaccinationErrors.vaccineId && <span className="field-error">{vaccinationErrors.vaccineId}</span>}
+                    </div>
+                    <div className="field">
+                      <label>التاريخ *</label>
+                      <input
+                        type="date"
+                        value={vaccinationForm.scheduledDate}
+                        onChange={(e) => {
+                          setVaccinationForm({ ...vaccinationForm, scheduledDate: e.target.value });
+                          if (vaccinationErrors.scheduledDate) setVaccinationErrors({ ...vaccinationErrors, scheduledDate: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      />
+                      {vaccinationErrors.scheduledDate && <span className="field-error">{vaccinationErrors.scheduledDate}</span>}
+                    </div>
+                  </div>
+                  <div className="modal-actions">
+                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccination}>
+                      حفظ
+                    </ActionButton>
+                    <button type="button" className="btn btn-outline" onClick={() => setShowVaccinationForm(false)}>إلغاء</button>
+                  </div>
+                </form>
+              </div>
+            )}
+            <table>
+              <thead><tr><th>البقرة</th><th>اللقاح</th><th>الموعد</th><th>الحالة</th><th>إجراء</th></tr></thead>
+              <tbody>
+                {vaccinations.length === 0 ? <tr><td colSpan="5" className="empty-row">لا توجد تطعيمات</td></tr> :
+                  vaccinations.map(v => (
+                    <tr key={v.id}>
+                      <td>{v.cattleTagNumber}</td>
+                      <td>{v.vaccineName}</td>
+                      <td>{new Date(v.scheduledDate).toLocaleDateString('ar-EG')}</td>
+                      <td><span className={`badge ${v.administeredDate ? 'ok' : 'pending'}`}>{v.administeredDate ? 'تم الإعطاء' : 'مجدول'}</span></td>
+                      <td>
+                        {!v.administeredDate && (
+                          <ActionButton action="administer" className="btn-outline btn-small" onClick={() => handleAdminister(v.id)}>
+                            تم الإعطاء
+                          </ActionButton>
                         )}
-                        {isLoggedIn() ? (
-                            <button className="btn btn-outline btn-small" onClick={logout}>خروج</button>
-                        ) : (
-                            <>
-                                <button className="btn btn-outline btn-small" onClick={() => window.openAuthModal()}>دخول</button>
-                                <button className="btn btn-solid btn-small" onClick={() => window.openAuthModal()}>حساب جديد</button>
-                            </>
-                        )}
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          {/* السجلات الصحية */}
+          <div className="card-box">
+            <h4>
+              السجلات الصحية
+              <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowHealthForm(true)}>
+                + إضافة سجل صحي
+              </ActionButton>
+            </h4>
+            {showHealthForm && (
+              <div className="card-box" style={{ marginBottom: '16px' }}>
+                <h4>إضافة سجل صحي جديد</h4>
+                <form onSubmit={handleAddHealth}>
+                  <div className="form-grid-2">
+                    <div className="field">
+                      <label>البقرة *</label>
+                      <select
+                        value={healthForm.cattleId}
+                        onChange={(e) => {
+                          setHealthForm({ ...healthForm, cattleId: e.target.value });
+                          if (healthErrors.cattleId) setHealthErrors({ ...healthErrors, cattleId: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      >
+                        <option value="">اختر بقرة</option>
+                        {cattleOptions.map(c => <option key={c.id} value={c.id}>{c.tagNumber}</option>)}
+                      </select>
+                      {healthErrors.cattleId && <span className="field-error">{healthErrors.cattleId}</span>}
                     </div>
-                </header>
-            );
+                    <div className="field">
+                      <label>التشخيص *</label>
+                      <input
+                        type="text"
+                        value={healthForm.diagnosis}
+                        onChange={(e) => {
+                          setHealthForm({ ...healthForm, diagnosis: e.target.value });
+                          if (healthErrors.diagnosis) setHealthErrors({ ...healthErrors, diagnosis: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      />
+                      {healthErrors.diagnosis && <span className="field-error">{healthErrors.diagnosis}</span>}
+                    </div>
+                    <div className="field">
+                      <label>خطة العلاج *</label>
+                      <input
+                        type="text"
+                        value={healthForm.treatmentPlan}
+                        onChange={(e) => {
+                          setHealthForm({ ...healthForm, treatmentPlan: e.target.value });
+                          if (healthErrors.treatmentPlan) setHealthErrors({ ...healthErrors, treatmentPlan: undefined });
+                        }}
+                        disabled={!hasPermission('create')}
+                      />
+                      {healthErrors.treatmentPlan && <span className="field-error">{healthErrors.treatmentPlan}</span>}
+                    </div>
+                    <div className="field">
+                      <label>ملاحظات البيطري</label>
+                      <input
+                        type="text"
+                        value={healthForm.vetNotes}
+                        onChange={(e) => setHealthForm({ ...healthForm, vetNotes: e.target.value })}
+                        disabled={!hasPermission('create')}
+                      />
+                    </div>
+                    <div className="field" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label style={{ margin: 0 }}>
+                        <input
+                          type="checkbox"
+                          checked={healthForm.isContagious}
+                          onChange={(e) => setHealthForm({ ...healthForm, isContagious: e.target.checked })}
+                          disabled={!hasPermission('create')}
+                        />
+                        {' حالة معدية'}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="modal-actions">
+                    <ActionButton action="create" className="btn-solid" onClick={handleAddHealth}>
+                      حفظ
+                    </ActionButton>
+                    <button type="button" className="btn btn-outline" onClick={() => setShowHealthForm(false)}>إلغاء</button>
+                  </div>
+                </form>
+              </div>
+            )}
+            <table>
+              <thead><tr><th>البقرة</th><th>التشخيص</th><th>خطة العلاج</th><th>معدية؟</th></tr></thead>
+              <tbody>
+                {healthLogs.length === 0 ? <tr><td colSpan="4" className="empty-row">لا توجد سجلات صحية</td></tr> :
+                  healthLogs.map(h => (
+                    <tr key={h.id}>
+                      <td>{h.cattleTagNumber}</td>
+                      <td>{h.diagnosis}</td>
+                      <td>{h.treatmentPlan}</td>
+                      <td>{h.isContagious ? 'نعم' : 'لا'}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // 9. ALERTS PAGE (مع صلاحيات)
+    // ============================================================
+    function AlertsPage() {
+      const { hasPermission } = useAuth();
+      const [alerts, setAlerts] = useState([
+        { id: 'a1', text: 'ارتفاع درجة الحرارة — البقرة #A102 (8.7/10)', time: 'الآن', active: true },
+        { id: 'a2', text: 'مستوى حركة منخفض — البقرة #A245 (2.1/10)', time: 'منذ 5 دقائق', active: true }
+      ]);
+
+      const resolveAlert = (id) => {
+        if (!hasPermission('administer')) {
+          showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true);
+          return;
         }
+        setAlerts(alerts.map(a => a.id === id ? { ...a, active: false, time: 'تم الإصلاح' } : a));
+        showToast('✅ تم إصلاح التنبيه');
+      };
 
-        function Sidebar({ activeView, setActiveView }) {
-            const { hasPermission } = useAuth();
-            const items = [
-                { id: 'health', icon: '💉', label: 'الطبي والتطعيمات' },
-                { id: 'cattle', icon: '🐄', label: 'القطيع' },
-                { id: 'milk', icon: '🥛', label: 'الحليب' },
-                { id: 'alerts', icon: '📡', label: 'التنبيهات' }
-            ];
-            return (
-                <aside className="sidebar">
-                    {items.map(item => (
-                        <button
-                            key={item.id}
-                            className={`nav-item ${activeView === item.id ? 'active' : ''}`}
-                            onClick={() => setActiveView(item.id)}
-                        >
-                            <span className="nav-icon">{item.icon}</span>
-                            <span className="label">{item.label}</span>
-                        </button>
-                    ))}
-                    <div className="sidebar-foot">v1.0.0</div>
-                </aside>
-            );
-        }
+      const ActionButton = ({ action, children, onClick, className = '' }) => {
+        const disabled = !hasPermission(action);
+        return (
+          <button
+            type="button"
+            className={`btn ${className}`}
+            disabled={disabled}
+            onClick={onClick}
+            title={disabled ? 'هذه الميزة غير متاحة لصلاحيات حسابك الحالي' : ''}
+            style={disabled ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+          >
+            {children}
+          </button>
+        );
+      };
 
-        // ============================================================
-        // 8. HEALTH MANAGEMENT COMPONENT (المطلوب)
-        // ============================================================
-        function HealthManagement() {
-            const {
-                user,
-                hasPermission,
-                loading,
-                vaccines, setVaccines,
-                vaccinations, setVaccinations,
-                healthLogs, setHealthLogs,
-                cattleOptions,
-                showVaccineForm, setShowVaccineForm,
-                showVaccinationForm, setShowVaccinationForm,
-                showHealthForm, setShowHealthForm,
-                loadData
-            } = useAuth();
-
-            // حالة النماذج المحلية
-            const [vaccineForm, setVaccineForm] = useState({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
-            const [vaccineErrors, setVaccineErrors] = useState({});
-
-            const [vaccinationForm, setVaccinationForm] = useState({ cattleId: '', vaccineId: '', scheduledDate: '' });
-            const [vaccinationErrors, setVaccinationErrors] = useState({});
-
-            const [healthForm, setHealthForm] = useState({ cattleId: '', diagnosis: '', treatmentPlan: '', vetNotes: '', isContagious: false });
-            const [healthErrors, setHealthErrors] = useState({});
-
-            // قائمة اللقاحات للاختيار
-            const vaccineOptions = vaccines.map(v => ({ id: v.id, name: v.name }));
-
-            // === التحقق من الصحة ===
-            const validateVaccine = () => {
-                const err = {};
-                if (!vaccineForm.name.trim()) err.name = 'اسم اللقاح مطلوب';
-                const age = Number(vaccineForm.targetAgeInMonths);
-                if (isNaN(age) || age < 0) err.targetAgeInMonths = 'العمر يجب أن يكون 0 أو أكبر';
-                const dose = Number(vaccineForm.dosage);
-                if (isNaN(dose) || dose < 0) err.dosage = 'الجرعة يجب أن تكون 0 أو أكبر';
-                if (vaccineForm.intervalInDays && Number(vaccineForm.intervalInDays) < 0) err.intervalInDays = 'الفاصل يجب أن يكون 0 أو أكبر';
-                setVaccineErrors(err);
-                return Object.keys(err).length === 0;
-            };
-
-            const validateVaccination = () => {
-                const err = {};
-                if (!vaccinationForm.cattleId) err.cattleId = 'اختر بقرة';
-                if (!vaccinationForm.vaccineId) err.vaccineId = 'اختر لقاح';
-                if (!vaccinationForm.scheduledDate) err.scheduledDate = 'حدد التاريخ';
-                setVaccinationErrors(err);
-                return Object.keys(err).length === 0;
-            };
-
-            const validateHealth = () => {
-                const err = {};
-                if (!healthForm.cattleId) err.cattleId = 'اختر بقرة';
-                if (!healthForm.diagnosis.trim()) err.diagnosis = 'التشخيص مطلوب';
-                if (!healthForm.treatmentPlan.trim()) err.treatmentPlan = 'خطة العلاج مطلوبة';
-                setHealthErrors(err);
-                return Object.keys(err).length === 0;
-            };
-
-            // === دوال الإرسال ===
-            const handleAddVaccine = async (e) => {
-                e.preventDefault();
-                if (!hasPermission('create')) {
-                    showToast('⚠️ ليس لديك صلاحية لإضافة لقاح', true);
-                    return;
-                }
-                if (!validateVaccine()) return;
-                try {
-                    const payload = {
-                        name: vaccineForm.name,
-                        targetAgeInMonths: Number(vaccineForm.targetAgeInMonths),
-                        dosage: Number(vaccineForm.dosage),
-                        intervalInDays: vaccineForm.intervalInDays ? Number(vaccineForm.intervalInDays) : null
-                    };
-                    const res = await axiosInstance.post(EP.vaccines, payload);
-                    setVaccines([...vaccines, res.data]);
-                    setShowVaccineForm(false);
-                    setVaccineForm({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
-                    showToast('✅ تم إضافة اللقاح');
-                } catch (err) {
-                    const msg = err.response?.data?.message || err.message;
-                    showToast('فشل الإضافة: ' + msg, true);
-                }
-            };
-
-            const handleAddVaccination = async (e) => {
-                e.preventDefault();
-                if (!hasPermission('create')) {
-                    showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true);
-                    return;
-                }
-                if (!validateVaccination()) return;
-                try {
-                    const payload = {
-                        cattleId: vaccinationForm.cattleId,
-                        vaccineId: vaccinationForm.vaccineId,
-                        scheduledDate: new Date(vaccinationForm.scheduledDate).toISOString()
-                    };
-                    const res = await axiosInstance.post(EP.vaccinations, payload);
-                    setVaccinations([...vaccinations, res.data]);
-                    setShowVaccinationForm(false);
-                    setVaccinationForm({ cattleId: '', vaccineId: '', scheduledDate: '' });
-                    showToast('✅ تمت الجدولة');
-                } catch (err) {
-                    const msg = err.response?.data?.message || err.message;
-                    showToast('فشل الجدولة: ' + msg, true);
-                }
-            };
-
-            const handleAdminister = async (id) => {
-                if (!hasPermission('administer')) {
-                    showToast('⚠️ ليس لديك صلاحية لتسجيل الإعطاء', true);
-                    return;
-                }
-                try {
-                    await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
-                    showToast('✅ تم تسجيل الإعطاء');
-                    await loadData();
-                } catch (err) {
-                    const msg = err.response?.data?.message || err.message;
-                    showToast('فشل الإعطاء: ' + msg, true);
-                }
-            };
-
-            const handleAddHealth = async (e) => {
-                e.preventDefault();
-                if (!hasPermission('create')) {
-                    showToast('⚠️ ليس لديك صلاحية لإضافة سجل صحي', true);
-                    return;
-                }
-                if (!validateHealth()) return;
-                try {
-                    const payload = {
-                        cattleId: healthForm.cattleId,
-                        diagnosis: healthForm.diagnosis,
-                        treatmentPlan: healthForm.treatmentPlan,
-                        vetNotes: healthForm.vetNotes || null,
-                        isContagious: healthForm.isContagious
-                    };
-                    const res = await axiosInstance.post(EP.healthLogs, payload);
-                    setHealthLogs([...healthLogs, res.data]);
-                    setShowHealthForm(false);
-                    setHealthForm({ cattleId: '', diagnosis: '', treatmentPlan: '', vetNotes: '', isContagious: false });
-                    showToast('✅ تم إضافة السجل الصحي');
-                } catch (err) {
-                    const msg = err.response?.data?.message || err.message;
-                    showToast('فشل الإضافة: ' + msg, true);
-                }
-            };
-
-            // === دوال عرض الأزرار ===
-            const ActionButton = ({ action, children, onClick, className = '' }) => {
-                const disabled = !hasPermission(action);
-                return (
-                    <button
-                        type="button"
-                        className={`btn ${className}`}
-                        disabled={disabled}
-                        onClick={onClick}
-                        title={disabled ? 'هذه الميزة غير متاحة لصلاحيات حسابك الحالي' : ''}
-                        style={disabled ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
-                    >
-                        {children}
-                    </button>
-                );
-            };
-
-            // === عرض الجداول ===
-            if (loading) return <div className="card-box">جاري التحميل...</div>;
-
-            return (
-                <div>
-                    <div className="view-head">
-                        <div><h1>💉 الجدول الطبي والتطعيمات</h1><p>إدارة اللقاحات، التطعيمات، والسجلات الصحية</p></div>
+      return (
+        <div>
+          <div className="view-head">
+            <div><h1>📡 التنبيهات اللحظية</h1><p>تنبيهات المستشعرات</p></div>
+          </div>
+          <div className="card-box">
+            {alerts.length === 0 ? (
+              <div className="empty-row">🎉 لا توجد تنبيهات</div>
+            ) : (
+              alerts.map(a => (
+                <div key={a.id} className="alert-item" style={{ display: 'flex', gap: '12px', padding: '12px 0', borderBottom: '1px solid var(--line)' }}>
+                  <span className={`dot ${a.active ? 'red' : 'gray'}`} style={{ width: '10px', height: '10px', borderRadius: '50%', background: a.active ? 'var(--rust)' : '#C9BE9C', marginTop: '6px' }}></span>
+                  <div className="body" style={{ flex: 1 }}>
+                    <div><strong>{a.text}</strong></div>
+                    <div className="meta" style={{ fontSize: '.75rem', color: 'var(--ink-soft)' }}>{a.time} · <span className={`badge ${a.active ? 'active' : 'ok'}`}>{a.active ? 'نشط' : 'تم الحل'}</span></div>
+                  </div>
+                  {a.active && (
+                    <div className="alert-actions">
+                      <ActionButton action="administer" className="btn-outline btn-small" onClick={() => resolveAlert(a.id)}>
+                        إصلاح التنبيه
+                      </ActionButton>
                     </div>
-
-                    {/* أنواع اللقاحات */}
-                    <div className="card-box">
-                        <h4>
-                            أنواع اللقاحات
-                            <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccineForm(true)}>
-                                + إضافة لقاح
-                            </ActionButton>
-                        </h4>
-                        {showVaccineForm && (
-                            <div className="card-box" style={{ marginBottom: '16px' }}>
-                                <h4>إضافة نوع لقاح جديد</h4>
-                                <form onSubmit={handleAddVaccine}>
-                                    <div className="form-grid-2">
-                                        <div className="field">
-                                            <label>اسم اللقاح *</label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                value={vaccineForm.name}
-                                                onChange={(e) => {
-                                                    setVaccineForm({ ...vaccineForm, name: e.target.value });
-                                                    if (vaccineErrors.name) setVaccineErrors({ ...vaccineErrors, name: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {vaccineErrors.name && <span className="field-error">{vaccineErrors.name}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>العمر المستهدف (شهر) *</label>
-                                            <input
-                                                type="number"
-                                                name="targetAgeInMonths"
-                                                value={vaccineForm.targetAgeInMonths}
-                                                onChange={(e) => {
-                                                    setVaccineForm({ ...vaccineForm, targetAgeInMonths: e.target.value });
-                                                    if (vaccineErrors.targetAgeInMonths) setVaccineErrors({ ...vaccineErrors, targetAgeInMonths: undefined });
-                                                }}
-                                                min="0"
-                                                step="1"
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {vaccineErrors.targetAgeInMonths && <span className="field-error">{vaccineErrors.targetAgeInMonths}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>الجرعة *</label>
-                                            <input
-                                                type="number"
-                                                name="dosage"
-                                                value={vaccineForm.dosage}
-                                                onChange={(e) => {
-                                                    setVaccineForm({ ...vaccineForm, dosage: e.target.value });
-                                                    if (vaccineErrors.dosage) setVaccineErrors({ ...vaccineErrors, dosage: undefined });
-                                                }}
-                                                min="0"
-                                                step="0.1"
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {vaccineErrors.dosage && <span className="field-error">{vaccineErrors.dosage}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>الفاصل الزمني (أيام)</label>
-                                            <input
-                                                type="number"
-                                                name="intervalInDays"
-                                                value={vaccineForm.intervalInDays}
-                                                onChange={(e) => {
-                                                    setVaccineForm({ ...vaccineForm, intervalInDays: e.target.value });
-                                                    if (vaccineErrors.intervalInDays) setVaccineErrors({ ...vaccineErrors, intervalInDays: undefined });
-                                                }}
-                                                min="0"
-                                                step="1"
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {vaccineErrors.intervalInDays && <span className="field-error">{vaccineErrors.intervalInDays}</span>}
-                                        </div>
-                                    </div>
-                                    <div className="modal-actions">
-                                        <ActionButton action="create" className="btn-solid" onClick={handleAddVaccine}>
-                                            حفظ
-                                        </ActionButton>
-                                        <button type="button" className="btn btn-outline" onClick={() => setShowVaccineForm(false)}>إلغاء</button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-                        <table>
-                            <thead><tr><th>الاسم</th><th>العمر (شهر)</th><th>الجرعة</th><th>الفاصل (يوم)</th></tr></thead>
-                            <tbody>
-                                {vaccines.length === 0 ? <tr><td colSpan="4" className="empty-row">لا توجد لقاحات</td></tr> :
-                                    vaccines.map(v => <tr key={v.id}><td>{v.name}</td><td>{v.targetAgeInMonths}</td><td>{v.dosage}</td><td>{v.intervalInDays || '—'}</td></tr>)
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* التطعيمات */}
-                    <div className="card-box">
-                        <h4>
-                            التطعيمات
-                            <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccinationForm(true)}>
-                                + جدولة تطعيم
-                            </ActionButton>
-                        </h4>
-                        {showVaccinationForm && (
-                            <div className="card-box" style={{ marginBottom: '16px' }}>
-                                <h4>جدولة تطعيم جديد</h4>
-                                <form onSubmit={handleAddVaccination}>
-                                    <div className="form-grid-3">
-                                        <div className="field">
-                                            <label>البقرة *</label>
-                                            <select
-                                                name="cattleId"
-                                                value={vaccinationForm.cattleId}
-                                                onChange={(e) => {
-                                                    setVaccinationForm({ ...vaccinationForm, cattleId: e.target.value });
-                                                    if (vaccinationErrors.cattleId) setVaccinationErrors({ ...vaccinationErrors, cattleId: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            >
-                                                <option value="">اختر بقرة</option>
-                                                {cattleOptions.map(c => <option key={c.id} value={c.id}>{c.tagNumber}</option>)}
-                                            </select>
-                                            {vaccinationErrors.cattleId && <span className="field-error">{vaccinationErrors.cattleId}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>نوع اللقاح *</label>
-                                            <select
-                                                name="vaccineId"
-                                                value={vaccinationForm.vaccineId}
-                                                onChange={(e) => {
-                                                    setVaccinationForm({ ...vaccinationForm, vaccineId: e.target.value });
-                                                    if (vaccinationErrors.vaccineId) setVaccinationErrors({ ...vaccinationErrors, vaccineId: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            >
-                                                <option value="">اختر لقاح</option>
-                                                {vaccineOptions.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-                                            </select>
-                                            {vaccinationErrors.vaccineId && <span className="field-error">{vaccinationErrors.vaccineId}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>التاريخ *</label>
-                                            <input
-                                                type="date"
-                                                name="scheduledDate"
-                                                value={vaccinationForm.scheduledDate}
-                                                onChange={(e) => {
-                                                    setVaccinationForm({ ...vaccinationForm, scheduledDate: e.target.value });
-                                                    if (vaccinationErrors.scheduledDate) setVaccinationErrors({ ...vaccinationErrors, scheduledDate: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {vaccinationErrors.scheduledDate && <span className="field-error">{vaccinationErrors.scheduledDate}</span>}
-                                        </div>
-                                    </div>
-                                    <div className="modal-actions">
-                                        <ActionButton action="create" className="btn-solid" onClick={handleAddVaccination}>
-                                            حفظ
-                                        </ActionButton>
-                                        <button type="button" className="btn btn-outline" onClick={() => setShowVaccinationForm(false)}>إلغاء</button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-                        <table>
-                            <thead><tr><th>البقرة</th><th>اللقاح</th><th>الموعد</th><th>الحالة</th><th>إجراء</th></tr></thead>
-                            <tbody>
-                                {vaccinations.length === 0 ? <tr><td colSpan="5" className="empty-row">لا توجد تطعيمات</td></tr> :
-                                    vaccinations.map(v => (
-                                        <tr key={v.id}>
-                                            <td>{v.cattleTagNumber}</td>
-                                            <td>{v.vaccineName}</td>
-                                            <td>{new Date(v.scheduledDate).toLocaleDateString('ar-EG')}</td>
-                                            <td><span className={`badge ${v.administeredDate ? 'ok' : 'pending'}`}>{v.administeredDate ? 'تم الإعطاء' : 'مجدول'}</span></td>
-                                            <td>
-                                                {!v.administeredDate && (
-                                                    <ActionButton action="administer" className="btn-outline btn-small" onClick={() => handleAdminister(v.id)}>
-                                                        تم الإعطاء
-                                                    </ActionButton>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* السجلات الصحية */}
-                    <div className="card-box">
-                        <h4>
-                            السجلات الصحية
-                            <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowHealthForm(true)}>
-                                + إضافة سجل صحي
-                            </ActionButton>
-                        </h4>
-                        {showHealthForm && (
-                            <div className="card-box" style={{ marginBottom: '16px' }}>
-                                <h4>إضافة سجل صحي جديد</h4>
-                                <form onSubmit={handleAddHealth}>
-                                    <div className="form-grid-2">
-                                        <div className="field">
-                                            <label>البقرة *</label>
-                                            <select
-                                                name="cattleId"
-                                                value={healthForm.cattleId}
-                                                onChange={(e) => {
-                                                    setHealthForm({ ...healthForm, cattleId: e.target.value });
-                                                    if (healthErrors.cattleId) setHealthErrors({ ...healthErrors, cattleId: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            >
-                                                <option value="">اختر بقرة</option>
-                                                {cattleOptions.map(c => <option key={c.id} value={c.id}>{c.tagNumber}</option>)}
-                                            </select>
-                                            {healthErrors.cattleId && <span className="field-error">{healthErrors.cattleId}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>التشخيص *</label>
-                                            <input
-                                                type="text"
-                                                name="diagnosis"
-                                                value={healthForm.diagnosis}
-                                                onChange={(e) => {
-                                                    setHealthForm({ ...healthForm, diagnosis: e.target.value });
-                                                    if (healthErrors.diagnosis) setHealthErrors({ ...healthErrors, diagnosis: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {healthErrors.diagnosis && <span className="field-error">{healthErrors.diagnosis}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>خطة العلاج *</label>
-                                            <input
-                                                type="text"
-                                                name="treatmentPlan"
-                                                value={healthForm.treatmentPlan}
-                                                onChange={(e) => {
-                                                    setHealthForm({ ...healthForm, treatmentPlan: e.target.value });
-                                                    if (healthErrors.treatmentPlan) setHealthErrors({ ...healthErrors, treatmentPlan: undefined });
-                                                }}
-                                                disabled={!hasPermission('create')}
-                                            />
-                                            {healthErrors.treatmentPlan && <span className="field-error">{healthErrors.treatmentPlan}</span>}
-                                        </div>
-                                        <div className="field">
-                                            <label>ملاحظات البيطري</label>
-                                            <input
-                                                type="text"
-                                                name="vetNotes"
-                                                value={healthForm.vetNotes}
-                                                onChange={(e) => setHealthForm({ ...healthForm, vetNotes: e.target.value })}
-                                                disabled={!hasPermission('create')}
-                                            />
-                                        </div>
-                                        <div className="field" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <label style={{ margin: 0 }}>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={healthForm.isContagious}
-                                                    onChange={(e) => setHealthForm({ ...healthForm, isContagious: e.target.checked })}
-                                                    disabled={!hasPermission('create')}
-                                                />
-                                                {' حالة معدية'}
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div className="modal-actions">
-                                        <ActionButton action="create" className="btn-solid" onClick={handleAddHealth}>
-                                            حفظ
-                                        </ActionButton>
-                                        <button type="button" className="btn btn-outline" onClick={() => setShowHealthForm(false)}>إلغاء</button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-                        <table>
-                            <thead><tr><th>البقرة</th><th>التشخيص</th><th>خطة العلاج</th><th>معدية؟</th></tr></thead>
-                            <tbody>
-                                {healthLogs.length === 0 ? <tr><td colSpan="4" className="empty-row">لا توجد سجلات صحية</td></tr> :
-                                    healthLogs.map(h => (
-                                        <tr key={h.id}>
-                                            <td>{h.cattleTagNumber}</td>
-                                            <td>{h.diagnosis}</td>
-                                            <td>{h.treatmentPlan}</td>
-                                            <td>{h.isContagious ? 'نعم' : 'لا'}</td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                  )}
                 </div>
-            );
+              ))
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // 10. AUTH MODAL
+    // ============================================================
+    function AuthModal({ onLogin }) {
+      const [tab, setTab] = useState('login');
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [farmName, setFarmName] = useState('');
+      const [ownerName, setOwnerName] = useState('');
+      const [error, setError] = useState('');
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+          if (tab === 'login') {
+            await onLogin(email, password);
+            document.getElementById('authModal').classList.add('hidden');
+          } else {
+            const res = await axiosInstance.post(EP.register, { farmName, ownerName, email, password });
+            if (res.data.accessToken) {
+              await onLogin(email, password);
+              document.getElementById('authModal').classList.add('hidden');
+            }
+          }
+        } catch (err) {
+          setError(err.response?.data?.message || err.message);
         }
+      };
 
-        // ============================================================
-        // 9. MOCK DATA (للوضع التجريبي)
-        // ============================================================
-        const MOCK = {
-            vaccines: [
-                { id: 'v1', name: 'الحمى القلاعية', targetAgeInMonths: 3, dosage: 2, intervalInDays: null },
-                { id: 'v2', name: 'البروسيلا', targetAgeInMonths: 6, dosage: 1.5, intervalInDays: 30 },
-                { id: 'v3', name: 'الجمرة الخبيثة', targetAgeInMonths: 12, dosage: 3, intervalInDays: null }
-            ],
-            vaccinations: [
-                { id: 'vc1', cattleTagNumber: 'A102', vaccineName: 'الحمى القلاعية', scheduledDate: '2026-07-10T00:00:00', administeredDate: null },
-                { id: 'vc2', cattleTagNumber: 'A245', vaccineName: 'البروسيلا', scheduledDate: '2026-08-01T00:00:00', administeredDate: null },
-                { id: 'vc3', cattleTagNumber: 'A088', vaccineName: 'الجمرة الخبيثة', scheduledDate: '2026-06-15T00:00:00', administeredDate: '2026-06-15T00:00:00' }
-            ],
-            healthLogs: [
-                { id: 'h1', cattleTagNumber: 'A088', diagnosis: 'التهاب الضرع', treatmentPlan: 'مضاد حيوي موضعي 5 أيام', isContagious: false },
-                { id: 'h2', cattleTagNumber: 'A245', diagnosis: 'عرج خفيف', treatmentPlan: 'راحة وتقليم الأظلاف', isContagious: false }
-            ],
-            cattle: [
-                { id: 'c1', tagNumber: 'A102' },
-                { id: 'c2', tagNumber: 'A245' },
-                { id: 'c3', tagNumber: 'A310' },
-                { id: 'c4', tagNumber: 'A088' }
-            ]
-        };
-
-        // ============================================================
-        // 10. AUTH MODAL (للتسجيل الدخول)
-        // ============================================================
-        function AuthModal({ onLogin }) {
-            const [tab, setTab] = useState('login');
-            const [email, setEmail] = useState('');
-            const [password, setPassword] = useState('');
-            const [farmName, setFarmName] = useState('');
-            const [ownerName, setOwnerName] = useState('');
-            const [error, setError] = useState('');
-
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                setError('');
-                try {
-                    if (tab === 'login') {
-                        await onLogin(email, password);
-                        document.getElementById('authModal').classList.add('hidden');
-                    } else {
-                        // تسجيل (افتراضي)
-                        const res = await axiosInstance.post(EP.register, { farmName, ownerName, email, password });
-                        if (res.data.accessToken) {
-                            await onLogin(email, password);
-                            document.getElementById('authModal').classList.add('hidden');
-                        }
-                    }
-                } catch (err) {
-                    setError(err.response?.data?.message || err.message);
-                }
-            };
-
-            return (
-                <div className="modal-overlay hidden" id="authModal">
-                    <div className="modal">
-                        <button className="modal-close" onClick={() => document.getElementById('authModal').classList.add('hidden')}>✕</button>
-                        <div className="auth-tabs">
-                            <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>تسجيل الدخول</button>
-                            <button className={`auth-tab ${tab === 'register' ? 'active' : ''}`} onClick={() => setTab('register')}>حساب جديد</button>
-                        </div>
-                        <form onSubmit={handleSubmit}>
-                            {tab === 'register' && (
-                                <>
-                                    <div className="field"><label>اسم المزرعة</label><input type="text" value={farmName} onChange={e => setFarmName(e.target.value)} required /></div>
-                                    <div className="field"><label>اسم المالك</label><input type="text" value={ownerName} onChange={e => setOwnerName(e.target.value)} required /></div>
-                                </>
-                            )}
-                            <div className="field"><label>البريد الإلكتروني</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} required /></div>
-                            <div className="field"><label>كلمة المرور</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} required /></div>
-                            {error && <div className="field-error">{error}</div>}
-                            <div className="modal-actions"><button type="submit" className="btn btn-solid"> {tab === 'login' ? 'دخول' : 'إنشاء'}</button></div>
-                        </form>
-                    </div>
-                </div>
-            );
-        }
-
-        // ============================================================
-        // 11. RENDER APP
-        // ============================================================
-        window.openAuthModal = () => document.getElementById('authModal').classList.remove('hidden');
-        window.logout = logout;
-
-        const Root = () => {
-            const [loginTrigger, setLoginTrigger] = useState(0);
-            const handleLogin = async (email, password) => {
-                const token = localStorage.getItem('hs_token');
-                if (token) {
-                    const roles = decodeToken(token);
-                    const perms = roles.reduce((acc, r) => {
-                        const p = ROLES_DEF[r] || ROLES_DEF.FarmOwner;
-                        return [...new Set([...acc, ...p])];
-                    }, []);
-                    // سيكون التحديث في App نفسه، لكننا نضطر لإعادة تحميل الصفحة لتحديث الحالة
-                    window.location.reload();
-                } else {
-                    // محاولة تسجيل دخول حقيقية
-                    try {
-                        const res = await axiosInstance.post(EP.login, { email, password });
-                        localStorage.setItem('hs_token', res.data.accessToken);
-                        localStorage.setItem('hs_refreshToken', res.data.refreshToken);
-                        localStorage.setItem('hs_role', res.data.role || 'FarmOwner');
-                        localStorage.setItem('hs_name', res.data.fullName || 'مستخدم');
-                        window.location.reload();
-                    } catch (e) {
-                        throw e;
-                    }
-                }
-            };
-
-            return (
+      return (
+        <div className="modal-overlay hidden" id="authModal">
+          <div className="modal">
+            <button className="modal-close" onClick={() => document.getElementById('authModal').classList.add('hidden')}>✕</button>
+            <div className="auth-tabs">
+              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>تسجيل الدخول</button>
+              <button className={`auth-tab ${tab === 'register' ? 'active' : ''}`} onClick={() => setTab('register')}>حساب جديد</button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              {tab === 'register' && (
                 <>
-                    <AuthModal onLogin={handleLogin} />
-                    <App />
+                  <div className="field"><label>اسم المزرعة</label><input type="text" value={farmName} onChange={e => setFarmName(e.target.value)} required /></div>
+                  <div className="field"><label>اسم المالك</label><input type="text" value={ownerName} onChange={e => setOwnerName(e.target.value)} required /></div>
                 </>
-            );
-        };
+              )}
+              <div className="field"><label>البريد الإلكتروني</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} required /></div>
+              <div className="field"><label>كلمة المرور</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} required /></div>
+              {error && <div className="field-error">{error}</div>}
+              <div className="modal-actions"><button type="submit" className="btn btn-solid"> {tab === 'login' ? 'دخول' : 'إنشاء'}</button></div>
+            </form>
+          </div>
+        </div>
+      );
+    }
 
-        ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
-    </script>
+    // ============================================================
+    // 11. RENDER
+    // ============================================================
+    window.openAuthModal = () => document.getElementById('authModal').classList.remove('hidden');
+    window.logout = logout;
+
+    const Root = () => {
+      const handleLogin = async (email, password) => {
+        try {
+          const res = await axiosInstance.post(EP.login, { email, password });
+          localStorage.setItem('hs_token', res.data.accessToken);
+          localStorage.setItem('hs_refreshToken', res.data.refreshToken);
+          localStorage.setItem('hs_role', res.data.role || 'FarmOwner');
+          localStorage.setItem('hs_name', res.data.fullName || 'مستخدم');
+          window.location.reload();
+        } catch (e) {
+          throw e;
+        }
+      };
+
+      return (
+        <>
+          <AuthModal onLogin={handleLogin} />
+          <App />
+        </>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+  </script>
 </body>
 </html>
