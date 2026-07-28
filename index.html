@@ -93,16 +93,19 @@
     .auth-tab.active { background: var(--green-deep); color: #fff; }
     /* Dashboard specific */
     .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px; }
-    .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
-    .stat-card .label { font-size: .75rem; color: var(--ink-soft); font-weight: 700; margin-bottom: 6px; }
-    .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--green-deep); }
-    .stat-card .sub { font-size: .7rem; color: var(--ink-soft); margin-top: 4px; }
+    .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; transition: transform .2s ease, box-shadow .2s ease; animation: cardIn .4s ease backwards; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -12px rgba(31, 58, 38, .3); }
+    .stat-row .stat-card:nth-child(1) { animation-delay: .02s; }
+    .stat-row .stat-card:nth-child(2) { animation-delay: .08s; }
+    .stat-row .stat-card:nth-child(3) { animation-delay: .14s; }
+    .stat-row .stat-card:nth-child(4) { animation-delay: .2s; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .gauge { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; text-align: center; }
     .gauge .g-label { font-size: .75rem; color: var(--ink-soft); font-weight: 700; margin-bottom: 4px; }
     .gauge .g-value { font-size: 1.6rem; font-weight: 700; }
     .gauge .g-bar { height: 6px; border-radius: 4px; background: var(--line); margin-top: 8px; overflow: hidden; }
-    .gauge .g-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+    .gauge .g-fill { height: 100%; border-radius: 4px; transition: width .6s cubic-bezier(.4,0,.2,1), background .3s; }
     .producer-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--line); }
     .producer-row:last-child { border-bottom: none; }
     .producer-row .liters { font-weight: 600; color: var(--rust); }
@@ -117,24 +120,7 @@
     .live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; color: var(--rust); }
     .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rust); animation: pulse 1.8s infinite; }
 
-    /* ===== ANIMATION POLISH ===== */
-    .card-box { transition: box-shadow .25s ease, transform .25s ease; }
-    .card-box:hover { box-shadow: 0 10px 24px -14px rgba(31, 58, 38, .25); }
-    .stat-card { transition: transform .2s ease, box-shadow .2s ease; animation: cardIn .4s ease backwards; }
-    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -12px rgba(31, 58, 38, .3); }
-    .stat-row .stat-card:nth-child(1) { animation-delay: .02s; }
-    .stat-row .stat-card:nth-child(2) { animation-delay: .08s; }
-    .stat-row .stat-card:nth-child(3) { animation-delay: .14s; }
-    .stat-row .stat-card:nth-child(4) { animation-delay: .2s; }
-    @keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .btn { transform: translateY(0); }
-    .btn:active:not(:disabled) { transform: scale(.97); }
-    .nav-item { transition: background .18s ease, color .18s ease, padding-right .18s ease; }
-    .nav-item:hover:not(.active) { padding-right: 18px; }
-    .gauge .g-fill { transition: width .6s cubic-bezier(.4,0,.2,1), background .3s; }
-    tbody tr { transition: background .15s ease; }
-
-    /* ===== TOOLTIP FOR DISABLED ACTIONS ===== */
+    /* ===== BUTTON LOCK / TOOLTIP ===== */
     .tip-wrap { position: relative; display: inline-flex; }
     .tip-wrap .tip-bubble {
       position: absolute; bottom: calc(100% + 8px); right: 50%; transform: translateX(50%) translateY(4px);
@@ -151,7 +137,7 @@
     .btn.locked:hover { background: #E7E2CC !important; color: #8C8567 !important; }
     .btn.locked .lock-ic { margin-left: 4px; }
 
-    /* ===== PASSWORD STRENGTH CHECKLIST ===== */
+    /* ===== PASSWORD STRENGTH ===== */
     .pw-checklist { list-style: none; margin-top: 8px; display: grid; gap: 5px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
     .pw-checklist li { display: flex; align-items: center; gap: 8px; font-size: .74rem; color: var(--ink-soft); font-weight: 600; transition: color .2s ease; }
     .pw-checklist li .pw-ic { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .62rem; background: #E1D6B4; color: #fff; flex: none; transition: background .25s ease, transform .25s ease; }
@@ -160,12 +146,11 @@
     .pw-strength-bar { height: 5px; border-radius: 4px; background: var(--line); margin-top: 8px; overflow: hidden; }
     .pw-strength-fill { height: 100%; border-radius: 4px; transition: width .3s ease, background .3s ease; }
 
-    /* ===== CATTLE ===== */
+    /* ===== CATTLE BADGE ===== */
     .badge.sold { background: #E7E2CC; color: #6B6547; }
     .badge.dead { background: #EAD6D6; color: #8A3A3A; }
-    .gender-ic { font-size: .9rem; }
 
-    /* ===== FEATURE SHOWCASE (GUEST) ===== */
+    /* ===== FEATURE HERO (GUEST) ===== */
     .feature-hero { background: linear-gradient(135deg, var(--green-deep), var(--green) 120%); border-radius: 16px; padding: 26px 24px; margin-bottom: 20px; color: #F3EEDE; position: relative; overflow: hidden; }
     .feature-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 85% 20%, rgba(199,154,69,.25), transparent 55%); }
     .feature-hero h2 { font-size: 1.25rem; font-weight: 900; margin-bottom: 6px; position: relative; }
@@ -177,7 +162,7 @@
     .feature-chip .fc-title { font-size: .78rem; font-weight: 700; margin-bottom: 2px; }
     .feature-chip .fc-desc { font-size: .68rem; opacity: .75; line-height: 1.4; }
 
-    /* ===== EMPTY / LOADING STATES ===== */
+    /* ===== LOADING / EMPTY ===== */
     .loading-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 40px 20px; color: var(--ink-soft); font-size: .85rem; font-weight: 700; }
     .spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--green); animation: spin .8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -185,6 +170,15 @@
     .empty-state .es-ic { font-size: 1.8rem; margin-bottom: 8px; }
     .empty-state .es-title { font-weight: 700; color: var(--green-deep); font-size: .9rem; margin-bottom: 3px; }
     .empty-state .es-sub { font-size: .75rem; }
+
+    /* ===== ANIMATION POLISH ===== */
+    .card-box { transition: box-shadow .25s ease, transform .25s ease; }
+    .card-box:hover { box-shadow: 0 10px 24px -14px rgba(31, 58, 38, .25); }
+    .btn { transform: translateY(0); }
+    .btn:active:not(:disabled) { transform: scale(.97); }
+    .nav-item { transition: background .18s ease, color .18s ease, padding-right .18s ease; }
+    .nav-item:hover:not(.active) { padding-right: 18px; }
+    tbody tr { transition: background .15s ease; }
   </style>
 </head>
 <body>
@@ -230,11 +224,8 @@
       Worker: 'عامل',
       Guest: 'ضيف'
     };
-    // إضافة "نوع لقاح" جديد هي مهمة طبية بحتة (تحديد الجرعة والفاصل الزمني حسب البروتوكول الطبي)
-    // لذلك تقتصر على الدور الطبي فقط، ولا يملكها حتى مالك المزرعة أو المدير.
     const VACCINE_CREATOR_ROLE = 'Veterinarian';
 
-    // خرائط عرض لتعدادات الماشية (Gender / CattleStatus أرقام في الـ API)
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
     const CATTLE_STATUS_MAP = {
       0: { label: 'نشطة', cls: 'ok' },
@@ -356,7 +347,6 @@
     function isLoggedIn() { return !!getToken(); }
     function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
     function logout() { clearSession(); window.location.reload(); }
-    // مصدر واحد لحفظ الجلسة، يُستخدم بعد الدخول أو إنشاء الحساب مباشرةً
     function persistSession(data) {
       localStorage.setItem('hs_token', data.accessToken);
       localStorage.setItem('hs_refreshToken', data.refreshToken);
@@ -380,21 +370,21 @@
       const [activeView, setActiveView] = useState('dashboard');
       const [loading, setLoading] = useState(false);
       const [currentRole, setCurrentRole] = useState('Guest');
-      const [isRealData, setIsRealData] = useState(false); // علم لتمييز البيانات الحقيقية
+      const [isRealData, setIsRealData] = useState(false);
 
       // --- بيانات الجداول ---
       const [vaccines, setVaccines] = useState([]);
       const [vaccinations, setVaccinations] = useState([]);
       const [healthLogs, setHealthLogs] = useState([]);
-      const [cattleOptions, setCattleOptions] = useState([]); // { id, tagNumber } — لاستخدام القوائم المنسدلة
-      const [cattleList, setCattleList] = useState([]); // السجلات الكاملة لصفحة إدارة الماشية
-      const [cattleTotal, setCattleTotal] = useState(0); // العدد الحقيقي من الـ API (totalCount)
+      const [cattleOptions, setCattleOptions] = useState([]);
+      const [cattleList, setCattleList] = useState([]);
+      const [cattleTotal, setCattleTotal] = useState(0);
       const [staffList, setStaffList] = useState([]);
       const [weeklyMilk, setWeeklyMilk] = useState([]);
       const [topProducers, setTopProducers] = useState([]);
       const [alerts, setAlerts] = useState([]);
       const [dailyMilk, setDailyMilk] = useState('—');
-      const [loadError, setLoadError] = useState(false); // فشل تحميل بيانات حقيقية (بدون رجوع لبيانات وهمية)
+      const [loadError, setLoadError] = useState(false);
 
       // --- حالة النماذج ---
       const [showVaccineForm, setShowVaccineForm] = useState(false);
@@ -410,9 +400,7 @@
 
       const hasPermission = useCallback((action) => permissions.includes(action), [permissions]);
 
-      // تحميل البيانات (حقيقية أو تجريبية)
-      // ⚠️ قاعدة أساسية: أي مستخدم مسجّل دخول حقيقي لا يرى بيانات تجريبية إطلاقاً،
-      // حتى لو فشل أحد الطلبات — نعرض حالة فارغة/خطأ حقيقية بدل بيانات وهمية مضللة.
+      // ======== تحميل البيانات ========
       const loadData = useCallback(async () => {
         if (isLoggedIn()) {
           // وضع المستخدم الحقيقي: تحميل من API فقط
@@ -439,7 +427,7 @@
             setStaffList(staff);
             setTopProducers(milkTop);
 
-            // إنتاج آخر 7 أيام — تُجلب بالتوازي بدل التسلسل
+            // إنتاج آخر 7 أيام
             const days = Array.from({ length: 7 }, (_, idx) => 6 - idx).map(i => {
               const d = new Date(); d.setDate(d.getDate() - i);
               const from = new Date(d); from.setHours(0, 0, 0, 0);
@@ -454,12 +442,9 @@
             setWeeklyMilk(weeklyResults);
             setDailyMilk(weeklyResults.length ? weeklyResults[weeklyResults.length - 1].toLocaleString('en-US') : '0');
 
-            // لا يوجد حالياً Endpoint حقيقي للتنبيهات اللحظية للمستشعرات في الـ API،
-            // لذلك تُترك فارغة لحساب حقيقي بدل عرض تنبيهات وهمية قد تُربك المستخدم.
             setAlerts([]);
             setIsRealData(true);
           } catch (e) {
-            // فشل عام غير متوقع (شبكة/مصادقة) — لا نعرض بيانات وهمية، فقط حالة خطأ فارغة
             showToast('تعذر تحميل بعض البيانات: ' + (e.response?.data?.message || e.message), true);
             setVaccines([]); setVaccinations([]); setHealthLogs([]);
             setCattleList([]); setCattleOptions([]); setCattleTotal(0);
@@ -469,14 +454,14 @@
             setLoadError(true);
           } finally { setLoading(false); }
         } else {
-          // وضع الضيف: بيانات تجريبية فقط، وواضح أنها كذلك في كل الواجهة
+          // وضع الضيف: بيانات تجريبية فقط
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
           setCattleOptions(MOCK.cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
           setCattleList(MOCK.cattle);
           setCattleTotal(MOCK.cattle.length);
-          setStaffList([]); // لا تظهر الموظفين للضيف (سيتم التحكم بها عبر الصلاحيات)
+          // نضع staffList فارغة مبدئياً، سنستخدم useMemo لحسابها بناءً على الدور
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
@@ -487,7 +472,17 @@
         }
       }, []);
 
-      // تهيئة المستخدم والدور
+      // ======== staffList تعتمد على currentRole في وضع الضيف ========
+      const effectiveStaffList = useMemo(() => {
+        if (isRealData) return staffList; // البيانات الحقيقية
+        // في وضع الضيف: نعرض الموظفين فقط إذا كان الدور مالك المزرعة
+        if (currentRole === 'FarmOwner') {
+          return MOCK.staff;
+        }
+        return [];
+      }, [isRealData, currentRole, staffList]);
+
+      // ======== تهيئة المستخدم والدور ========
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
@@ -496,18 +491,18 @@
           setCurrentRole(primaryRole);
           const name = localStorage.getItem('hs_name') || 'مستخدم';
           setUser({ name, roles });
-          loadData(); // تحميل البيانات الحقيقية فوراً
+          loadData();
         } else {
           setCurrentRole('Guest');
           setUser({ name: 'ضيف', roles: ['Guest'] });
-          loadData(); // تحميل البيانات التجريبية
+          loadData();
         }
       }, []);
 
-      // ملاحظة: تسجيل الدخول الفعلي يتم عبر AuthModal (في Root) الذي يحفظ التوكن
-      // ثم يعيد تحميل الصفحة — هذا يضمن مصدراً واحداً للحقيقة بدل تكرار المنطق.
+      // ======== تحديث staffList عند تغيير الدور في وضع الضيف ========
+      // ولكن useMemo يقوم بذلك تلقائياً، لكن يجب تمرير effectiveStaffList إلى Context.
+      // وسنستخدم effectiveStaffList في مكان staffList في Context.
 
-      // تغيير الدور (في وضع الضيف فقط)
       const handleRoleChange = (e) => {
         const newRole = e.target.value;
         setCurrentRole(newRole);
@@ -525,7 +520,8 @@
         cattleOptions,
         cattleList, setCattleList,
         cattleTotal,
-        staffList, setStaffList,
+        staffList: effectiveStaffList, // استخدم القيمة المحسوبة
+        setStaffList, // نحتفظ بها لكن لا نستخدمها في الضيف
         weeklyMilk,
         topProducers,
         dailyMilk,
@@ -574,9 +570,7 @@
     }
 
     // ============================================================
-    // 6.1 ACTION BUTTON — يظهر دائماً، لكن يتحول لرصاصي وغير قابل
-    // للنقر مع توضيح السبب لو المستخدم لا يملك الصلاحية، بدل إخفائه
-    // تماماً (شفافية أفضل للمستخدم من إخفاء الأزرار بدون تفسير).
+    // 6.1 ACTION BUTTON — يظهر دائماً، معطل مع رسالة إذا لم يملك صلاحية
     // ============================================================
     function ActionButton({ allowed, reason, onClick, children, className = '', small = true }) {
       if (allowed) {
@@ -645,7 +639,6 @@
         { id: 'health', icon: '💉', label: 'الطبي والتطعيمات' },
         { id: 'alerts', icon: '📡', label: 'التنبيهات' }
       ];
-      // إضافة الموظفين فقط إذا كان لديه صلاحية manageStaff
       if (hasPermission('manageStaff')) {
         items.push({ id: 'staff', icon: '👥', label: 'الموظفين' });
       }
@@ -667,7 +660,7 @@
     }
 
     // ============================================================
-    // 8. DASHBOARD (لوحة التحكم)
+    // 8. DASHBOARD
     // ============================================================
     const FEATURES = [
       { icon: '🐮', title: 'إدارة الماشية', desc: 'سجل كامل لكل رأس: السلالة، النسب، الحالة الصحية' },
@@ -696,13 +689,11 @@
       const activeAlerts = alerts.filter(a => a.active).length;
       const isGuest = currentRole === 'Guest' || !isLoggedIn();
 
-      // محاكاة المستشعرات — تظهر فقط في الوضع التجريبي كعرض توضيحي لما سيحدث
-      // عند ربط أجهزة استشعار حقيقية بالمزرعة (لا تُعرض بيانات مزيفة لحساب حقيقي).
       const [temp, setTemp] = useState(6.5);
       const [move, setMove] = useState(5.2);
 
       useEffect(() => {
-        if (isRealData) return; // بدون محاكاة على البيانات الحقيقية
+        if (isRealData) return;
         const interval = setInterval(() => {
           setTemp(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
           setMove(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
@@ -861,7 +852,7 @@
     }
 
     // ============================================================
-    // 8.5 CATTLE MANAGEMENT (إدارة الماشية)
+    // 8.5 CATTLE MANAGEMENT
     // ============================================================
     function CattleManagement() {
       const {
@@ -1047,7 +1038,7 @@
     }
 
     // ============================================================
-    // 9. HEALTH MANAGEMENT (الجدول الطبي)
+    // 9. HEALTH MANAGEMENT
     // ============================================================
     function HealthManagement() {
       const {
@@ -1440,10 +1431,10 @@
     }
 
     // ============================================================
-    // 10. STAFF MANAGEMENT (للمالك فقط)
+    // 10. STAFF MANAGEMENT — يظهر للمالك فقط مع بيانات تجريبية في وضع الضيف
     // ============================================================
     function StaffManagement() {
-      const { staffList, setStaffList, hasPermission, loadData } = useAuth();
+      const { staffList, setStaffList, hasPermission, loadData, isRealData } = useAuth();
       const [showForm, setShowForm] = useState(false);
       const [formData, setFormData] = useState({ fullName: '', email: '', password: '', role: 'Veterinarian' });
       const [errors, setErrors] = useState({});
@@ -1548,7 +1539,11 @@
             <table>
               <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th></tr></thead>
               <tbody>
-                {staffList.length === 0 ? <tr><td colSpan="3" className="empty-row">لا يوجد موظفون</td></tr> :
+                {staffList.length === 0 ? (
+                  <tr><td colSpan="3"><div className="empty-state"><div className="es-ic">👤</div><div className="es-title">لا يوجد موظفون</div>
+                    {!isRealData && <div className="es-sub">جرّب اختيار دور "مالك المزرعة" من الأعلى لعرض بيانات تجريبية للموظفين.</div>}
+                  </div></td></tr>
+                ) : (
                   staffList.map(s => (
                     <tr key={s.id}>
                       <td>{s.fullName}</td>
@@ -1556,7 +1551,7 @@
                       <td>{roleNames[s.role] || s.role}</td>
                     </tr>
                   ))
-                }
+                )}
               </tbody>
             </table>
           </div>
@@ -1574,20 +1569,6 @@
         if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true); return; }
         setAlerts(alerts.map(a => a.id === id ? { ...a, active: false, time: 'تم الإصلاح' } : a));
         showToast('✅ تم إصلاح التنبيه');
-      };
-
-      const ResolveButton = ({ alert }) => {
-        if (!alert.active) return null;
-        return (
-          <ActionButton
-            allowed={hasPermission('administer')}
-            reason="إصلاح التنبيهات متاح لمالك المزرعة والمدير والطبيب البيطري فقط"
-            className="btn-outline"
-            onClick={() => resolveAlert(alert.id)}
-          >
-            إصلاح التنبيه
-          </ActionButton>
-        );
       };
 
       return (
@@ -1611,7 +1592,16 @@
                     <div className="meta">{a.time} · <span className={`badge ${a.active ? 'active' : 'ok'}`}>{a.active ? 'نشط' : 'تم الحل'}</span></div>
                   </div>
                   <div className="alert-actions">
-                    <ResolveButton alert={a} />
+                    {a.active && (
+                      <ActionButton
+                        allowed={hasPermission('administer')}
+                        reason="إصلاح التنبيهات متاح لمالك المزرعة والمدير والطبيب البيطري فقط"
+                        className="btn-outline"
+                        onClick={() => resolveAlert(a.id)}
+                      >
+                        إصلاح التنبيه
+                      </ActionButton>
+                    )}
                   </div>
                 </div>
               ))
@@ -1624,7 +1614,6 @@
     // ============================================================
     // 12. AUTH MODAL
     // ============================================================
-    // شروط قوة كلمة المرور — تُعرض كقائمة بالعربي وتتحول للأخضر فور تحققها
     const PASSWORD_RULES = [
       { key: 'len', label: '8 أحرف على الأقل', test: (p) => p.length >= 8 },
       { key: 'upper', label: 'حرف إنجليزي كبير واحد على الأقل (A-Z)', test: (p) => /[A-Z]/.test(p) },
