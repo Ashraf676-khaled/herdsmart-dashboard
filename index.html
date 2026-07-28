@@ -116,6 +116,75 @@
     .alert-item .body { flex: 1; }
     .live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; color: var(--rust); }
     .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rust); animation: pulse 1.8s infinite; }
+
+    /* ===== ANIMATION POLISH ===== */
+    .card-box { transition: box-shadow .25s ease, transform .25s ease; }
+    .card-box:hover { box-shadow: 0 10px 24px -14px rgba(31, 58, 38, .25); }
+    .stat-card { transition: transform .2s ease, box-shadow .2s ease; animation: cardIn .4s ease backwards; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -12px rgba(31, 58, 38, .3); }
+    .stat-row .stat-card:nth-child(1) { animation-delay: .02s; }
+    .stat-row .stat-card:nth-child(2) { animation-delay: .08s; }
+    .stat-row .stat-card:nth-child(3) { animation-delay: .14s; }
+    .stat-row .stat-card:nth-child(4) { animation-delay: .2s; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .btn { transform: translateY(0); }
+    .btn:active:not(:disabled) { transform: scale(.97); }
+    .nav-item { transition: background .18s ease, color .18s ease, padding-right .18s ease; }
+    .nav-item:hover:not(.active) { padding-right: 18px; }
+    .gauge .g-fill { transition: width .6s cubic-bezier(.4,0,.2,1), background .3s; }
+    tbody tr { transition: background .15s ease; }
+
+    /* ===== TOOLTIP FOR DISABLED ACTIONS ===== */
+    .tip-wrap { position: relative; display: inline-flex; }
+    .tip-wrap .tip-bubble {
+      position: absolute; bottom: calc(100% + 8px); right: 50%; transform: translateX(50%) translateY(4px);
+      background: var(--green-deep); color: #fff; font-size: .68rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease;
+      z-index: 20; box-shadow: 0 6px 16px -6px rgba(0,0,0,.4);
+    }
+    .tip-wrap .tip-bubble::after {
+      content: ''; position: absolute; top: 100%; right: 50%; transform: translateX(50%);
+      border: 5px solid transparent; border-top-color: var(--green-deep);
+    }
+    .tip-wrap:hover .tip-bubble { opacity: 1; transform: translateX(50%) translateY(0); }
+    .btn.locked { background: #E7E2CC; color: #8C8567; border-color: #E7E2CC; filter: none; opacity: 1; }
+    .btn.locked:hover { background: #E7E2CC !important; color: #8C8567 !important; }
+    .btn.locked .lock-ic { margin-left: 4px; }
+
+    /* ===== PASSWORD STRENGTH CHECKLIST ===== */
+    .pw-checklist { list-style: none; margin-top: 8px; display: grid; gap: 5px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+    .pw-checklist li { display: flex; align-items: center; gap: 8px; font-size: .74rem; color: var(--ink-soft); font-weight: 600; transition: color .2s ease; }
+    .pw-checklist li .pw-ic { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .62rem; background: #E1D6B4; color: #fff; flex: none; transition: background .25s ease, transform .25s ease; }
+    .pw-checklist li.ok { color: var(--green-deep); }
+    .pw-checklist li.ok .pw-ic { background: var(--green); transform: scale(1.08); }
+    .pw-strength-bar { height: 5px; border-radius: 4px; background: var(--line); margin-top: 8px; overflow: hidden; }
+    .pw-strength-fill { height: 100%; border-radius: 4px; transition: width .3s ease, background .3s ease; }
+
+    /* ===== CATTLE ===== */
+    .badge.sold { background: #E7E2CC; color: #6B6547; }
+    .badge.dead { background: #EAD6D6; color: #8A3A3A; }
+    .gender-ic { font-size: .9rem; }
+
+    /* ===== FEATURE SHOWCASE (GUEST) ===== */
+    .feature-hero { background: linear-gradient(135deg, var(--green-deep), var(--green) 120%); border-radius: 16px; padding: 26px 24px; margin-bottom: 20px; color: #F3EEDE; position: relative; overflow: hidden; }
+    .feature-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 85% 20%, rgba(199,154,69,.25), transparent 55%); }
+    .feature-hero h2 { font-size: 1.25rem; font-weight: 900; margin-bottom: 6px; position: relative; }
+    .feature-hero p { font-size: .85rem; opacity: .85; max-width: 560px; position: relative; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 16px; position: relative; }
+    .feature-chip { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 10px; padding: 12px; transition: background .2s ease, transform .2s ease; }
+    .feature-chip:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); }
+    .feature-chip .fc-ic { font-size: 1.2rem; margin-bottom: 6px; }
+    .feature-chip .fc-title { font-size: .78rem; font-weight: 700; margin-bottom: 2px; }
+    .feature-chip .fc-desc { font-size: .68rem; opacity: .75; line-height: 1.4; }
+
+    /* ===== EMPTY / LOADING STATES ===== */
+    .loading-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 40px 20px; color: var(--ink-soft); font-size: .85rem; font-weight: 700; }
+    .spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--green); animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 30px 16px; color: var(--ink-soft); }
+    .empty-state .es-ic { font-size: 1.8rem; margin-bottom: 8px; }
+    .empty-state .es-title { font-weight: 700; color: var(--green-deep); font-size: .9rem; margin-bottom: 3px; }
+    .empty-state .es-sub { font-size: .75rem; }
   </style>
 </head>
 <body>
@@ -137,7 +206,9 @@
       vaccinations: '/vaccinations',
       vaccAdminister: id => `/vaccinations/${id}/administer`,
       healthLogs: '/health-logs',
-      cattle: '/cattle',
+      cattle: '/Cattle',
+      cattleOne: id => `/Cattle/${id}`,
+      cattleStatus: id => `/Cattle/${id}/status`,
       users: '/users',
       milk: '/milk',
       milkTop: '/milk/top-producers',
@@ -159,6 +230,19 @@
       Worker: 'عامل',
       Guest: 'ضيف'
     };
+    // إضافة "نوع لقاح" جديد هي مهمة طبية بحتة (تحديد الجرعة والفاصل الزمني حسب البروتوكول الطبي)
+    // لذلك تقتصر على الدور الطبي فقط، ولا يملكها حتى مالك المزرعة أو المدير.
+    const VACCINE_CREATOR_ROLE = 'Veterinarian';
+
+    // خرائط عرض لتعدادات الماشية (Gender / CattleStatus أرقام في الـ API)
+    const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
+    const CATTLE_STATUS_MAP = {
+      0: { label: 'نشطة', cls: 'ok' },
+      1: { label: 'مريضة', cls: 'active' },
+      2: { label: 'حامل', cls: 'pending' },
+      3: { label: 'مباعة', cls: 'sold' },
+      4: { label: 'نافقة', cls: 'dead' }
+    };
 
     // ============================================================
     // 2. MOCK DATA (فقط للضيف)
@@ -179,10 +263,10 @@
         { id: 'h2', cattleTagNumber: 'A245', diagnosis: 'عرج خفيف', treatmentPlan: 'راحة وتقليم الأظلاف', isContagious: false }
       ],
       cattle: [
-        { id: 'c1', tagNumber: 'A102' },
-        { id: 'c2', tagNumber: 'A245' },
-        { id: 'c3', tagNumber: 'A310' },
-        { id: 'c4', tagNumber: 'A088' }
+        { id: 'c1', tagNumber: 'A102', breed: 'هولشتاين', gender: 0, birthDate: '2023-02-11T00:00:00', status: 0, fatherTagNumber: null, motherTagNumber: 'A050' },
+        { id: 'c2', tagNumber: 'A245', breed: 'بلدي', gender: 0, birthDate: '2022-08-03T00:00:00', status: 0, fatherTagNumber: 'A010', motherTagNumber: null },
+        { id: 'c3', tagNumber: 'A310', breed: 'جيرسي', gender: 0, birthDate: '2023-11-20T00:00:00', status: 2, fatherTagNumber: null, motherTagNumber: null },
+        { id: 'c4', tagNumber: 'A088', breed: 'هولشتاين', gender: 1, birthDate: '2021-05-14T00:00:00', status: 1, fatherTagNumber: null, motherTagNumber: null }
       ],
       staff: [
         { id: 's1', fullName: 'د. كريم عادل', email: 'kareem@farm.com', role: 'Veterinarian' },
@@ -272,6 +356,13 @@
     function isLoggedIn() { return !!getToken(); }
     function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
     function logout() { clearSession(); window.location.reload(); }
+    // مصدر واحد لحفظ الجلسة، يُستخدم بعد الدخول أو إنشاء الحساب مباشرةً
+    function persistSession(data) {
+      localStorage.setItem('hs_token', data.accessToken);
+      localStorage.setItem('hs_refreshToken', data.refreshToken);
+      localStorage.setItem('hs_role', data.role || 'FarmOwner');
+      localStorage.setItem('hs_name', data.fullName || 'مستخدم');
+    }
 
     function decodeToken(token) {
       try {
@@ -295,17 +386,21 @@
       const [vaccines, setVaccines] = useState([]);
       const [vaccinations, setVaccinations] = useState([]);
       const [healthLogs, setHealthLogs] = useState([]);
-      const [cattleOptions, setCattleOptions] = useState([]);
+      const [cattleOptions, setCattleOptions] = useState([]); // { id, tagNumber } — لاستخدام القوائم المنسدلة
+      const [cattleList, setCattleList] = useState([]); // السجلات الكاملة لصفحة إدارة الماشية
+      const [cattleTotal, setCattleTotal] = useState(0); // العدد الحقيقي من الـ API (totalCount)
       const [staffList, setStaffList] = useState([]);
       const [weeklyMilk, setWeeklyMilk] = useState([]);
       const [topProducers, setTopProducers] = useState([]);
       const [alerts, setAlerts] = useState([]);
       const [dailyMilk, setDailyMilk] = useState('—');
+      const [loadError, setLoadError] = useState(false); // فشل تحميل بيانات حقيقية (بدون رجوع لبيانات وهمية)
 
       // --- حالة النماذج ---
       const [showVaccineForm, setShowVaccineForm] = useState(false);
       const [showVaccinationForm, setShowVaccinationForm] = useState(false);
       const [showHealthForm, setShowHealthForm] = useState(false);
+      const [showCattleForm, setShowCattleForm] = useState(false);
 
       // حساب الصلاحيات
       const permissions = useMemo(() => {
@@ -316,76 +411,78 @@
       const hasPermission = useCallback((action) => permissions.includes(action), [permissions]);
 
       // تحميل البيانات (حقيقية أو تجريبية)
+      // ⚠️ قاعدة أساسية: أي مستخدم مسجّل دخول حقيقي لا يرى بيانات تجريبية إطلاقاً،
+      // حتى لو فشل أحد الطلبات — نعرض حالة فارغة/خطأ حقيقية بدل بيانات وهمية مضللة.
       const loadData = useCallback(async () => {
         if (isLoggedIn()) {
-          // وضع المستخدم الحقيقي: تحميل من API
+          // وضع المستخدم الحقيقي: تحميل من API فقط
           setLoading(true);
+          setLoadError(false);
+          const safe = (promise, fallback) => promise.catch(() => fallback);
+
           try {
-            const [vacs, vaccs, logs, cattle, staff, milkTop, milkSummary] = await Promise.all([
-              axiosInstance.get(EP.vaccines + '?Page=1&PageSize=50').then(r => r.data.items || []),
-              axiosInstance.get(EP.vaccinations + '?Page=1&PageSize=50').then(r => r.data.items || []),
-              axiosInstance.get(EP.healthLogs + '?Page=1&PageSize=50').then(r => r.data.items || []),
-              axiosInstance.get(EP.cattle + '?Page=1&PageSize=50').then(r => r.data.items || []),
-              axiosInstance.get(EP.users + '?Page=1&PageSize=50').then(r => r.data.items || []),
-              axiosInstance.get(EP.milkTop + '?Top=5').then(r => r.data || []),
-              axiosInstance.get(EP.milkSummary + '?from=' + new Date(Date.now() - 7*24*60*60*1000).toISOString() + '&to=' + new Date().toISOString()).then(r => r.data || {})
+            const [vacs, vaccs, logs, cattleRes, staff, milkTop] = await Promise.all([
+              safe(axiosInstance.get(EP.vaccines + '?Page=1&PageSize=100').then(r => r.data.items || []), []),
+              safe(axiosInstance.get(EP.vaccinations + '?Page=1&PageSize=100').then(r => r.data.items || []), []),
+              safe(axiosInstance.get(EP.healthLogs + '?Page=1&PageSize=100').then(r => r.data.items || []), []),
+              safe(axiosInstance.get(EP.cattle + '?Page=1&PageSize=100').then(r => r.data), { items: [], totalCount: 0 }),
+              safe(axiosInstance.get(EP.users + '?Page=1&PageSize=100').then(r => r.data.items || []), []),
+              safe(axiosInstance.get(EP.milkTop + '?Top=5').then(r => r.data || []), [])
             ]);
             setVaccines(vacs);
             setVaccinations(vaccs);
             setHealthLogs(logs);
-            setCattleOptions(cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
+            const cattleItems = cattleRes.items || [];
+            setCattleList(cattleItems);
+            setCattleOptions(cattleItems.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
+            setCattleTotal(cattleRes.totalCount ?? cattleItems.length);
             setStaffList(staff);
             setTopProducers(milkTop);
-            // weekly summary
-            const weekly = [];
-            for (let i = 6; i >= 0; i--) {
-              const d = new Date();
-              d.setDate(d.getDate() - i);
-              const from = new Date(d); from.setHours(0,0,0,0);
-              const to = new Date(d); to.setHours(23,59,59,999);
-              try {
-                const s = await axiosInstance.get(EP.milkSummary + `?from=${from.toISOString()}&to=${to.toISOString()}`);
-                weekly.push(s.data.totalLiters || 0);
-              } catch (_) { weekly.push(0); }
-            }
-            setWeeklyMilk(weekly);
-            // daily total
-            const today = new Date();
-            const f = new Date(today); f.setHours(0,0,0,0);
-            const t = new Date(today); t.setHours(23,59,59,999);
-            try {
-              const s = await axiosInstance.get(EP.milkSummary + `?from=${f.toISOString()}&to=${t.toISOString()}`);
-              setDailyMilk((s.data.totalLiters || 0).toLocaleString('en-US'));
-            } catch (_) { setDailyMilk('—'); }
-            // alerts (mock for now, but could be from real endpoint)
-            setAlerts(MOCK.alerts);
+
+            // إنتاج آخر 7 أيام — تُجلب بالتوازي بدل التسلسل
+            const days = Array.from({ length: 7 }, (_, idx) => 6 - idx).map(i => {
+              const d = new Date(); d.setDate(d.getDate() - i);
+              const from = new Date(d); from.setHours(0, 0, 0, 0);
+              const to = new Date(d); to.setHours(23, 59, 59, 999);
+              return { from, to };
+            });
+            const weeklyResults = await Promise.all(
+              days.map(({ from, to }) =>
+                safe(axiosInstance.get(EP.milkSummary + `?from=${from.toISOString()}&to=${to.toISOString()}`).then(r => r.data.totalLiters || 0), 0)
+              )
+            );
+            setWeeklyMilk(weeklyResults);
+            setDailyMilk(weeklyResults.length ? weeklyResults[weeklyResults.length - 1].toLocaleString('en-US') : '0');
+
+            // لا يوجد حالياً Endpoint حقيقي للتنبيهات اللحظية للمستشعرات في الـ API،
+            // لذلك تُترك فارغة لحساب حقيقي بدل عرض تنبيهات وهمية قد تُربك المستخدم.
+            setAlerts([]);
             setIsRealData(true);
           } catch (e) {
-            showToast('تعذر تحميل البيانات: ' + (e.response?.data?.message || e.message), true);
-            // في حالة فشل الـ API، نستخدم البيانات التجريبية مؤقتاً
-            setVaccines(MOCK.vaccines);
-            setVaccinations(MOCK.vaccinations);
-            setHealthLogs(MOCK.healthLogs);
-            setCattleOptions(MOCK.cattle);
-            setStaffList(MOCK.staff);
-            setTopProducers(MOCK.topProducers);
-            setWeeklyMilk(MOCK.weeklyMilk);
-            setDailyMilk('1,840');
-            setAlerts(MOCK.alerts);
-            setIsRealData(false);
+            // فشل عام غير متوقع (شبكة/مصادقة) — لا نعرض بيانات وهمية، فقط حالة خطأ فارغة
+            showToast('تعذر تحميل بعض البيانات: ' + (e.response?.data?.message || e.message), true);
+            setVaccines([]); setVaccinations([]); setHealthLogs([]);
+            setCattleList([]); setCattleOptions([]); setCattleTotal(0);
+            setStaffList([]); setTopProducers([]); setWeeklyMilk([]);
+            setDailyMilk('—'); setAlerts([]);
+            setIsRealData(true);
+            setLoadError(true);
           } finally { setLoading(false); }
         } else {
-          // وضع الضيف: بيانات تجريبية فقط
+          // وضع الضيف: بيانات تجريبية فقط، وواضح أنها كذلك في كل الواجهة
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
-          setCattleOptions(MOCK.cattle);
+          setCattleOptions(MOCK.cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
+          setCattleList(MOCK.cattle);
+          setCattleTotal(MOCK.cattle.length);
           setStaffList([]); // لا تظهر الموظفين للضيف (سيتم التحكم بها عبر الصلاحيات)
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
           setAlerts(MOCK.alerts);
           setIsRealData(false);
+          setLoadError(false);
           setLoading(false);
         }
       }, []);
@@ -407,21 +504,8 @@
         }
       }, []);
 
-      // تسجيل الدخول
-      const handleLogin = async (email, password) => {
-        try {
-          const res = await axiosInstance.post(EP.login, { email, password });
-          const data = res.data;
-          localStorage.setItem('hs_token', data.accessToken);
-          localStorage.setItem('hs_refreshToken', data.refreshToken);
-          localStorage.setItem('hs_role', data.role || 'FarmOwner');
-          localStorage.setItem('hs_name', data.fullName || 'مستخدم');
-          window.location.reload(); // إعادة تحميل الصفحة لجلب البيانات الحقيقية
-        } catch (e) {
-          const msg = e.response?.data?.message || e.message;
-          showToast('فشل تسجيل الدخول: ' + msg, true);
-        }
-      };
+      // ملاحظة: تسجيل الدخول الفعلي يتم عبر AuthModal (في Root) الذي يحفظ التوكن
+      // ثم يعيد تحميل الصفحة — هذا يضمن مصدراً واحداً للحقيقة بدل تكرار المنطق.
 
       // تغيير الدور (في وضع الضيف فقط)
       const handleRoleChange = (e) => {
@@ -439,6 +523,8 @@
         vaccinations, setVaccinations,
         healthLogs, setHealthLogs,
         cattleOptions,
+        cattleList, setCattleList,
+        cattleTotal,
         staffList, setStaffList,
         weeklyMilk,
         topProducers,
@@ -447,11 +533,12 @@
         showVaccineForm, setShowVaccineForm,
         showVaccinationForm, setShowVaccinationForm,
         showHealthForm, setShowHealthForm,
+        showCattleForm, setShowCattleForm,
         loadData,
-        handleLogin,
         handleRoleChange,
         logout,
-        isRealData
+        isRealData,
+        loadError
       };
 
       return (
@@ -461,7 +548,8 @@
             <div className="app-body">
               <Sidebar activeView={activeView} setActiveView={setActiveView} />
               <main className="content">
-                {activeView === 'dashboard' && <Dashboard />}
+                {activeView === 'dashboard' && <Dashboard setActiveView={setActiveView} />}
+                {activeView === 'cattle' && <CattleManagement />}
                 {activeView === 'health' && <HealthManagement />}
                 {activeView === 'staff' && <StaffManagement />}
                 {activeView === 'alerts' && <AlertsPage />}
@@ -483,6 +571,29 @@
       const ctx = useContext(AuthContext);
       if (!ctx) throw new Error('useAuth must be used within AuthProvider');
       return ctx;
+    }
+
+    // ============================================================
+    // 6.1 ACTION BUTTON — يظهر دائماً، لكن يتحول لرصاصي وغير قابل
+    // للنقر مع توضيح السبب لو المستخدم لا يملك الصلاحية، بدل إخفائه
+    // تماماً (شفافية أفضل للمستخدم من إخفاء الأزرار بدون تفسير).
+    // ============================================================
+    function ActionButton({ allowed, reason, onClick, children, className = '', small = true }) {
+      if (allowed) {
+        return (
+          <button type="button" className={`btn ${small ? 'btn-small' : ''} ${className}`} onClick={onClick}>
+            {children}
+          </button>
+        );
+      }
+      return (
+        <span className="tip-wrap">
+          <button type="button" className={`btn ${small ? 'btn-small' : ''} locked`} disabled onClick={(e) => e.preventDefault()}>
+            <span className="lock-ic">🔒</span>{children}
+          </button>
+          <span className="tip-bubble">{reason || 'لا تملك صلاحية هذا الإجراء'}</span>
+        </span>
+      );
     }
 
     // ============================================================
@@ -530,6 +641,7 @@
       const { hasPermission } = useAuth();
       const items = [
         { id: 'dashboard', icon: '📊', label: 'لوحة التحكم' },
+        { id: 'cattle', icon: '🐮', label: 'الماشية' },
         { id: 'health', icon: '💉', label: 'الطبي والتطعيمات' },
         { id: 'alerts', icon: '📡', label: 'التنبيهات' }
       ];
@@ -557,46 +669,82 @@
     // ============================================================
     // 8. DASHBOARD (لوحة التحكم)
     // ============================================================
-    function Dashboard() {
+    const FEATURES = [
+      { icon: '🐮', title: 'إدارة الماشية', desc: 'سجل كامل لكل رأس: السلالة، النسب، الحالة الصحية' },
+      { icon: '💉', title: 'اللقاحات والتطعيمات', desc: 'جدولة وتتبع تلقائي حسب عمر كل بقرة' },
+      { icon: '🩺', title: 'السجلات الصحية', desc: 'تشخيص وخطط علاج موثقة لكل حالة' },
+      { icon: '🥛', title: 'إنتاج الحليب', desc: 'تتبع يومي وأسبوعي وأعلى المنتجات' },
+      { icon: '📡', title: 'تنبيهات لحظية', desc: 'إشعارات فورية عند خلل في المؤشرات الحيوية' },
+      { icon: '👥', title: 'إدارة الموظفين', desc: 'صلاحيات دقيقة لكل دور داخل المزرعة' }
+    ];
+
+    function Dashboard({ setActiveView }) {
       const {
         cattleOptions,
+        cattleTotal,
         topProducers,
         dailyMilk,
         weeklyMilk,
         alerts,
         hasPermission,
-        isRealData
+        isRealData,
+        loading,
+        currentRole
       } = useAuth();
 
-      const totalCattle = cattleOptions.length || 0;
+      const totalCattle = isRealData ? (cattleTotal || 0) : (cattleOptions.length || 0);
       const activeAlerts = alerts.filter(a => a.active).length;
+      const isGuest = currentRole === 'Guest' || !isLoggedIn();
 
-      // محاكاة المستشعرات
+      // محاكاة المستشعرات — تظهر فقط في الوضع التجريبي كعرض توضيحي لما سيحدث
+      // عند ربط أجهزة استشعار حقيقية بالمزرعة (لا تُعرض بيانات مزيفة لحساب حقيقي).
       const [temp, setTemp] = useState(6.5);
       const [move, setMove] = useState(5.2);
 
       useEffect(() => {
+        if (isRealData) return; // بدون محاكاة على البيانات الحقيقية
         const interval = setInterval(() => {
           setTemp(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
           setMove(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
         }, 4000);
         return () => clearInterval(interval);
-      }, []);
+      }, [isRealData]);
 
       const gaugeColor = (v) => v >= 9 ? '#A85234' : v >= 7 ? '#C79A45' : '#3C6B41';
 
       const totalMilkWeek = weeklyMilk.reduce((a, b) => a + b, 0) || 0;
       const avgMilk = weeklyMilk.length ? Math.round(totalMilkWeek / weeklyMilk.length) : 0;
 
+      if (loading) return <div className="loading-box"><span className="spinner"></span>جاري تحميل لوحة التحكم...</div>;
+
       return (
         <div>
           <div className="view-head">
             <div><h1>📊 لوحة التحكم</h1><p>نظرة عامة لحظية على المزرعة</p></div>
-            <span className="live-badge"><span className="live-dot"></span> {isRealData ? 'بيانات حية' : 'بيانات تجريبية'}</span>
+            <span className="live-badge"><span className="live-dot"></span> {isRealData ? 'بيانات حية من مزرعتك' : 'بيانات تجريبية للعرض فقط'}</span>
           </div>
 
+          {isGuest && (
+            <div className="feature-hero">
+              <h2>🌾 هيردسمارت — نظام إدارة المزرعة الذكي</h2>
+              <p>أنت الآن تتصفح نسخة تجريبية ببيانات وهمية. أنشئ حساب مزرعتك لتبدأ بإدخال بيانات ماشيتك الحقيقية وتتابع كل شيء أولاً بأول.</p>
+              <div className="feature-grid">
+                {FEATURES.map((f, i) => (
+                  <div className="feature-chip" key={i}>
+                    <div className="fc-ic">{f.icon}</div>
+                    <div className="fc-title">{f.title}</div>
+                    <div className="fc-desc">{f.desc}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="modal-actions" style={{ marginTop: '18px', maxWidth: '260px' }}>
+                <button className="btn btn-solid" style={{ background: '#fff', color: 'var(--green-deep)' }} onClick={() => window.openAuthModal()}>ابدأ الآن مجاناً</button>
+              </div>
+            </div>
+          )}
+
           <div className="stat-row">
-            <div className="stat-card">
+            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => setActiveView && setActiveView('cattle')}>
               <div className="label">إجمالي الماشية</div>
               <div className="value num">{totalCattle}</div>
               <div className="sub">رأس</div>
@@ -606,7 +754,7 @@
               <div className="value num">{dailyMilk}</div>
               <div className="sub">لتر</div>
             </div>
-            <div className="stat-card">
+            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => setActiveView && setActiveView('alerts')}>
               <div className="label">التنبيهات النشطة</div>
               <div className="value num rust">{activeAlerts}</div>
               <div className="sub">مستشعرات</div>
@@ -616,52 +764,72 @@
           <div className="panel-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
             <div className="card-box">
               <h4>📈 إنتاج الأسبوع</h4>
-              <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--green-deep)', padding: '8px 0' }}>
-                إجمالي: {totalMilkWeek.toLocaleString()} لتر
-              </div>
-              <div style={{ fontSize: '.85rem', color: 'var(--ink-soft)' }}>
-                المعدل اليومي: {avgMilk} لتر
-              </div>
-              <div style={{ marginTop: 12, display: 'flex', gap: '4px', alignItems: 'flex-end', height: '60px' }}>
-                {weeklyMilk.map((v, i) => {
-                  const height = Math.max(4, (v / (Math.max(...weeklyMilk, 100)) * 50));
-                  return (
-                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div style={{
-                        width: '100%',
-                        height: height + 'px',
-                        background: 'var(--green)',
-                        borderRadius: '4px 4px 0 0',
-                        transition: 'height .3s'
-                      }}></div>
-                      <span style={{ fontSize: '.6rem', color: 'var(--ink-soft)', marginTop: 2 }}>يوم</span>
-                    </div>
-                  );
-                })}
-              </div>
+              {totalMilkWeek === 0 && weeklyMilk.every(v => v === 0) ? (
+                <div className="empty-state">
+                  <div className="es-ic">🥛</div>
+                  <div className="es-title">لا يوجد إنتاج حليب مسجّل بعد</div>
+                  <div className="es-sub">ابدأ بتسجيل جلسات الحلب اليومية لتظهر هنا.</div>
+                </div>
+              ) : (
+                <>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--green-deep)', padding: '8px 0' }}>
+                    إجمالي: {totalMilkWeek.toLocaleString()} لتر
+                  </div>
+                  <div style={{ fontSize: '.85rem', color: 'var(--ink-soft)' }}>
+                    المعدل اليومي: {avgMilk} لتر
+                  </div>
+                  <div style={{ marginTop: 12, display: 'flex', gap: '4px', alignItems: 'flex-end', height: '60px' }}>
+                    {weeklyMilk.map((v, i) => {
+                      const height = Math.max(4, (v / (Math.max(...weeklyMilk, 100)) * 50));
+                      return (
+                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <div style={{
+                            width: '100%',
+                            height: height + 'px',
+                            background: 'var(--green)',
+                            borderRadius: '4px 4px 0 0',
+                            transition: 'height .5s cubic-bezier(.4,0,.2,1)'
+                          }}></div>
+                          <span style={{ fontSize: '.6rem', color: 'var(--ink-soft)', marginTop: 2 }}>يوم</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="card-box">
-              <h4>📡 المستشعرات <span className="live-badge"><span className="live-dot"></span></span></h4>
-              <div className="gauge-grid">
-                <div className="gauge">
-                  <div className="g-label">🌡️ الحرارة</div>
-                  <div className="g-value num" style={{ color: gaugeColor(temp) }}>{temp.toFixed(1)}/10</div>
-                  <div className="g-bar"><div className="g-fill" style={{ width: temp * 10 + '%', background: gaugeColor(temp) }}></div></div>
+              <h4>📡 المستشعرات {!isRealData && <span className="live-badge"><span className="live-dot"></span> عرض تجريبي</span>}</h4>
+              {isRealData ? (
+                <div className="empty-state">
+                  <div className="es-ic">📶</div>
+                  <div className="es-title">لا توجد أجهزة استشعار مربوطة بعد</div>
+                  <div className="es-sub">بمجرد ربط أجهزة استشعار المزرعة، ستظهر قراءات الحرارة والحركة هنا لحظياً.</div>
                 </div>
-                <div className="gauge">
-                  <div className="g-label">🏃 الحركة</div>
-                  <div className="g-value num" style={{ color: gaugeColor(move) }}>{move.toFixed(1)}/10</div>
-                  <div className="g-bar"><div className="g-fill" style={{ width: move * 10 + '%', background: gaugeColor(move) }}></div></div>
+              ) : (
+                <div className="gauge-grid">
+                  <div className="gauge">
+                    <div className="g-label">🌡️ الحرارة</div>
+                    <div className="g-value num" style={{ color: gaugeColor(temp) }}>{temp.toFixed(1)}/10</div>
+                    <div className="g-bar"><div className="g-fill" style={{ width: temp * 10 + '%', background: gaugeColor(temp) }}></div></div>
+                  </div>
+                  <div className="gauge">
+                    <div className="g-label">🏃 الحركة</div>
+                    <div className="g-value num" style={{ color: gaugeColor(move) }}>{move.toFixed(1)}/10</div>
+                    <div className="g-bar"><div className="g-fill" style={{ width: move * 10 + '%', background: gaugeColor(move) }}></div></div>
+                  </div>
                 </div>
-              </div>
+              )}
               <div style={{ marginTop: 16 }}>
                 <h4 style={{ fontSize: '.9rem' }}>🏆 أعلى الإنتاج</h4>
-                {topProducers.length === 0 ? <div className="empty-row">لا توجد بيانات</div> :
+                {topProducers.length === 0 ? (
+                  <div className="empty-state"><div className="es-sub">لا توجد بيانات إنتاج كافية بعد</div></div>
+                ) :
                   topProducers.map((p, i) => (
                     <div key={i} className="producer-row">
                       <span>🐄 #{p.tagNumber}</span>
-                      <span className="liters num">{p.totalLiters.toFixed(1)} لتر</span>
+                      <span className="liters num">{Number(p.totalLiters).toFixed(1)} لتر</span>
                     </div>
                   ))
                 }
@@ -671,7 +839,12 @@
 
           <div className="card-box">
             <h4>🔔 آخر التنبيهات</h4>
-            {alerts.length === 0 ? <div className="empty-row">لا توجد تنبيهات</div> :
+            {alerts.length === 0 ? (
+              <div className="empty-state">
+                <div className="es-ic">{isRealData ? '📡' : '🎉'}</div>
+                <div className="es-title">{isRealData ? 'لا توجد تنبيهات — لم يتم ربط مستشعرات بعد' : 'لا توجد تنبيهات نشطة حالياً'}</div>
+              </div>
+            ) :
               alerts.slice(0, 3).map(a => (
                 <div key={a.id} className="alert-item">
                   <span className={`dot ${a.active ? 'red' : 'gray'}`}></span>
@@ -682,6 +855,192 @@
                 </div>
               ))
             }
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // 8.5 CATTLE MANAGEMENT (إدارة الماشية)
+    // ============================================================
+    function CattleManagement() {
+      const {
+        currentRole, hasPermission, loading,
+        cattleList, setCattleList, cattleTotal,
+        showCattleForm, setShowCattleForm,
+        loadData, isRealData
+      } = useAuth();
+
+      const emptyForm = { tagNumber: '', breed: '', gender: 0, birthDate: '', fatherTagNumber: '', motherTagNumber: '' };
+      const [form, setForm] = useState(emptyForm);
+      const [errors, setErrors] = useState({});
+      const [search, setSearch] = useState('');
+      const [statusFilter, setStatusFilter] = useState('all');
+      const [savingStatusId, setSavingStatusId] = useState(null);
+
+      const validate = () => {
+        const err = {};
+        if (!form.tagNumber.trim()) err.tagNumber = 'رقم التاج مطلوب';
+        if (!form.breed.trim()) err.breed = 'السلالة مطلوبة';
+        if (!form.birthDate) err.birthDate = 'تاريخ الميلاد مطلوب';
+        else if (new Date(form.birthDate) > new Date()) err.birthDate = 'تاريخ الميلاد لا يمكن أن يكون في المستقبل';
+        setErrors(err);
+        return Object.keys(err).length === 0;
+      };
+
+      const handleAdd = async (e) => {
+        e.preventDefault();
+        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة ماشية', true); return; }
+        if (!validate()) return;
+        try {
+          const payload = {
+            tagNumber: form.tagNumber.trim(),
+            breed: form.breed.trim(),
+            gender: Number(form.gender),
+            birthDate: new Date(form.birthDate).toISOString(),
+            fatherTagNumber: form.fatherTagNumber.trim() || null,
+            motherTagNumber: form.motherTagNumber.trim() || null
+          };
+          const res = await axiosInstance.post(EP.cattle, payload);
+          setCattleList([res.data, ...cattleList]);
+          setShowCattleForm(false);
+          setForm(emptyForm);
+          showToast('✅ تم تسجيل رأس الماشية بنجاح');
+          loadData();
+        } catch (err) {
+          showToast('فشل الإضافة: ' + (err.response?.data?.message || err.message), true);
+        }
+      };
+
+      const handleStatusChange = async (cattle, newStatus) => {
+        if (!hasPermission('edit')) { showToast('⚠️ ليس لديك صلاحية لتعديل حالة الماشية', true); return; }
+        setSavingStatusId(cattle.id);
+        try {
+          await axiosInstance.put(EP.cattleStatus(cattle.id), { id: cattle.id, newStatus: Number(newStatus) });
+          setCattleList(cattleList.map(c => c.id === cattle.id ? { ...c, status: Number(newStatus) } : c));
+          showToast('✅ تم تحديث حالة الماشية');
+        } catch (err) {
+          showToast('فشل تحديث الحالة: ' + (err.response?.data?.message || err.message), true);
+        } finally { setSavingStatusId(null); }
+      };
+
+      const filtered = cattleList.filter(c => {
+        const matchesSearch = !search || c.tagNumber?.toLowerCase().includes(search.toLowerCase()) || c.breed?.toLowerCase().includes(search.toLowerCase());
+        const matchesStatus = statusFilter === 'all' || String(c.status) === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      const ageLabel = (birthDate) => {
+        if (!birthDate) return '—';
+        const months = Math.max(0, Math.floor((Date.now() - new Date(birthDate)) / (1000 * 60 * 60 * 24 * 30.44)));
+        if (months < 12) return `${months} شهر`;
+        return `${Math.floor(months / 12)} سنة و ${months % 12} شهر`;
+      };
+
+      if (loading) return <div className="loading-box"><span className="spinner"></span>جاري تحميل بيانات الماشية...</div>;
+
+      return (
+        <div>
+          <div className="view-head">
+            <div><h1>🐮 إدارة الماشية</h1><p>سجل كامل لقطيع المزرعة — {cattleTotal} رأس {isRealData ? '' : '(بيانات تجريبية)'}</p></div>
+            <ActionButton
+              allowed={hasPermission('create')}
+              reason="إضافة ماشية جديدة متاحة لمالك المزرعة والمدير والطبيب البيطري فقط"
+              className="btn-solid"
+              onClick={() => setShowCattleForm(true)}
+            >
+              + تسجيل رأس ماشية
+            </ActionButton>
+          </div>
+
+          {showCattleForm && hasPermission('create') && (
+            <div className="card-box">
+              <h4>تسجيل رأس ماشية جديد</h4>
+              <form onSubmit={handleAdd}>
+                <div className="form-grid-3">
+                  <div className="field">
+                    <label>رقم التاج *</label>
+                    <input type="text" value={form.tagNumber} onChange={e => setForm({ ...form, tagNumber: e.target.value })} placeholder="مثال: A501" />
+                    {errors.tagNumber && <span className="field-error">{errors.tagNumber}</span>}
+                  </div>
+                  <div className="field">
+                    <label>السلالة *</label>
+                    <input type="text" value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} placeholder="مثال: هولشتاين" />
+                    {errors.breed && <span className="field-error">{errors.breed}</span>}
+                  </div>
+                  <div className="field">
+                    <label>الجنس *</label>
+                    <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}>
+                      <option value={0}>ذكر</option>
+                      <option value={1}>أنثى</option>
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label>تاريخ الميلاد *</label>
+                    <input type="date" value={form.birthDate} onChange={e => setForm({ ...form, birthDate: e.target.value })} />
+                    {errors.birthDate && <span className="field-error">{errors.birthDate}</span>}
+                  </div>
+                  <div className="field">
+                    <label>رقم تاج الأب (اختياري)</label>
+                    <input type="text" value={form.fatherTagNumber} onChange={e => setForm({ ...form, fatherTagNumber: e.target.value })} />
+                  </div>
+                  <div className="field">
+                    <label>رقم تاج الأم (اختياري)</label>
+                    <input type="text" value={form.motherTagNumber} onChange={e => setForm({ ...form, motherTagNumber: e.target.value })} />
+                  </div>
+                </div>
+                <div className="modal-actions">
+                  <button type="submit" className="btn btn-solid">حفظ</button>
+                  <button type="button" className="btn btn-outline" onClick={() => { setShowCattleForm(false); setForm(emptyForm); setErrors({}); }}>إلغاء</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="card-box">
+            <h4>
+              القطيع
+              <span style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <input
+                  type="text" placeholder="بحث برقم التاج أو السلالة..." value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--line)', fontSize: '.8rem', minWidth: '180px' }}
+                />
+                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--line)', fontSize: '.8rem' }}>
+                  <option value="all">كل الحالات</option>
+                  {Object.entries(CATTLE_STATUS_MAP).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </span>
+            </h4>
+            <table>
+              <thead><tr><th>رقم التاج</th><th>السلالة</th><th>الجنس</th><th>العمر</th><th>الأب/الأم</th><th>الحالة</th></tr></thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr><td colSpan="6"><div className="empty-state"><div className="es-ic">🐄</div><div className="es-title">لا توجد نتائج</div><div className="es-sub">جرّب تعديل البحث أو الفلتر، أو سجّل أول رأس ماشية.</div></div></td></tr>
+                ) : filtered.map(c => (
+                  <tr key={c.id}>
+                    <td><strong>{c.tagNumber}</strong></td>
+                    <td>{c.breed}</td>
+                    <td><span className="gender-ic">{GENDER_MAP[c.gender]?.icon}</span> {GENDER_MAP[c.gender]?.label || '—'}</td>
+                    <td>{ageLabel(c.birthDate)}</td>
+                    <td style={{ fontSize: '.78rem', color: 'var(--ink-soft)' }}>{c.fatherTagNumber || '—'} / {c.motherTagNumber || '—'}</td>
+                    <td>
+                      {hasPermission('edit') ? (
+                        <select
+                          value={c.status} disabled={savingStatusId === c.id}
+                          onChange={e => handleStatusChange(c, e.target.value)}
+                          style={{ padding: '3px 8px', borderRadius: '999px', border: 'none', fontSize: '.7rem', fontWeight: 700, background: '#F1E3BE', color: 'var(--gold)' }}
+                        >
+                          {Object.entries(CATTLE_STATUS_MAP).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                        </select>
+                      ) : (
+                        <span className={`badge ${CATTLE_STATUS_MAP[c.status]?.cls || 'ok'}`}>{CATTLE_STATUS_MAP[c.status]?.label || '—'}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       );
@@ -744,9 +1103,11 @@
         return Object.keys(err).length === 0;
       };
 
+      const canCreateVaccine = currentRole === VACCINE_CREATOR_ROLE;
+
       const handleAddVaccine = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة لقاح', true); return; }
+        if (!canCreateVaccine) { showToast('⚠️ إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط', true); return; }
         if (!validateVaccine()) return;
         try {
           const payload = {
@@ -821,21 +1182,7 @@
         }
       };
 
-      // دالة لعرض الزر فقط إذا كان المستخدم يملك الصلاحية
-      const PermissionButton = ({ action, children, onClick, className = '' }) => {
-        if (!hasPermission(action)) return null; // إخفاء الزر تماماً
-        return (
-          <button
-            type="button"
-            className={`btn ${className}`}
-            onClick={onClick}
-          >
-            {children}
-          </button>
-        );
-      };
-
-      if (loading) return <div className="card-box">جاري التحميل...</div>;
+      if (loading) return <div className="loading-box"><span className="spinner"></span>جاري تحميل البيانات...</div>;
 
       return (
         <div>
@@ -847,11 +1194,16 @@
           <div className="card-box">
             <h4>
               أنواع اللقاحات
-              <PermissionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccineForm(true)}>
+              <ActionButton
+                allowed={canCreateVaccine}
+                reason="إضافة أنواع اللقاحات مسؤولية الطبيب البيطري فقط (حتى مالك المزرعة لا يملك هذا الإجراء)"
+                className="btn-solid"
+                onClick={() => setShowVaccineForm(true)}
+              >
                 + إضافة لقاح
-              </PermissionButton>
+              </ActionButton>
             </h4>
-            {showVaccineForm && hasPermission('create') && (
+            {showVaccineForm && canCreateVaccine && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>إضافة نوع لقاح جديد</h4>
                 <form onSubmit={handleAddVaccine}>
@@ -917,9 +1269,14 @@
           <div className="card-box">
             <h4>
               التطعيمات
-              <PermissionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccinationForm(true)}>
+              <ActionButton
+                allowed={hasPermission('create')}
+                reason="جدولة التطعيمات متاحة لمالك المزرعة والمدير والطبيب البيطري فقط"
+                className="btn-solid"
+                onClick={() => setShowVaccinationForm(true)}
+              >
                 + جدولة تطعيم
-              </PermissionButton>
+              </ActionButton>
             </h4>
             {showVaccinationForm && hasPermission('create') && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
@@ -993,9 +1350,14 @@
           <div className="card-box">
             <h4>
               السجلات الصحية
-              <PermissionButton action="create" className="btn-solid btn-small" onClick={() => setShowHealthForm(true)}>
+              <ActionButton
+                allowed={hasPermission('create')}
+                reason="إضافة سجل صحي متاحة لمالك المزرعة والمدير والطبيب البيطري فقط"
+                className="btn-solid"
+                onClick={() => setShowHealthForm(true)}
+              >
                 + إضافة سجل صحي
-              </PermissionButton>
+              </ActionButton>
             </h4>
             {showHealthForm && hasPermission('create') && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
@@ -1117,21 +1479,18 @@
         }
       };
 
-      // زر إضافة الموظفين يظهر فقط للمالك
-      const AddButton = () => {
-        if (!hasPermission('manageStaff')) return null;
-        return (
-          <button className="btn btn-solid btn-small" onClick={() => setShowForm(true)}>
-            + إضافة موظف
-          </button>
-        );
-      };
-
       return (
         <div>
           <div className="view-head">
             <div><h1>👥 إدارة الموظفين</h1><p>إضافة وإدارة أطباء بيطريين وعمال</p></div>
-            <AddButton />
+            <ActionButton
+              allowed={hasPermission('manageStaff')}
+              reason="إدارة الموظفين متاحة لمالك المزرعة والمدير فقط"
+              className="btn-solid"
+              onClick={() => setShowForm(true)}
+            >
+              + إضافة موظف
+            </ActionButton>
           </div>
 
           {showForm && hasPermission('manageStaff') && (
@@ -1209,7 +1568,7 @@
     // 11. ALERTS PAGE
     // ============================================================
     function AlertsPage() {
-      const { alerts, setAlerts, hasPermission } = useAuth();
+      const { alerts, setAlerts, hasPermission, isRealData } = useAuth();
 
       const resolveAlert = (id) => {
         if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true); return; }
@@ -1218,11 +1577,16 @@
       };
 
       const ResolveButton = ({ alert }) => {
-        if (!hasPermission('administer') || !alert.active) return null;
+        if (!alert.active) return null;
         return (
-          <button className="btn btn-outline btn-small" onClick={() => resolveAlert(alert.id)}>
+          <ActionButton
+            allowed={hasPermission('administer')}
+            reason="إصلاح التنبيهات متاح لمالك المزرعة والمدير والطبيب البيطري فقط"
+            className="btn-outline"
+            onClick={() => resolveAlert(alert.id)}
+          >
             إصلاح التنبيه
-          </button>
+          </ActionButton>
         );
       };
 
@@ -1233,7 +1597,11 @@
           </div>
           <div className="card-box">
             {alerts.length === 0 ? (
-              <div className="empty-row">🎉 لا توجد تنبيهات</div>
+              <div className="empty-state">
+                <div className="es-ic">{isRealData ? '📡' : '🎉'}</div>
+                <div className="es-title">{isRealData ? 'لا يوجد بث حي من المستشعرات بعد' : 'لا توجد تنبيهات نشطة'}</div>
+                <div className="es-sub">{isRealData ? 'وصّل أجهزة استشعار المزرعة لتصلك التنبيهات هنا أولاً بأول.' : 'هذا مثال توضيحي — سجّل حسابك لتتابع تنبيهات مزرعتك الحقيقية.'}</div>
+              </div>
             ) : (
               alerts.map(a => (
                 <div key={a.id} className="alert-item">
@@ -1256,6 +1624,37 @@
     // ============================================================
     // 12. AUTH MODAL
     // ============================================================
+    // شروط قوة كلمة المرور — تُعرض كقائمة بالعربي وتتحول للأخضر فور تحققها
+    const PASSWORD_RULES = [
+      { key: 'len', label: '8 أحرف على الأقل', test: (p) => p.length >= 8 },
+      { key: 'upper', label: 'حرف إنجليزي كبير واحد على الأقل (A-Z)', test: (p) => /[A-Z]/.test(p) },
+      { key: 'lower', label: 'حرف إنجليزي صغير واحد على الأقل (a-z)', test: (p) => /[a-z]/.test(p) },
+      { key: 'num', label: 'رقم واحد على الأقل (0-9)', test: (p) => /[0-9]/.test(p) },
+      { key: 'special', label: 'رمز خاص واحد على الأقل (!@#$...)', test: (p) => /[^A-Za-z0-9]/.test(p) }
+    ];
+    function passwordScore(p) { return PASSWORD_RULES.filter(r => r.test(p)).length; }
+
+    function PasswordChecklist({ password }) {
+      const score = passwordScore(password);
+      const pct = (score / PASSWORD_RULES.length) * 100;
+      const barColor = score <= 1 ? 'var(--rust)' : score <= 3 ? 'var(--gold)' : 'var(--green)';
+      return (
+        <div>
+          <div className="pw-strength-bar"><div className="pw-strength-fill" style={{ width: pct + '%', background: barColor }}></div></div>
+          <ul className="pw-checklist">
+            {PASSWORD_RULES.map(r => {
+              const ok = r.test(password);
+              return (
+                <li key={r.key} className={ok ? 'ok' : ''}>
+                  <span className="pw-ic">{ok ? '✓' : '•'}</span>{r.label}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      );
+    }
+
     function AuthModal({ onLogin }) {
       const [tab, setTab] = useState('login');
       const [email, setEmail] = useState('');
@@ -1263,10 +1662,22 @@
       const [farmName, setFarmName] = useState('');
       const [ownerName, setOwnerName] = useState('');
       const [error, setError] = useState('');
+      const [submitting, setSubmitting] = useState(false);
+      const [touchedPassword, setTouchedPassword] = useState(false);
+
+      const switchTab = (t) => { setTab(t); setError(''); };
+
+      const isPasswordValid = tab === 'login' ? password.length > 0 : passwordScore(password) === PASSWORD_RULES.length;
 
       const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        if (tab === 'register' && !isPasswordValid) {
+          setTouchedPassword(true);
+          setError('كلمة المرور لا تحقق كل الشروط المطلوبة بالأسفل');
+          return;
+        }
+        setSubmitting(true);
         try {
           if (tab === 'login') {
             await onLogin(email, password);
@@ -1274,13 +1685,13 @@
           } else {
             const res = await axiosInstance.post(EP.register, { farmName, ownerName, email, password });
             if (res.data.accessToken) {
-              await onLogin(email, password);
-              document.getElementById('authModal').classList.add('hidden');
+              persistSession(res.data);
+              window.location.reload();
             }
           }
         } catch (err) {
           setError(err.response?.data?.message || err.message);
-        }
+        } finally { setSubmitting(false); }
       };
 
       return (
@@ -1288,8 +1699,8 @@
           <div className="modal">
             <button className="modal-close" onClick={() => document.getElementById('authModal').classList.add('hidden')}>✕</button>
             <div className="auth-tabs">
-              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>تسجيل الدخول</button>
-              <button className={`auth-tab ${tab === 'register' ? 'active' : ''}`} onClick={() => setTab('register')}>حساب جديد</button>
+              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => switchTab('login')}>تسجيل الدخول</button>
+              <button className={`auth-tab ${tab === 'register' ? 'active' : ''}`} onClick={() => switchTab('register')}>حساب جديد</button>
             </div>
             <form onSubmit={handleSubmit}>
               {tab === 'register' && (
@@ -1299,9 +1710,21 @@
                 </>
               )}
               <div className="field"><label>البريد الإلكتروني</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} required /></div>
-              <div className="field"><label>كلمة المرور</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} required /></div>
+              <div className="field">
+                <label>كلمة المرور</label>
+                <input
+                  type="password" value={password} required
+                  onFocus={() => setTouchedPassword(true)}
+                  onChange={e => setPassword(e.target.value)}
+                />
+                {tab === 'register' && (touchedPassword || password.length > 0) && <PasswordChecklist password={password} />}
+              </div>
               {error && <div className="field-error">{error}</div>}
-              <div className="modal-actions"><button type="submit" className="btn btn-solid"> {tab === 'login' ? 'دخول' : 'إنشاء'}</button></div>
+              <div className="modal-actions">
+                <button type="submit" className="btn btn-solid" disabled={submitting || (tab === 'register' && !isPasswordValid)}>
+                  {submitting ? '...جاري المعالجة' : (tab === 'login' ? 'دخول' : 'إنشاء الحساب')}
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -1316,14 +1739,9 @@
 
     const Root = () => {
       const handleLogin = async (email, password) => {
-        try {
-          const res = await axiosInstance.post(EP.login, { email, password });
-          localStorage.setItem('hs_token', res.data.accessToken);
-          localStorage.setItem('hs_refreshToken', res.data.refreshToken);
-          localStorage.setItem('hs_role', res.data.role || 'FarmOwner');
-          localStorage.setItem('hs_name', res.data.fullName || 'مستخدم');
-          window.location.reload();
-        } catch (e) { throw e; }
+        const res = await axiosInstance.post(EP.login, { email, password });
+        persistSession(res.data);
+        window.location.reload();
       };
 
       return (
