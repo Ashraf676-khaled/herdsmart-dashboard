@@ -172,12 +172,6 @@
     .empty-state .es-title { font-weight: 700; color: var(--green-deep); font-size: .85rem; margin-bottom: 2px; }
     .empty-state .es-sub { font-size: .7rem; }
 
-    /* ===== COW WALK ANIMATION ===== */
-    .cow-walk { position: fixed; bottom: 12px; left: -50px; font-size: 2.2rem; z-index: 45; animation: cowWalk 20s linear infinite; pointer-events: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,.12)); }
-    @keyframes cowWalk { 0% { left: -50px; transform: scaleX(1); } 45% { left: calc(100% + 20px); transform: scaleX(1); } 50% { left: calc(100% + 20px); transform: scaleX(-1); } 95% { left: -50px; transform: scaleX(-1); } 100% { left: -50px; transform: scaleX(1); } }
-    .milk-drop { display: inline-block; animation: milkDrop 1.2s ease-in-out infinite; }
-    @keyframes milkDrop { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(3px) scale(1.08); } }
-
     /* ===== MEDIA QUERIES ===== */
     @media(max-width: 1024px) { .panel-grid { grid-template-columns: 1fr; } }
     @media(max-width: 900px) { .form-grid-3 { grid-template-columns: 1fr 1fr; } }
@@ -213,7 +207,6 @@
       .feature-chip .fc-ic { font-size: .9rem; }
       .feature-chip .fc-title { font-size: .65rem; }
       .feature-chip .fc-desc { font-size: .55rem; }
-      .cow-walk { font-size: 1.6rem; bottom: 8px; }
       .role-switch { font-size: .65rem; padding: 2px 8px; }
       .role-switch select { font-size: .7rem; }
       .btn { padding: 5px 10px; font-size: .7rem; }
@@ -235,7 +228,6 @@
       .gauge-grid { grid-template-columns: 1fr; }
       .content { padding: 8px; }
       .card-box { padding: 10px; }
-      .cow-walk { font-size: 1.2rem; bottom: 4px; left: -30px; }
       .hamburger { font-size: 1.2rem; }
       .guest-banner { font-size: .6rem; padding: 3px 8px; }
       .guest-banner button { font-size: .55rem; padding: 2px 8px; }
@@ -263,7 +255,6 @@
       .top-right .role-switch select { font-size: .6rem; }
       .stat-card .value { font-size: 1rem; }
       .gauge .g-value { font-size: 1rem; }
-      .cow-walk { display: none; }
       .modal { padding: 10px; }
     }
   </style>
@@ -271,7 +262,6 @@
 <body>
   <div id="root"></div>
   <div id="toast-wrap"></div>
-  <div class="cow-walk">🐄</div>
 
   <script type="text/babel">
     const { useState, useEffect, useMemo, useCallback, createContext, useContext } = React;
@@ -297,6 +287,7 @@
       milkSummary: '/milk/summary'
     };
 
+    // تعريف الصلاحيات – مطابقة لـ [Authorize(Roles = "...")] في الكنترولرز
     const ROLES_DEF = {
       Owner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'view', 'manageStaff', 'administer', 'schedule_vaccination'],
       Vet: ['create_cattle', 'edit_cattle', 'view', 'create_vaccine', 'schedule_vaccination', 'administer', 'create_health', 'edit_health'],
@@ -320,11 +311,11 @@
       return roleNames[role] || role;
     }
 
-    const CATTLE_DELETE_ROLE = 'Owner';
+    // أدوار محددة للأذونات الدقيقة
+    const STAFF_MANAGER_ROLE = 'Owner';
     const VACCINE_CREATOR_ROLE = 'Vet';
     const VACCINATION_ADMINISTER_ROLE = 'Vet';
     const HEALTH_LOG_EDITOR_ROLE = 'Vet';
-    const STAFF_MANAGER_ROLE = 'Owner';
 
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
     const CATTLE_STATUS_MAP = {
@@ -336,7 +327,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA
+    // 2. MOCK DATA (للضيف فقط)
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -433,7 +424,7 @@
     );
 
     // ============================================================
-    // 4. HELPERS — مع ترجمة جميع رسائل الأخطاء للعربية
+    // 4. HELPERS
     // ============================================================
     function showToast(msg, isError = false) {
       const wrap = document.getElementById('toast-wrap');
@@ -464,8 +455,9 @@
       return messages;
     }
 
+    // ترجمة الأخطاء إلى العربية
     const ERROR_TRANSLATIONS = [
-      { test: /invalid\s*(email|username)?\s*(or|\/)\s*password|incorrect\s*(email|password)|wrong\s*(email|password)/i, ar: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' },
+      { test: /invalid\s*(email|username)?\s*(or|\/)\s*password|incorrect\s*(email|password)/i, ar: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' },
       { test: /user\s*not\s*found|account\s*not\s*found/i, ar: 'لا يوجد حساب مسجّل بهذا البريد الإلكتروني' },
       { test: /already\s*(exists|registered|taken|in\s*use)/i, ar: 'هذا البريد الإلكتروني مستخدم بالفعل' },
       { test: /unauthorized/i, ar: 'بيانات الدخول غير صحيحة أو انتهت صلاحية الجلسة' },
@@ -533,7 +525,7 @@
       localStorage.setItem('hs_name', data.fullName || 'مستخدم');
     }
 
-    // ===== فك تشفير JWT مع دعم جميع أشكال Claims بشكل قوي =====
+    // ===== فك تشفير JWT بشكل قوي ومتسامح =====
     function decodeToken(token) {
       try {
         const decoded = jwtDecode(token);
@@ -558,7 +550,7 @@
             }
           }
         }
-        // محاولة إضافية: إذا وجد role مباشرة
+        // إذا لم نجد، نجرب حقولاً أخرى
         if (!roles.length && decoded.role !== undefined && decoded.role !== null) {
           roles = Array.isArray(decoded.role) ? decoded.role : [decoded.role];
         }
@@ -569,12 +561,9 @@
         roles = roles.map(r => {
           if (typeof r === 'number') return ROLE_INT_MAP[r] || r;
           if (typeof r === 'string') {
-            // إذا كانت القيمة رقماً كنص، نحولها
             const num = Number(r);
             if (!isNaN(num) && num in ROLE_INT_MAP) return ROLE_INT_MAP[num];
-            // إذا كانت القيمة نصية تطابق أحد الأدوار المعروفة
             if (r in roleNames) return r;
-            // محاولة تطابق غير حساس للحالة
             const lower = r.toLowerCase();
             for (const [key, val] of Object.entries(ROLE_INT_MAP)) {
               if (val.toLowerCase() === lower) return val;
@@ -583,7 +572,6 @@
           }
           return r;
         });
-        // فلترة القيم الفارغة
         roles = roles.filter(r => r && r !== 'null' && r !== 'undefined');
         // استخراج الاسم
         const name = decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
@@ -611,6 +599,7 @@
       const [userName, setUserName] = useState('');
       const [sidebarOpen, setSidebarOpen] = useState(false);
 
+      // --- Data state ---
       const [vaccines, setVaccines] = useState([]);
       const [vaccinations, setVaccinations] = useState([]);
       const [healthLogs, setHealthLogs] = useState([]);
@@ -628,6 +617,7 @@
       const [showHealthForm, setShowHealthForm] = useState(false);
       const [showCattleForm, setShowCattleForm] = useState(false);
 
+      // --- Normalize role ---
       const normalizedRole = useMemo(() => {
         if (typeof currentRole === 'number') return ROLE_INT_MAP[currentRole] || 'Guest';
         return currentRole || 'Guest';
@@ -638,9 +628,9 @@
       }, [normalizedRole]);
 
       const hasPermission = useCallback((action) => permissions.includes(action), [permissions]);
-
       const isOwner = normalizedRole === STAFF_MANAGER_ROLE;
 
+      // --- Load data ---
       const loadData = useCallback(async () => {
         if (isLoggedIn()) {
           setLoading(true);
@@ -688,13 +678,14 @@
             setIsRealData(true);
           } finally { setLoading(false); }
         } else {
+          // Guest mode: mock data
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
           setCattleOptions(MOCK.cattle.map(c => ({ id: c.id, tagNumber: c.tagNumber })));
           setCattleList(MOCK.cattle);
           setCattleTotal(MOCK.cattle.length);
-          setStaffList(MOCK.staff);
+          setStaffList(MOCK.staff); // Staff will appear in mock only if user chooses Owner role in guest mode
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
@@ -704,7 +695,7 @@
         }
       }, []);
 
-      // ===== تهيئة المستخدم من التوكن =====
+      // --- Initialize user from token ---
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
@@ -723,8 +714,7 @@
         }
       }, []);
 
-      // ===== التأكد من أن الدور القادم من التوكن يُستخدم =====
-      // عند تغيير التوكن أو تسجيل الدخول، نعيد قراءة التوكن
+      // --- Re-read token if it changes (e.g., after login) ---
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
@@ -748,19 +738,50 @@
       const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
       const closeSidebar = () => setSidebarOpen(false);
 
+      // Redirect if staff view but not owner
       useEffect(() => {
         if (activeView === 'staff' && !isOwner) setActiveView('dashboard');
       }, [isOwner, activeView]);
 
       const contextValue = {
-        user, userName, currentRole: normalizedRole, isOwner, hasPermission, loading,
-        vaccines, setVaccines, vaccinations, setVaccinations, healthLogs, setHealthLogs,
-        cattleOptions, cattleList, setCattleList, cattleTotal,
-        staffList, setStaffList, weeklyMilk, topProducers, dailyMilk, alerts, setAlerts,
-        showVaccineForm, setShowVaccineForm, showVaccinationForm, setShowVaccinationForm,
-        showHealthForm, setShowHealthForm, showCattleForm, setShowCattleForm,
-        loadData, handleRoleChange, logout, isRealData,
-        sidebarOpen, toggleSidebar, closeSidebar
+        user,
+        userName,
+        currentRole: normalizedRole,
+        isOwner,
+        hasPermission,
+        loading,
+        vaccines,
+        setVaccines,
+        vaccinations,
+        setVaccinations,
+        healthLogs,
+        setHealthLogs,
+        cattleOptions,
+        cattleList,
+        setCattleList,
+        cattleTotal,
+        staffList,
+        setStaffList,
+        weeklyMilk,
+        topProducers,
+        dailyMilk,
+        alerts,
+        setAlerts,
+        showVaccineForm,
+        setShowVaccineForm,
+        showVaccinationForm,
+        setShowVaccinationForm,
+        showHealthForm,
+        setShowHealthForm,
+        showCattleForm,
+        setShowCattleForm,
+        loadData,
+        handleRoleChange,
+        logout,
+        isRealData,
+        sidebarOpen,
+        toggleSidebar,
+        closeSidebar
       };
 
       return (
@@ -795,6 +816,9 @@
       return ctx;
     }
 
+    // ============================================================
+    // 6.1 ACTION BUTTON
+    // ============================================================
     function ActionButton({ allowed, reason, onClick, children, className = '', small = true }) {
       if (allowed) {
         return (
@@ -814,7 +838,7 @@
     }
 
     // ============================================================
-    // 7. TOPBAR
+    // 7. TOPBAR & SIDEBAR
     // ============================================================
     function Topbar() {
       const { user, userName, currentRole, handleRoleChange, toggleSidebar, sidebarOpen } = useAuth();
@@ -855,7 +879,7 @@
               </button>
             </div>
           </header>
-          {sidebarOpen && <div className="sidebar-overlay open" onClick={closeSidebar}></div>}
+          {sidebarOpen && <div className="sidebar-overlay open" onClick={() => { const ctx = useAuth(); ctx.closeSidebar(); }}></div>}
         </>
       );
     }
