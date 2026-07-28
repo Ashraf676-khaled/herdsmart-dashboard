@@ -45,18 +45,129 @@
             <div class="sidebar-foot">آخر تحديث: <span id="syncTime" class="num">—</span></div>
         </aside>
         <main class="content">
-            <!-- Dashboard -->
-            <section class="view active" id="view-dashboard">...</section>
-            <!-- Cattle -->
-            <section class="view" id="view-cattle">...</section>
-            <!-- Milk -->
-            <section class="view" id="view-milk">...</section>
-            <!-- Health -->
-            <section class="view" id="view-health">...</section>
-            <!-- Alerts -->
-            <section class="view" id="view-alerts">...</section>
-            <!-- Staff -->
-            <section class="view" id="view-staff">...</section>
+            <!-- ===== DASHBOARD ===== -->
+            <section class="view active" id="view-dashboard">
+                <div class="view-head"><div><h1>لوحة التحليلات</h1><p>نظرة عامة لحظية</p></div><div class="head-actions"><span class="live-badge"><span class="live-dot"></span> مباشر</span><button class="btn-ghost-icon" onclick="window.refreshAll()">⟳</button></div></div>
+                <div class="stat-row">
+                    <div class="stat-card"><div class="label">إجمالي الماشية</div><div class="value num" id="statCattle">—</div><div class="sub">رأس</div></div>
+                    <div class="stat-card"><div class="label">إنتاج اليوم</div><div class="value num" id="statMilk">—</div><div class="sub">لتر</div></div>
+                    <div class="stat-card"><div class="label">تنبيهات نشطة</div><div class="value num rust" id="statCritical">0</div><div class="sub">مستشعرات</div></div>
+                </div>
+                <div class="panel-grid">
+                    <div class="card-box"><h4>📈 إنتاج الأسبوع</h4><div id="milkSummaryText" style="font-size:1.1rem;font-weight:700;color:var(--green-deep);padding:8px 0;">—</div><div style="font-size:.75rem;color:var(--ink-soft);">إجمالي اللبن خلال آخر 7 أيام</div></div>
+                    <div class="card-box"><h4>📡 المستشعرات <span class="live-badge"><span class="live-dot"></span></span> <button class="btn btn-outline btn-small" onclick="window.refreshTelemetry()" style="font-size:.65rem;">تحديث</button></h4>
+                        <div class="gauge-grid">
+                            <div class="gauge"><div class="g-label">🌡️ الحرارة</div><div class="g-value num" id="gaugeTempVal">—</div><div class="g-bar"><div class="g-fill" id="gaugeTempBar"></div></div></div>
+                            <div class="gauge"><div class="g-label">🏃 الحركة</div><div class="g-value num" id="gaugeMoveVal">—</div><div class="g-bar"><div class="g-fill" id="gaugeMoveBar"></div></div></div>
+                        </div>
+                        <div style="margin-top:12px;"><h4 style="font-size:.85rem;">🏆 أعلى الإنتاج</h4><div id="topProducers"><div class="empty-row">لا توجد بيانات</div></div></div>
+                    </div>
+                </div>
+                <div class="card-box" id="featuresCard"><h4>✨ مميزات هيردسمارت</h4><div class="feature-grid"><div class="feature-item"><span>🐄</span> تتبع القطيع لحظياً</div><div class="feature-item"><span>🥛</span> إنتاج الحليب اليومي</div><div class="feature-item"><span>💉</span> جدول التطعيمات</div><div class="feature-item"><span>📡</span> تنبيهات المستشعرات</div></div><p style="font-size:.8rem;color:var(--ink-soft);margin-top:8px;">سجّل الدخول لإدارة مزرعتك بذكاء</p></div>
+                <div class="card-box"><h4>🔔 آخر التنبيهات <button class="btn btn-outline btn-small" onclick="window.switchView('alerts')">عرض الكل</button></h4><div id="dashRecentAlerts"><div class="empty-row">لا توجد تنبيهات</div></div></div>
+            </section>
+
+            <!-- ===== CATTLE ===== -->
+            <section class="view" id="view-cattle">
+                <div class="view-head"><div><h1>🐄 إدارة القطيع</h1><p>سجل كامل للماشية</p></div><button class="btn btn-solid" data-roles="owner,vet" onclick="window.openCattleForm()">+ إضافة</button></div>
+                <div class="card-box" id="cattleFormBox" style="display:none;"><h4>إضافة رأس ماشية</h4>
+                    <form id="cattleForm" onsubmit="return window.handleAddCattle(event)">
+                        <div class="form-grid-2">
+                            <div class="field"><label>الرقم (Tag)</label><input id="cattleTag" type="text" required placeholder="A420"></div>
+                            <div class="field"><label>السلالة</label><input id="cattleBreed" type="text" required placeholder="هولشتاين"></div>
+                            <div class="field"><label>الجنس</label><select id="cattleGender"><option value="1">أنثى</option><option value="0">ذكر</option></select></div>
+                            <div class="field"><label>تاريخ الميلاد</label><input id="cattleBirth" type="date" required></div>
+                        </div>
+                        <div id="cattleErrors" class="field-errors"></div>
+                        <div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('cattleFormBox').style.display='none'">إلغاء</button></div>
+                    </form>
+                </div>
+                <div class="card-box" style="overflow-x:auto;"><table><thead><tr><th>الرقم</th><th>السلالة</th><th>الجنس</th><th>الميلاد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="cattleTableBody"><tr class="empty-row"><td colspan="6">سجّل الدخول</td></tr></tbody></table></div>
+            </section>
+
+            <!-- ===== MILK ===== -->
+            <section class="view" id="view-milk">
+                <div class="view-head"><div><h1>🥛 إنتاج الحليب</h1><p>سجل الورديات</p></div><button class="btn btn-solid" data-roles="owner,vet,worker" onclick="window.openMilkForm()">+ تسجيل</button></div>
+                <div class="card-box" id="milkFormBox" style="display:none;"><h4>تسجيل وردية</h4>
+                    <form id="milkForm" onsubmit="return window.handleAddMilk(event)">
+                        <div class="form-grid-3">
+                            <div class="field"><label>البقرة</label><select id="milkCow" required></select></div>
+                            <div class="field"><label>الوردية</label><select id="milkShift"><option value="0">صباحية</option><option value="1">مسائية</option></select></div>
+                            <div class="field"><label>الكمية (لتر)</label><input id="milkQty" type="number" step="0.1" required placeholder="13.5"></div>
+                        </div>
+                        <div id="milkErrors" class="field-errors"></div>
+                        <div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('milkFormBox').style.display='none'">إلغاء</button></div>
+                    </form>
+                </div>
+                <div class="card-box" style="overflow-x:auto;"><table><thead><tr><th>التاريخ</th><th>الوردية</th><th>البقرة</th><th>الكمية</th></tr></thead><tbody id="milkTableBody"><tr class="empty-row"><td colspan="4">سجّل الدخول</td></tr></tbody></table></div>
+            </section>
+
+            <!-- ===== HEALTH ===== -->
+            <section class="view" id="view-health">
+                <div class="view-head"><div><h1>💉 الجدول الطبي</h1><p>تطعيمات وسجلات صحية</p></div><div class="head-actions"><button class="btn btn-outline" data-roles="owner,vet" onclick="window.openVaccineTypeForm()">+ لقاح</button><button class="btn btn-outline" data-roles="owner,vet" onclick="window.openVaccinationForm()">+ تطعيم</button><button class="btn btn-solid" data-roles="owner,vet" onclick="window.openHealthForm()">+ سجل صحي</button></div></div>
+                <div class="card-box" id="vtFormBox" style="display:none;"><h4>نوع لقاح جديد</h4>
+                    <form id="vtForm" onsubmit="return window.handleAddVaccineType(event)">
+                        <div class="form-grid-2">
+                            <div class="field"><label>الاسم</label><input id="vtName" type="text" required placeholder="البروسيلا"></div>
+                            <div class="field"><label>العمر (شهر)</label><input id="vtAge" type="number" required placeholder="6"></div>
+                            <div class="field"><label>الجرعة</label><input id="vtDosage" type="number" step="0.1" required placeholder="2"></div>
+                            <div class="field"><label>الفاصل (يوم)</label><input id="vtInterval" type="number"></div>
+                        </div>
+                        <div id="vtErrors" class="field-errors"></div>
+                        <div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('vtFormBox').style.display='none'">إلغاء</button></div>
+                    </form>
+                </div>
+                <div class="card-box" id="vaccFormBox" style="display:none;"><h4>جدولة تطعيم</h4>
+                    <form id="vaccForm" onsubmit="return window.handleAddVacc(event)">
+                        <div class="form-grid-3">
+                            <div class="field"><label>البقرة</label><select id="vaccCow" required></select></div>
+                            <div class="field"><label>نوع اللقاح</label><select id="vaccType" required></select></div>
+                            <div class="field"><label>الموعد</label><input id="vaccDate" type="date" required></div>
+                        </div>
+                        <div id="vaccErrors" class="field-errors"></div>
+                        <div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('vaccFormBox').style.display='none'">إلغاء</button></div>
+                    </form>
+                </div>
+                <div class="card-box" id="healthFormBox" style="display:none;"><h4>سجل صحي جديد</h4>
+                    <form id="healthForm" onsubmit="return window.handleAddHealth(event)">
+                        <div class="form-grid-2">
+                            <div class="field"><label>البقرة</label><select id="healthCow" required></select></div>
+                            <div class="field"><label>التشخيص</label><input id="healthDiag" type="text" required placeholder="التهاب الضرع"></div>
+                            <div class="field"><label>خطة العلاج</label><input id="healthTreat" type="text" required placeholder="مضاد حيوي"></div>
+                            <div class="field"><label>ملاحظات</label><input id="healthNotes" type="text"></div>
+                            <div class="field" style="display:flex;align-items:center;gap:8px;"><label style="margin:0;"><input type="checkbox" id="healthContagious" style="width:auto;display:inline-block;margin-left:6px;"> معدية</label></div>
+                        </div>
+                        <div id="healthErrors" class="field-errors"></div>
+                        <div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('healthFormBox').style.display='none'">إلغاء</button></div>
+                    </form>
+                </div>
+                <div class="card-box" style="overflow-x:auto;"><h4>التطعيمات</h4><table><thead><tr><th>البقرة</th><th>اللقاح</th><th>الموعد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="vaccTableBody"><tr class="empty-row"><td colspan="5">سجّل الدخول</td></tr></tbody></table></div>
+                <div class="card-box" style="overflow-x:auto;"><h4>السجلات الصحية</h4><table><thead><tr><th>البقرة</th><th>التشخيص</th><th>العلاج</th><th>معدية؟</th></tr></thead><tbody id="healthTableBody"><tr class="empty-row"><td colspan="4">سجّل الدخول</td></tr></tbody></table></div>
+            </section>
+
+            <!-- ===== ALERTS ===== -->
+            <section class="view" id="view-alerts">
+                <div class="view-head"><div><h1>📡 التنبيهات اللحظية</h1><p>مستشعرات الحرارة والحركة</p></div><span class="live-badge"><span class="live-dot"></span> تحديث تلقائي</span></div>
+                <div class="card-box" id="alertsList"><div class="empty-row">سجّل الدخول</div></div>
+            </section>
+
+            <!-- ===== STAFF ===== -->
+            <section class="view" id="view-staff">
+                <div class="view-head"><div><h1>👥 إدارة الموظفين</h1><p>أطباء وعمال</p></div><button class="btn btn-solid" data-roles="owner" onclick="window.openStaffForm()">+ إضافة</button></div>
+                <div class="card-box" id="staffFormBox" style="display:none;"><h4>موظف جديد</h4>
+                    <form id="staffForm" onsubmit="return window.handleAddStaff(event)">
+                        <div class="form-grid-2">
+                            <div class="field"><label>الاسم</label><input id="staffName" type="text" required></div>
+                            <div class="field"><label>البريد</label><input id="staffEmail" type="email" required></div>
+                            <div class="field"><label>كلمة المرور</label><input id="staffPassword" type="password" required></div>
+                            <div class="field"><label>الدور</label><select id="staffRole"><option value="vet">بيطري</option><option value="worker">عامل</option></select></div>
+                        </div>
+                        <div id="staffErrors" class="field-errors"></div>
+                        <div class="modal-actions mt-12"><button type="submit" class="btn btn-solid">حفظ</button><button type="button" class="btn btn-outline" onclick="document.getElementById('staffFormBox').style.display='none'">إلغاء</button></div>
+                    </form>
+                </div>
+                <div class="card-box" style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th></tr></thead><tbody id="staffTableBody"><tr class="empty-row"><td colspan="3">لا يوجد موظفون</td></tr></tbody></table></div>
+            </section>
         </main>
     </div>
 
@@ -68,7 +179,6 @@
                 <button class="auth-tab active" id="tabLogin" onclick="window.setAuthTab('login')">تسجيل الدخول</button>
                 <button class="auth-tab" id="tabRegister" onclick="window.setAuthTab('register')">حساب جديد</button>
             </div>
-            <!-- Login Form -->
             <form id="loginForm" onsubmit="return window.handleLogin(event)">
                 <h3>تسجيل الدخول</h3>
                 <p class="sub">ادخل إلى مزرعتك</p>
@@ -77,7 +187,6 @@
                 <div id="loginErrors" class="field-errors"></div>
                 <div class="modal-actions"><button type="submit" class="btn btn-solid">دخول</button></div>
             </form>
-            <!-- Register Form -->
             <form id="registerForm" style="display:none;" onsubmit="return window.handleRegister(event)">
                 <h3>إنشاء حساب مزرعة</h3>
                 <p class="sub">ينشئ مالك المزرعة تلقائياً</p>
@@ -250,6 +359,7 @@
             ];
             rules.forEach(rule => {
                 const el = document.getElementById(rule.id);
+                if (!el) return;
                 const valid = rule.test(password);
                 el.className = valid ? 'valid' : 'invalid';
                 el.querySelector('.icon').textContent = valid ? '✅' : '❌';
@@ -894,12 +1004,16 @@
         window.setAuthTab = setAuthTab;
         window.validatePassword = validatePassword;
         window.switchView = switchView;
+        window.showToast = showToast;
 
         // التنقل بين التبويبات
         document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', function() { switchView(this.dataset.view); });
         });
-        document.getElementById('cattleBirth').valueAsDate = new Date();
+
+        // تعيين تاريخ الميلاد الافتراضي
+        const cattleBirthInput = document.getElementById('cattleBirth');
+        if (cattleBirthInput) cattleBirthInput.valueAsDate = new Date();
 
         // حالة البداية
         if (isLoggedIn()) {
