@@ -247,6 +247,14 @@
     // إضافة "نوع لقاح" جديد هي مهمة طبية بحتة (تحديد الجرعة والفاصل الزمني حسب البروتوكول الطبي)
     // لذلك تقتصر على الدور الطبي فقط، ولا يملكها حتى مالك المزرعة.
     const VACCINE_CREATOR_ROLE = 'Vet';
+    // تسجيل "تم الإعطاء" للتطعيم [POST /vaccinations/{id}/administer] مقصور على البيطري فقط
+    // في الـ API (Authorize Roles="Vet")، حتى لو مالك المزرعة عنده صلاحية "create/edit" عمومًا.
+    const VACCINATION_ADMINISTER_ROLE = 'Vet';
+    // إنشاء/تعديل السجلات الصحية [POST|PUT /health-logs] مقصور على البيطري فقط في الـ API
+    // (Authorize Roles="Vet") — مالك المزرعة يقدر يشوف السجلات بس مش يضيف/يعدّل.
+    const HEALTH_LOG_EDITOR_ROLE = 'Vet';
+    // حذف رأس ماشية إجراء حساس، بيفضل مقصور على مالك المزرعة فقط.
+    const CATTLE_DELETE_ROLE = 'Owner';
 
     // خرائط عرض لتعدادات الماشية (Gender / CattleStatus أرقام في الـ API)
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
@@ -401,7 +409,12 @@
       const [user, setUser] = useState(null);
       const [activeView, setActiveView] = useState('dashboard');
       const [loading, setLoading] = useState(false);
-      const [currentRole, setCurrentRole] = useState('Guest');
+      // ⚠️ قائمة "تجربة كـ" في التوب بار مفيهاش خيار Guest أصلاً (Owner/Vet/Worker فقط)،
+      // فلو الحالة الابتدائية كانت 'Guest' هيظهر الـ select بصريًا على أول خيار (مالك المزرعة)
+      // بينما currentRole الحقيقي لسه 'Guest' → صلاحيات ناقصة (زي عدم ظهور "الموظفين") لحد
+      // ما المستخدم يغيّر الاختيار يدويًا فعليًا. علشان كده الحالة الابتدائية للضيف = 'Owner'
+      // من أول تحميل، مطابقة لما هو ظاهر فعليًا في الـ select.
+      const [currentRole, setCurrentRole] = useState('Owner');
       const [isRealData, setIsRealData] = useState(false); // علم لتمييز البيانات الحقيقية
 
       // --- بيانات الجداول ---
@@ -520,7 +533,7 @@
           setUser({ name, roles });
           loadData(); // تحميل البيانات الحقيقية فوراً
         } else {
-          setCurrentRole('Guest');
+          setCurrentRole('Owner'); // مطابق لأول خيار في select "تجربة كـ"
           setUser({ name: 'ضيف', roles: ['Guest'] });
           loadData(); // تحميل البيانات التجريبية
         }
@@ -899,6 +912,7 @@
       const [search, setSearch] = useState('');
       const [statusFilter, setStatusFilter] = useState('all');
       const [savingStatusId, setSavingStatusId] = useState(null);
+      const [deletingId, setDeletingId] = useState(null);
 
       const validate = () => {
         const err = {};
@@ -944,6 +958,20 @@
         } catch (err) {
           showToast('فشل تحديث الحالة: ' + errMsg(err), true);
         } finally { setSavingStatusId(null); }
+      };
+
+      const handleDelete = async (cattle) => {
+        if (currentRole !== CATTLE_DELETE_ROLE) { showToast('⚠️ حذف الماشية مسؤولية مالك المزرعة فقط', true); return; }
+        if (!window.confirm(`هل أنت متأكد من حذف رأس الماشية رقم ${cattle.tagNumber}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
+        setDeletingId(cattle.id);
+        try {
+          await axiosInstance.delete(EP.cattleOne(cattle.id));
+          setCattleList(cattleList.filter(c => c.id !== cattle.id));
+          showToast('✅ تم حذف رأس الماشية');
+          loadData();
+        } catch (err) {
+          showToast('فشل الحذف: ' + errMsg(err), true);
+        } finally { setDeletingId(null); }
       };
 
       const filtered = cattleList.filter(c => {
@@ -1036,10 +1064,10 @@
             </h4>
             <div className="table-scroll">
             <table>
-              <thead><tr><th>رقم التاج</th><th>السلالة</th><th>الجنس</th><th>العمر</th><th>الأب/الأم</th><th>الحالة</th></tr></thead>
+              <thead><tr><th>رقم التاج</th><th>السلالة</th><th>الجنس</th><th>العمر</th><th>الأب/الأم</th><th>الحالة</th><th>إجراء</th></tr></thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan="6"><div className="empty-state"><div className="es-ic">🐄</div><div className="es-title">لا توجد نتائج</div><div className="es-sub">جرّب تعديل البحث أو الفلتر، أو سجّل أول رأس ماشية.</div></div></td></tr>
+                  <tr><td colSpan="7"><div className="empty-state"><div className="es-ic">🐄</div><div className="es-title">لا توجد نتائج</div><div className="es-sub">جرّب تعديل البحث أو الفلتر، أو سجّل أول رأس ماشية.</div></div></td></tr>
                 ) : filtered.map(c => (
                   <tr key={c.id}>
                     <td><strong>{c.tagNumber}</strong></td>
@@ -1059,6 +1087,16 @@
                       ) : (
                         <span className={`badge ${CATTLE_STATUS_MAP[c.status]?.cls || 'ok'}`}>{CATTLE_STATUS_MAP[c.status]?.label || '—'}</span>
                       )}
+                    </td>
+                    <td>
+                      <ActionButton
+                        allowed={currentRole === CATTLE_DELETE_ROLE}
+                        reason="حذف الماشية مسؤولية مالك المزرعة فقط"
+                        className="btn-outline"
+                        onClick={() => handleDelete(c)}
+                      >
+                        {deletingId === c.id ? '...' : '🗑️ حذف'}
+                      </ActionButton>
                     </td>
                   </tr>
                 ))}
@@ -1094,6 +1132,7 @@
       const [vaccinationErrors, setVaccinationErrors] = useState({});
       const [healthForm, setHealthForm] = useState({ cattleId: '', diagnosis: '', treatmentPlan: '', vetNotes: '', isContagious: false });
       const [healthErrors, setHealthErrors] = useState({});
+      const [submittingHealth, setSubmittingHealth] = useState(false);
 
       const vaccineOptions = vaccines.map(v => ({ id: v.id, name: v.name }));
 
@@ -1173,7 +1212,7 @@
       };
 
       const handleAdminister = async (id) => {
-        if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لتسجيل الإعطاء', true); return; }
+        if (currentRole !== VACCINATION_ADMINISTER_ROLE) { showToast('⚠️ تسجيل إعطاء اللقاح مسؤولية الطبيب البيطري فقط', true); return; }
         try {
           await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
           showToast('✅ تم تسجيل الإعطاء');
@@ -1183,10 +1222,14 @@
         }
       };
 
+      const canEditHealthLog = currentRole === HEALTH_LOG_EDITOR_ROLE;
+
       const handleAddHealth = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة سجل صحي', true); return; }
+        if (submittingHealth) return; // منع إرسال مزدوج (دبل كليك) يسبب رسالتي خطأ مكررة
+        if (!canEditHealthLog) { showToast('⚠️ إضافة السجلات الصحية مسؤولية الطبيب البيطري فقط', true); return; }
         if (!validateHealth()) return;
+        setSubmittingHealth(true);
         try {
           const payload = {
             cattleId: healthForm.cattleId,
@@ -1203,6 +1246,8 @@
           loadData();
         } catch (err) {
           showToast('فشل الإضافة: ' + errMsg(err), true);
+        } finally {
+          setSubmittingHealth(false);
         }
       };
 
@@ -1362,7 +1407,7 @@
                       <td>
                         {!v.administeredDate && (
                           <ActionButton
-                            allowed={hasPermission('administer')}
+                            allowed={currentRole === VACCINATION_ADMINISTER_ROLE}
                             reason="تسجيل إعطاء اللقاح متاح للطبيب البيطري فقط"
                             className="btn-outline"
                             onClick={() => handleAdminister(v.id)}
@@ -1384,15 +1429,15 @@
             <h4>
               السجلات الصحية
               <ActionButton
-                allowed={hasPermission('create')}
-                reason="إضافة سجل صحي متاحة لمالك المزرعة والطبيب البيطري فقط"
+                allowed={canEditHealthLog}
+                reason="إضافة السجلات الصحية مسؤولية الطبيب البيطري فقط (حتى مالك المزرعة لا يملك هذا الإجراء)"
                 className="btn-solid"
                 onClick={() => setShowHealthForm(true)}
               >
                 + إضافة سجل صحي
               </ActionButton>
             </h4>
-            {showHealthForm && hasPermission('create') && (
+            {showHealthForm && canEditHealthLog && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>إضافة سجل صحي جديد</h4>
                 <form onSubmit={handleAddHealth}>
@@ -1446,8 +1491,8 @@
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <button type="submit" className="btn btn-solid">حفظ</button>
-                    <button type="button" className="btn btn-outline" onClick={() => setShowHealthForm(false)}>إلغاء</button>
+                    <button type="submit" className="btn btn-solid" disabled={submittingHealth}>{submittingHealth ? '...جاري الحفظ' : 'حفظ'}</button>
+                    <button type="button" className="btn btn-outline" onClick={() => setShowHealthForm(false)} disabled={submittingHealth}>إلغاء</button>
                   </div>
                 </form>
               </div>
