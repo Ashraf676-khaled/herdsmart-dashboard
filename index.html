@@ -406,7 +406,6 @@ function App() {
     }
   }, []);
 
-  // Re-read token on change
   useEffect(() => {
     if (isLoggedIn()) {
       const token = getToken();
