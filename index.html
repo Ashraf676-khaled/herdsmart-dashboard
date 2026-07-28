@@ -230,7 +230,7 @@
       milkSummary: '/milk/summary'
     };
 
-    // تعريف الصلاحيات لكل دور – مع إضافة صلاحية منفصلة للتطعيم (schedule_vaccination) للبيطري فقط
+    // تعريف الصلاحيات لكل دور
     const ROLES_DEF = {
       Owner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'view', 'manageStaff', 'administer'],
       Vet: ['create_cattle', 'edit_cattle', 'view', 'create_vaccine', 'schedule_vaccination', 'administer', 'create_health', 'edit_health'],
@@ -244,13 +244,23 @@
       Guest: 'ضيف'
     };
 
-    // الأدوار المسموح لها بحذف الماشية (فقط المالك)
+    // خريطة الأدوار الرقمية إلى أسماء (حسب الـ API)
+    const ROLE_INT_MAP = { 0: 'Owner', 1: 'Vet', 2: 'Worker' };
+    const ROLE_STRING_TO_INT = { Owner: 0, Vet: 1, Worker: 2 };
+
+    // دالة لعرض اسم الدور بغض النظر عن نوع القيمة (رقم أو نص)
+    function getRoleDisplay(role) {
+      if (typeof role === 'number') {
+        const key = ROLE_INT_MAP[role];
+        return roleNames[key] || role;
+      }
+      return roleNames[role] || role;
+    }
+
+    // الأدوار المسموح بها لإجراءات محددة
     const CATTLE_DELETE_ROLE = 'Owner';
-    // إضافة لقاحات (للبيطري فقط)
     const VACCINE_CREATOR_ROLE = 'Vet';
-    // إعطاء التطعيم (للبيطري فقط)
     const VACCINATION_ADMINISTER_ROLE = 'Vet';
-    // تعديل السجلات الصحية (للبيطري فقط)
     const HEALTH_LOG_EDITOR_ROLE = 'Vet';
 
     const GENDER_MAP = { 0: { label: 'ذكر', icon: '♂️' }, 1: { label: 'أنثى', icon: '♀️' } };
@@ -263,7 +273,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA (فقط للضيف) — تم تعديل c3: ذكر → حالة نشطة بدلاً من حامل
+    // 2. MOCK DATA (فقط للضيف) — مع بيانات موظفين تجريبية (string roles)
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -283,7 +293,6 @@
       cattle: [
         { id: 'c1', tagNumber: 'A102', breed: 'هولشتاين', gender: 0, birthDate: '2023-02-11T00:00:00', status: 0, fatherTagNumber: null, motherTagNumber: 'A050' },
         { id: 'c2', tagNumber: 'A245', breed: 'بلدي', gender: 0, birthDate: '2022-08-03T00:00:00', status: 0, fatherTagNumber: 'A010', motherTagNumber: null },
-        // c3: ذكر (gender:0) — كان status:2 (حامل) ← غيرناه إلى نشط (0) لأنه لا يمكن أن يكون ذكراً حاملاً
         { id: 'c3', tagNumber: 'A310', breed: 'جيرسي', gender: 0, birthDate: '2023-11-20T00:00:00', status: 0, fatherTagNumber: null, motherTagNumber: null },
         { id: 'c4', tagNumber: 'A088', breed: 'هولشتاين', gender: 1, birthDate: '2021-05-14T00:00:00', status: 1, fatherTagNumber: null, motherTagNumber: null }
       ],
@@ -372,9 +381,27 @@
       setTimeout(() => el.remove(), 4000);
     }
 
+    // دالة لاستخراج رسائل التحقق التفصيلية من استجابة الخطأ
+    function extractValidationErrors(error) {
+      const data = error.response?.data;
+      if (!data) return [];
+      let messages = [];
+      if (data.errors && typeof data.errors === 'object') {
+        Object.values(data.errors).forEach(arr => {
+          if (Array.isArray(arr)) messages.push(...arr);
+        });
+      } else if (data.message) {
+        messages.push(data.message);
+      } else if (data.title) {
+        messages.push(data.title);
+      }
+      return messages;
+    }
+
     function errMsg(err, fallback = 'حدث خطأ غير متوقع، حاول مرة أخرى') {
-      const apiMsg = err?.response?.data?.message || err?.response?.data?.title;
-      return apiMsg || fallback;
+      const msgs = extractValidationErrors(err);
+      if (msgs.length) return msgs.join(' | ');
+      return fallback;
     }
 
     function getToken() { return localStorage.getItem('hs_token'); }
@@ -933,7 +960,6 @@
       };
 
       const handleDelete = async (cattle) => {
-        // منع الحذف في وضع الضيف (بيانات تجريبية)
         if (!isRealData) { showToast('⚠️ لا يمكن حذف بيانات تجريبية', true); return; }
         if (currentRole !== CATTLE_DELETE_ROLE) { showToast('⚠️ حذف الماشية مسؤولية مالك المزرعة فقط', true); return; }
         if (!window.confirm(`هل أنت متأكد من حذف رأس الماشية رقم ${cattle.tagNumber}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
@@ -1083,7 +1109,7 @@
     }
 
     // ============================================================
-    // 9. HEALTH MANAGEMENT (الجدول الطبي) — جدولة التطعيم للبيطري فقط
+    // 9. HEALTH MANAGEMENT
     // ============================================================
     function HealthManagement() {
       const {
@@ -1312,7 +1338,7 @@
             </div>
           </div>
 
-          {/* التطعيمات — جدولة متاحة للبيطري فقط (حتى مالك المزرعة لا يملكها) */}
+          {/* التطعيمات — جدولة متاحة للبيطري فقط */}
           <div className="card-box">
             <h4>
               التطعيمات
@@ -1496,7 +1522,7 @@
     }
 
     // ============================================================
-    // 10. STAFF MANAGEMENT (للمالك فقط)
+    // 10. STAFF MANAGEMENT – مع تصحيح إرسال الأدوار كأرقام
     // ============================================================
     function StaffManagement() {
       const { staffList, setStaffList, hasPermission, loadData, isRealData } = useAuth();
@@ -1519,20 +1545,28 @@
         if (!isRealData) { showToast('⚠️ لا يمكن تعديل بيانات تجريبية', true); return; }
         if (!validate()) return;
         try {
+          // تحويل اسم الدور إلى الرقم الصحيح المطلوب من الـ API
+          const roleInt = ROLE_STRING_TO_INT[formData.role];
           const payload = {
             fullName: formData.fullName,
             email: formData.email,
             password: formData.password,
-            role: formData.role
+            role: roleInt
           };
           const res = await axiosInstance.post(EP.users, payload);
+          // نضيف المستخدم الجديد مع الدور الرقمي، لكننا نعرضه عبر getRoleDisplay
           setStaffList([...staffList, res.data]);
           setShowForm(false);
           setFormData({ fullName: '', email: '', password: '', role: 'Vet' });
           showToast('✅ تم إضافة الموظف');
           loadData();
         } catch (err) {
-          showToast('فشل الإضافة: ' + errMsg(err), true);
+          const errors = extractValidationErrors(err);
+          if (errors.length) {
+            showToast('⚠️ ' + errors.join(' | '), true);
+          } else {
+            showToast('فشل الإضافة: ' + errMsg(err), true);
+          }
         }
       };
 
@@ -1606,15 +1640,17 @@
             <table>
               <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th></tr></thead>
               <tbody>
-                {staffList.length === 0 ? <tr><td colSpan="3" className="empty-row">لا يوجد موظفون</td></tr> :
+                {staffList.length === 0 ? (
+                  <tr><td colSpan="3" className="empty-row">لا يوجد موظفون</td></tr>
+                ) : (
                   staffList.map(s => (
                     <tr key={s.id}>
                       <td>{s.fullName}</td>
                       <td>{s.email}</td>
-                      <td>{roleNames[s.role] || s.role}</td>
+                      <td>{getRoleDisplay(s.role)}</td>
                     </tr>
                   ))
-                }
+                )}
               </tbody>
             </table>
             </div>
@@ -1743,7 +1779,8 @@
             }
           }
         } catch (err) {
-          setError(errMsg(err));
+          const msgs = extractValidationErrors(err);
+          setError(msgs.length ? msgs.join(' | ') : errMsg(err));
         } finally { setSubmitting(false); }
       };
 
