@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>هيردسمارت | النظام المتكامل</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -41,9 +41,7 @@
     .num {
       font-family: 'JetBrains Mono', monospace;
     }
-    button,
-    input,
-    select {
+    button, input, select {
       font-family: inherit;
       cursor: pointer;
     }
@@ -322,8 +320,7 @@
       color: var(--ink-soft);
       margin-bottom: 4px;
     }
-    .field input,
-    .field select {
+    .field input, .field select {
       width: 100%;
       padding: 8px 12px;
       border: 1px solid var(--line);
@@ -332,14 +329,12 @@
       font-size: .9rem;
       color: var(--ink);
     }
-    .field input:disabled,
-    .field select:disabled {
+    .field input:disabled, .field select:disabled {
       background: #f0f0f0;
       opacity: 0.6;
       cursor: not-allowed;
     }
-    .field input:focus,
-    .field select:focus {
+    .field input:focus, .field select:focus {
       outline: none;
       border-color: var(--green);
     }
@@ -370,19 +365,10 @@
       text-align: center;
     }
     @media(max-width: 768px) {
-      .sidebar {
-        width: 60px;
-      }
-      .nav-item span.label {
-        display: none;
-      }
-      .form-grid-2,
-      .form-grid-3 {
-        grid-template-columns: 1fr;
-      }
-      .content {
-        padding: 16px 12px;
-      }
+      .sidebar { width: 60px; }
+      .nav-item span.label { display: none; }
+      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+      .content { padding: 16px 12px; }
     }
     #toast-wrap {
       position: fixed;
@@ -409,9 +395,7 @@
       pointer-events: auto;
       text-align: center;
     }
-    .toast.error {
-      background: var(--rust);
-    }
+    .toast.error { background: var(--rust); }
     @keyframes toastin {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -442,9 +426,7 @@
       background: #fff;
       color: var(--gold);
     }
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
     .role-switch {
       display: flex;
       align-items: center;
@@ -475,9 +457,7 @@
       backdrop-filter: blur(2px);
       padding: 16px;
     }
-    .modal-overlay.hidden {
-      display: none;
-    }
+    .modal-overlay.hidden { display: none; }
     .modal {
       background: var(--card);
       border-radius: 16px;
@@ -527,7 +507,7 @@
       background: var(--green-deep);
       color: #fff;
     }
-    /* ===== Dashboard specific ===== */
+    /* Dashboard specific */
     .stat-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -597,9 +577,7 @@
       padding: 7px 0;
       border-bottom: 1px solid var(--line);
     }
-    .producer-row:last-child {
-      border-bottom: none;
-    }
+    .producer-row:last-child { border-bottom: none; }
     .producer-row .liters {
       font-weight: 600;
       color: var(--rust);
@@ -611,9 +589,7 @@
       border-bottom: 1px solid var(--line);
       align-items: flex-start;
     }
-    .alert-item:last-child {
-      border-bottom: none;
-    }
+    .alert-item:last-child { border-bottom: none; }
     .dot {
       width: 10px;
       height: 10px;
@@ -630,17 +606,13 @@
       70% { box-shadow: 0 0 0 10px rgba(168, 82, 52, 0); }
       100% { box-shadow: 0 0 0 0 rgba(168, 82, 52, 0); }
     }
-    .dot.gray {
-      background: #C9BE9C;
-    }
+    .dot.gray { background: #C9BE9C; }
     .alert-item .meta {
       font-size: .75rem;
       color: var(--ink-soft);
       margin-top: 2px;
     }
-    .alert-item .body {
-      flex: 1;
-    }
+    .alert-item .body { flex: 1; }
     .live-badge {
       display: inline-flex;
       align-items: center;
@@ -701,7 +673,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA (للوضع التجريبي)
+    // 2. MOCK DATA (بيانات تجريبية غنية)
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -743,10 +715,7 @@
     // ============================================================
     // 3. AXIOS INSTANCE
     // ============================================================
-    const axiosInstance = axios.create({
-      baseURL: API_BASE,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const axiosInstance = axios.create({ baseURL: API_BASE, headers: { 'Content-Type': 'application/json' } });
     axiosInstance.interceptors.request.use(config => {
       const token = localStorage.getItem('hs_token');
       if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -775,11 +744,7 @@
           originalRequest._retry = true;
           isRefreshing = true;
           const refreshToken = localStorage.getItem('hs_refreshToken');
-          if (!refreshToken) {
-            isRefreshing = false;
-            window.logout();
-            return Promise.reject(error);
-          }
+          if (!refreshToken) { isRefreshing = false; window.logout(); return Promise.reject(error); }
           try {
             const res = await axios.post(API_BASE + EP.refresh, {
               refreshToken,
@@ -817,9 +782,7 @@
 
     function getToken() { return localStorage.getItem('hs_token'); }
     function isLoggedIn() { return !!getToken(); }
-    function clearSession() {
-      ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k));
-    }
+    function clearSession() { ['hs_token', 'hs_refreshToken', 'hs_role', 'hs_name'].forEach(k => localStorage.removeItem(k)); }
     function logout() { clearSession(); window.location.reload(); }
 
     function decodeToken(token) {
@@ -908,7 +871,7 @@
             setAlerts(MOCK.alerts);
           } catch (e) {
             showToast('تعذر تحميل البيانات: ' + (e.response?.data?.message || e.message), true);
-            // fallback to mock
+            // الرجوع للبيانات التجريبية في حال فشل الـ API
             setVaccines(MOCK.vaccines);
             setVaccinations(MOCK.vaccinations);
             setHealthLogs(MOCK.healthLogs);
@@ -920,12 +883,12 @@
             setAlerts(MOCK.alerts);
           } finally { setLoading(false); }
         } else {
-          // وضع الضيف: بيانات تجريبية
+          // وضع الضيف: بيانات تجريبية كاملة
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
           setCattleOptions(MOCK.cattle);
-          setStaffList([]); // لا تظهر الموظفين للضيف
+          setStaffList(MOCK.staff); // تظهر للمالك فقط، ولكن في وضع الضيف يمكن رؤيتها عند اختيار دور المالك
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
@@ -971,7 +934,6 @@
       const handleRoleChange = (e) => {
         const newRole = e.target.value;
         setCurrentRole(newRole);
-        // تحديث البيانات حسب الدور (لكن البيانات نفسها تبقى، فقط الصلاحيات تتغير)
         showToast(`تم التبديل إلى دور: ${roleNames[newRole]}`);
       };
 
@@ -1099,7 +1061,7 @@
     }
 
     // ============================================================
-    // 8. DASHBOARD (لوحة التحكم)
+    // 8. DASHBOARD (لوحة التحكم) - عرض البيانات التجريبية الصحيحة
     // ============================================================
     function Dashboard() {
       const {
@@ -1112,24 +1074,18 @@
       } = useAuth();
 
       const totalCattle = cattleOptions.length || 0;
+      const activeAlerts = alerts.filter(a => a.active).length;
 
       // محاكاة المستشعرات
-      const [temp, setTemp] = useState(6.2);
-      const [move, setMove] = useState(4.8);
+      const [temp, setTemp] = useState(6.5);
+      const [move, setMove] = useState(5.2);
 
       useEffect(() => {
-        if (!isLoggedIn()) {
-          // تحديث عشوائي للمستشعرات في وضع الضيف
-          const interval = setInterval(() => {
-            setTemp(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
-            setMove(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
-          }, 4000);
-          return () => clearInterval(interval);
-        } else {
-          // في الوضع الحقيقي، يمكن جلبها من API، نتركها ثابتة حالياً
-          setTemp(6.5);
-          setMove(5.2);
-        }
+        const interval = setInterval(() => {
+          setTemp(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
+          setMove(Math.max(1, Math.min(10, Math.round((5 + (Math.random() - 0.5) * 6) * 10) / 10)));
+        }, 4000);
+        return () => clearInterval(interval);
       }, []);
 
       const gaugeColor = (v) => v >= 9 ? '#A85234' : v >= 7 ? '#C79A45' : '#3C6B41';
@@ -1157,7 +1113,7 @@
             </div>
             <div className="stat-card">
               <div className="label">التنبيهات النشطة</div>
-              <div className="value num rust">{alerts.filter(a => a.active).length}</div>
+              <div className="value num rust">{activeAlerts}</div>
               <div className="sub">مستشعرات</div>
             </div>
           </div>
@@ -1237,7 +1193,7 @@
     }
 
     // ============================================================
-    // 9. HEALTH MANAGEMENT (كما هو مطلوب)
+    // 9. HEALTH MANAGEMENT
     // ============================================================
     function HealthManagement() {
       const {
@@ -1254,7 +1210,6 @@
         loadData
       } = useAuth();
 
-      // حالة النماذج المحلية
       const [vaccineForm, setVaccineForm] = useState({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
       const [vaccineErrors, setVaccineErrors] = useState({});
       const [vaccinationForm, setVaccinationForm] = useState({ cattleId: '', vaccineId: '', scheduledDate: '' });
@@ -1264,7 +1219,6 @@
 
       const vaccineOptions = vaccines.map(v => ({ id: v.id, name: v.name }));
 
-      // التحقق من الصحة
       const validateVaccine = () => {
         const err = {};
         if (!vaccineForm.name.trim()) err.name = 'اسم اللقاح مطلوب';
@@ -1295,13 +1249,9 @@
         return Object.keys(err).length === 0;
       };
 
-      // دوال الإرسال
       const handleAddVaccine = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) {
-          showToast('⚠️ ليس لديك صلاحية لإضافة لقاح', true);
-          return;
-        }
+        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة لقاح', true); return; }
         if (!validateVaccine()) return;
         try {
           const payload = {
@@ -1315,18 +1265,15 @@
           setShowVaccineForm(false);
           setVaccineForm({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
           showToast('✅ تم إضافة اللقاح');
+          loadData();
         } catch (err) {
-          const msg = err.response?.data?.message || err.message;
-          showToast('فشل الإضافة: ' + msg, true);
+          showToast('فشل الإضافة: ' + (err.response?.data?.message || err.message), true);
         }
       };
 
       const handleAddVaccination = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) {
-          showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true);
-          return;
-        }
+        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة تطعيم', true); return; }
         if (!validateVaccination()) return;
         try {
           const payload = {
@@ -1339,33 +1286,26 @@
           setShowVaccinationForm(false);
           setVaccinationForm({ cattleId: '', vaccineId: '', scheduledDate: '' });
           showToast('✅ تمت الجدولة');
+          loadData();
         } catch (err) {
-          const msg = err.response?.data?.message || err.message;
-          showToast('فشل الجدولة: ' + msg, true);
+          showToast('فشل الجدولة: ' + (err.response?.data?.message || err.message), true);
         }
       };
 
       const handleAdminister = async (id) => {
-        if (!hasPermission('administer')) {
-          showToast('⚠️ ليس لديك صلاحية لتسجيل الإعطاء', true);
-          return;
-        }
+        if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لتسجيل الإعطاء', true); return; }
         try {
           await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
           showToast('✅ تم تسجيل الإعطاء');
-          await loadData();
+          loadData();
         } catch (err) {
-          const msg = err.response?.data?.message || err.message;
-          showToast('فشل الإعطاء: ' + msg, true);
+          showToast('فشل الإعطاء: ' + (err.response?.data?.message || err.message), true);
         }
       };
 
       const handleAddHealth = async (e) => {
         e.preventDefault();
-        if (!hasPermission('create')) {
-          showToast('⚠️ ليس لديك صلاحية لإضافة سجل صحي', true);
-          return;
-        }
+        if (!hasPermission('create')) { showToast('⚠️ ليس لديك صلاحية لإضافة سجل صحي', true); return; }
         if (!validateHealth()) return;
         try {
           const payload = {
@@ -1380,13 +1320,12 @@
           setShowHealthForm(false);
           setHealthForm({ cattleId: '', diagnosis: '', treatmentPlan: '', vetNotes: '', isContagious: false });
           showToast('✅ تم إضافة السجل الصحي');
+          loadData();
         } catch (err) {
-          const msg = err.response?.data?.message || err.message;
-          showToast('فشل الإضافة: ' + msg, true);
+          showToast('فشل الإضافة: ' + (err.response?.data?.message || err.message), true);
         }
       };
 
-      // زر مع صلاحية
       const ActionButton = ({ action, children, onClick, className = '' }) => {
         const disabled = !hasPermission(action);
         return (
@@ -1429,10 +1368,7 @@
                       <input
                         type="text"
                         value={vaccineForm.name}
-                        onChange={(e) => {
-                          setVaccineForm({ ...vaccineForm, name: e.target.value });
-                          if (vaccineErrors.name) setVaccineErrors({ ...vaccineErrors, name: undefined });
-                        }}
+                        onChange={(e) => setVaccineForm({ ...vaccineForm, name: e.target.value })}
                         disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.name && <span className="field-error">{vaccineErrors.name}</span>}
@@ -1442,12 +1378,8 @@
                       <input
                         type="number"
                         value={vaccineForm.targetAgeInMonths}
-                        onChange={(e) => {
-                          setVaccineForm({ ...vaccineForm, targetAgeInMonths: e.target.value });
-                          if (vaccineErrors.targetAgeInMonths) setVaccineErrors({ ...vaccineErrors, targetAgeInMonths: undefined });
-                        }}
-                        min="0"
-                        step="1"
+                        onChange={(e) => setVaccineForm({ ...vaccineForm, targetAgeInMonths: e.target.value })}
+                        min="0" step="1"
                         disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.targetAgeInMonths && <span className="field-error">{vaccineErrors.targetAgeInMonths}</span>}
@@ -1457,12 +1389,8 @@
                       <input
                         type="number"
                         value={vaccineForm.dosage}
-                        onChange={(e) => {
-                          setVaccineForm({ ...vaccineForm, dosage: e.target.value });
-                          if (vaccineErrors.dosage) setVaccineErrors({ ...vaccineErrors, dosage: undefined });
-                        }}
-                        min="0"
-                        step="0.1"
+                        onChange={(e) => setVaccineForm({ ...vaccineForm, dosage: e.target.value })}
+                        min="0" step="0.1"
                         disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.dosage && <span className="field-error">{vaccineErrors.dosage}</span>}
@@ -1472,21 +1400,15 @@
                       <input
                         type="number"
                         value={vaccineForm.intervalInDays}
-                        onChange={(e) => {
-                          setVaccineForm({ ...vaccineForm, intervalInDays: e.target.value });
-                          if (vaccineErrors.intervalInDays) setVaccineErrors({ ...vaccineErrors, intervalInDays: undefined });
-                        }}
-                        min="0"
-                        step="1"
+                        onChange={(e) => setVaccineForm({ ...vaccineForm, intervalInDays: e.target.value })}
+                        min="0" step="1"
                         disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.intervalInDays && <span className="field-error">{vaccineErrors.intervalInDays}</span>}
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccine}>
-                      حفظ
-                    </ActionButton>
+                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccine}>حفظ</ActionButton>
                     <button type="button" className="btn btn-outline" onClick={() => setShowVaccineForm(false)}>إلغاء</button>
                   </div>
                 </form>
@@ -1519,10 +1441,7 @@
                       <label>البقرة *</label>
                       <select
                         value={vaccinationForm.cattleId}
-                        onChange={(e) => {
-                          setVaccinationForm({ ...vaccinationForm, cattleId: e.target.value });
-                          if (vaccinationErrors.cattleId) setVaccinationErrors({ ...vaccinationErrors, cattleId: undefined });
-                        }}
+                        onChange={(e) => setVaccinationForm({ ...vaccinationForm, cattleId: e.target.value })}
                         disabled={!hasPermission('create')}
                       >
                         <option value="">اختر بقرة</option>
@@ -1534,10 +1453,7 @@
                       <label>نوع اللقاح *</label>
                       <select
                         value={vaccinationForm.vaccineId}
-                        onChange={(e) => {
-                          setVaccinationForm({ ...vaccinationForm, vaccineId: e.target.value });
-                          if (vaccinationErrors.vaccineId) setVaccinationErrors({ ...vaccinationErrors, vaccineId: undefined });
-                        }}
+                        onChange={(e) => setVaccinationForm({ ...vaccinationForm, vaccineId: e.target.value })}
                         disabled={!hasPermission('create')}
                       >
                         <option value="">اختر لقاح</option>
@@ -1550,19 +1466,14 @@
                       <input
                         type="date"
                         value={vaccinationForm.scheduledDate}
-                        onChange={(e) => {
-                          setVaccinationForm({ ...vaccinationForm, scheduledDate: e.target.value });
-                          if (vaccinationErrors.scheduledDate) setVaccinationErrors({ ...vaccinationErrors, scheduledDate: undefined });
-                        }}
+                        onChange={(e) => setVaccinationForm({ ...vaccinationForm, scheduledDate: e.target.value })}
                         disabled={!hasPermission('create')}
                       />
                       {vaccinationErrors.scheduledDate && <span className="field-error">{vaccinationErrors.scheduledDate}</span>}
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccination}>
-                      حفظ
-                    </ActionButton>
+                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccination}>حفظ</ActionButton>
                     <button type="button" className="btn btn-outline" onClick={() => setShowVaccinationForm(false)}>إلغاء</button>
                   </div>
                 </form>
@@ -1609,10 +1520,7 @@
                       <label>البقرة *</label>
                       <select
                         value={healthForm.cattleId}
-                        onChange={(e) => {
-                          setHealthForm({ ...healthForm, cattleId: e.target.value });
-                          if (healthErrors.cattleId) setHealthErrors({ ...healthErrors, cattleId: undefined });
-                        }}
+                        onChange={(e) => setHealthForm({ ...healthForm, cattleId: e.target.value })}
                         disabled={!hasPermission('create')}
                       >
                         <option value="">اختر بقرة</option>
@@ -1625,10 +1533,7 @@
                       <input
                         type="text"
                         value={healthForm.diagnosis}
-                        onChange={(e) => {
-                          setHealthForm({ ...healthForm, diagnosis: e.target.value });
-                          if (healthErrors.diagnosis) setHealthErrors({ ...healthErrors, diagnosis: undefined });
-                        }}
+                        onChange={(e) => setHealthForm({ ...healthForm, diagnosis: e.target.value })}
                         disabled={!hasPermission('create')}
                       />
                       {healthErrors.diagnosis && <span className="field-error">{healthErrors.diagnosis}</span>}
@@ -1638,10 +1543,7 @@
                       <input
                         type="text"
                         value={healthForm.treatmentPlan}
-                        onChange={(e) => {
-                          setHealthForm({ ...healthForm, treatmentPlan: e.target.value });
-                          if (healthErrors.treatmentPlan) setHealthErrors({ ...healthErrors, treatmentPlan: undefined });
-                        }}
+                        onChange={(e) => setHealthForm({ ...healthForm, treatmentPlan: e.target.value })}
                         disabled={!hasPermission('create')}
                       />
                       {healthErrors.treatmentPlan && <span className="field-error">{healthErrors.treatmentPlan}</span>}
@@ -1668,9 +1570,7 @@
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <ActionButton action="create" className="btn-solid" onClick={handleAddHealth}>
-                      حفظ
-                    </ActionButton>
+                    <ActionButton action="create" className="btn-solid" onClick={handleAddHealth}>حفظ</ActionButton>
                     <button type="button" className="btn btn-outline" onClick={() => setShowHealthForm(false)}>إلغاء</button>
                   </div>
                 </form>
@@ -1716,10 +1616,7 @@
 
       const handleAdd = async (e) => {
         e.preventDefault();
-        if (!hasPermission('manageStaff')) {
-          showToast('⚠️ ليس لديك صلاحية لإدارة الموظفين', true);
-          return;
-        }
+        if (!hasPermission('manageStaff')) { showToast('⚠️ ليس لديك صلاحية لإدارة الموظفين', true); return; }
         if (!validate()) return;
         try {
           const payload = {
@@ -1735,8 +1632,7 @@
           showToast('✅ تم إضافة الموظف');
           loadData();
         } catch (err) {
-          const msg = err.response?.data?.message || err.message;
-          showToast('فشل الإضافة: ' + msg, true);
+          showToast('فشل الإضافة: ' + (err.response?.data?.message || err.message), true);
         }
       };
 
@@ -1813,9 +1709,7 @@
                   </div>
                 </div>
                 <div className="modal-actions">
-                  <ActionButton action="manageStaff" className="btn-solid" onClick={handleAdd}>
-                    حفظ
-                  </ActionButton>
+                  <ActionButton action="manageStaff" className="btn-solid" onClick={handleAdd}>حفظ</ActionButton>
                   <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>إلغاء</button>
                 </div>
               </form>
@@ -1849,10 +1743,7 @@
       const { alerts, setAlerts, hasPermission } = useAuth();
 
       const resolveAlert = (id) => {
-        if (!hasPermission('administer')) {
-          showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true);
-          return;
-        }
+        if (!hasPermission('administer')) { showToast('⚠️ ليس لديك صلاحية لإصلاح التنبيهات', true); return; }
         setAlerts(alerts.map(a => a.id === id ? { ...a, active: false, time: 'تم الإصلاح' } : a));
         showToast('✅ تم إصلاح التنبيه');
       };
@@ -1974,9 +1865,7 @@
           localStorage.setItem('hs_role', res.data.role || 'FarmOwner');
           localStorage.setItem('hs_name', res.data.fullName || 'مستخدم');
           window.location.reload();
-        } catch (e) {
-          throw e;
-        }
+        } catch (e) { throw e; }
       };
 
       return (
