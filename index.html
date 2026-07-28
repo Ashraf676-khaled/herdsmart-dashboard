@@ -13,621 +13,109 @@
   <script src="https://cdn.jsdelivr.net/npm/jwt-decode@4.0.0/build/jwt-decode.min.js"></script>
   <style>
     /* ===== RESET & GLOBAL ===== */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background: #F3EEDE;
-      color: #202A1E;
-      font-family: 'Tajawal', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    :root {
-      --bg: #F3EEDE;
-      --sidebar: #1F3A26;
-      --card: #FFFDF5;
-      --ink: #202A1E;
-      --ink-soft: #5A6553;
-      --green: #3C6B41;
-      --green-deep: #1F3A26;
-      --gold: #C79A45;
-      --rust: #A85234;
-      --line: #E1D6B4;
-      --radius: 12px;
-    }
-    .num {
-      font-family: 'JetBrains Mono', monospace;
-    }
-    button, input, select {
-      font-family: inherit;
-      cursor: pointer;
-    }
-    .topbar {
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      background: var(--card);
-      border-bottom: 1px solid var(--line);
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 900;
-      font-size: 1.2rem;
-      color: var(--green-deep);
-    }
-    .brand .mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: linear-gradient(155deg, var(--green), var(--green-deep));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-    }
-    .top-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .status-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: .75rem;
-      font-weight: 700;
-      color: var(--ink-soft);
-      background: var(--bg);
-      border: 1px solid var(--line);
-      padding: 4px 12px;
-      border-radius: 999px;
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #C9BE9C;
-    }
-    .status-dot.on {
-      background: var(--green);
-      animation: pulseGreen 2s infinite;
-    }
-    @keyframes pulseGreen {
-      0% { box-shadow: 0 0 0 0 rgba(60, 107, 65, .5); }
-      70% { box-shadow: 0 0 0 8px rgba(60, 107, 65, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(60, 107, 65, 0); }
-    }
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--bg);
-      border: 1px solid var(--line);
-      padding: 4px 14px;
-      border-radius: 999px;
-      font-size: .8rem;
-      font-weight: 700;
-      color: var(--green-deep);
-    }
-    .user-chip .role-tag {
-      font-size: .65rem;
-      font-weight: 700;
-      background: var(--gold);
-      color: var(--green-deep);
-      padding: 2px 10px;
-      border-radius: 999px;
-    }
-    .btn {
-      padding: 8px 16px;
-      border-radius: 9px;
-      font-weight: 700;
-      font-size: .8rem;
-      border: 1.5px solid transparent;
-      transition: all 0.2s;
-    }
-    .btn-solid {
-      background: var(--green-deep);
-      color: #fff;
-    }
-    .btn-solid:hover:not(:disabled) {
-      background: var(--green);
-    }
-    .btn-outline {
-      background: transparent;
-      border-color: var(--green-deep);
-      color: var(--green-deep);
-    }
-    .btn-outline:hover:not(:disabled) {
-      background: var(--green-deep);
-      color: #fff;
-    }
-    .btn-small {
-      padding: 4px 10px;
-      font-size: .7rem;
-      border-radius: 6px;
-    }
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed !important;
-      filter: grayscale(0.6);
-      pointer-events: auto;
-    }
-    .btn:disabled:hover {
-      background: transparent !important;
-      color: inherit !important;
-    }
-    .app-body {
-      display: flex;
-      height: calc(100vh - 64px);
-    }
-    .sidebar {
-      width: 220px;
-      background: #1F3A26;
-      color: #EFE9D6;
-      padding: 16px 10px;
-      flex: none;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      color: #D9D3B8;
-      font-weight: 600;
-      font-size: .9rem;
-      background: transparent;
-      border: none;
-      width: 100%;
-      text-align: right;
-    }
-    .nav-item:hover {
-      background: #2B4B33;
-      color: #fff;
-    }
-    .nav-item.active {
-      background: var(--gold);
-      color: var(--green-deep);
-    }
-    .nav-item.hidden-role {
-      display: none;
-    }
-    .sidebar-foot {
-      margin-top: auto;
-      font-size: .7rem;
-      color: #93A088;
-      padding: 10px 14px;
-    }
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 28px;
-    }
-    .view {
-      display: none;
-    }
-    .view.active {
-      display: block;
-      animation: fadein .25s ease;
-    }
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .view-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .view-head h1 {
-      font-size: 1.4rem;
-      color: var(--green-deep);
-      font-weight: 900;
-    }
-    .view-head p {
-      color: var(--ink-soft);
-      font-size: .85rem;
-    }
-    .card-box {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 18px;
-      overflow-x: auto;
-    }
-    .card-box h4 {
-      color: var(--green-deep);
-      margin-bottom: 14px;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .85rem;
-      min-width: 500px;
-    }
-    th {
-      text-align: right;
-      color: var(--ink-soft);
-      font-weight: 700;
-      font-size: .75rem;
-      padding: 8px 8px;
-      border-bottom: 1px solid var(--line);
-    }
-    td {
-      padding: 8px 8px;
-      border-bottom: 1px solid var(--line);
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    tbody tr:hover {
-      background: #FAF6E8;
-    }
-    .empty-row td {
-      color: var(--ink-soft);
-      text-align: center;
-      padding: 20px;
-    }
-    .badge {
-      display: inline-block;
-      padding: 3px 12px;
-      border-radius: 999px;
-      font-size: .7rem;
-      font-weight: 700;
-    }
-    .badge.ok {
-      background: #DEEAD9;
-      color: var(--green-deep);
-    }
-    .badge.pending {
-      background: #F1E3BE;
-      color: var(--gold);
-    }
-    .badge.active {
-      background: #F3DAD1;
-      color: var(--rust);
-    }
-    .field {
-      margin-bottom: 14px;
-    }
-    .field label {
-      display: block;
-      font-size: .8rem;
-      font-weight: 700;
-      color: var(--ink-soft);
-      margin-bottom: 4px;
-    }
-    .field input, .field select {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      font-size: .9rem;
-      color: var(--ink);
-    }
-    .field input:disabled, .field select:disabled {
-      background: #f0f0f0;
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .field input:focus, .field select:focus {
-      outline: none;
-      border-color: var(--green);
-    }
-    .field-error {
-      color: var(--rust);
-      font-size: .75rem;
-      margin-top: 4px;
-      display: block;
-    }
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .form-grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-    }
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-      flex-wrap: wrap;
-    }
-    .modal-actions .btn {
-      flex: 1;
-      text-align: center;
-    }
-    @media(max-width: 768px) {
-      .sidebar { width: 60px; }
-      .nav-item span.label { display: none; }
-      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
-      .content { padding: 16px 12px; }
-    }
-    #toast-wrap {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 200;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 90%;
-      max-width: 400px;
-      pointer-events: none;
-    }
-    .toast {
-      background: var(--green-deep);
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: .85rem;
-      font-weight: 600;
-      box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .35);
-      animation: toastin .3s ease;
-      pointer-events: auto;
-      text-align: center;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F3EEDE; color: #202A1E; font-family: 'Tajawal', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    :root { --bg: #F3EEDE; --sidebar: #1F3A26; --card: #FFFDF5; --ink: #202A1E; --ink-soft: #5A6553; --green: #3C6B41; --green-deep: #1F3A26; --gold: #C79A45; --rust: #A85234; --line: #E1D6B4; --radius: 12px; }
+    .num { font-family: 'JetBrains Mono', monospace; }
+    button, input, select { font-family: inherit; cursor: pointer; }
+    .topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--card); border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.2rem; color: var(--green-deep); }
+    .brand .mark { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(155deg, var(--green), var(--green-deep)); display: flex; align-items: center; justify-content: center; color: #fff; }
+    .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .status-badge { display: flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 700; color: var(--ink-soft); background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #C9BE9C; }
+    .status-dot.on { background: var(--green); animation: pulseGreen 2s infinite; }
+    @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(60, 107, 65, .5); } 70% { box-shadow: 0 0 0 8px rgba(60, 107, 65, 0); } 100% { box-shadow: 0 0 0 0 rgba(60, 107, 65, 0); } }
+    .user-chip { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 14px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--green-deep); }
+    .user-chip .role-tag { font-size: .65rem; font-weight: 700; background: var(--gold); color: var(--green-deep); padding: 2px 10px; border-radius: 999px; }
+    .btn { padding: 8px 16px; border-radius: 9px; font-weight: 700; font-size: .8rem; border: 1.5px solid transparent; transition: all 0.2s; }
+    .btn-solid { background: var(--green-deep); color: #fff; }
+    .btn-solid:hover:not(:disabled) { background: var(--green); }
+    .btn-outline { background: transparent; border-color: var(--green-deep); color: var(--green-deep); }
+    .btn-outline:hover:not(:disabled) { background: var(--green-deep); color: #fff; }
+    .btn-small { padding: 4px 10px; font-size: .7rem; border-radius: 6px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(0.6); pointer-events: auto; }
+    .btn:disabled:hover { background: transparent !important; color: inherit !important; }
+    .app-body { display: flex; height: calc(100vh - 64px); }
+    .sidebar { width: 220px; background: #1F3A26; color: #EFE9D6; padding: 16px 10px; flex: none; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; color: #D9D3B8; font-weight: 600; font-size: .9rem; background: transparent; border: none; width: 100%; text-align: right; }
+    .nav-item:hover { background: #2B4B33; color: #fff; }
+    .nav-item.active { background: var(--gold); color: var(--green-deep); }
+    .nav-item.hidden-role { display: none; }
+    .sidebar-foot { margin-top: auto; font-size: .7rem; color: #93A088; padding: 10px 14px; }
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+    .view { display: none; }
+    .view.active { display: block; animation: fadein .25s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .view-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .view-head h1 { font-size: 1.4rem; color: var(--green-deep); font-weight: 900; }
+    .view-head p { color: var(--ink-soft); font-size: .85rem; }
+    .card-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; overflow-x: auto; }
+    .card-box h4 { color: var(--green-deep); margin-bottom: 14px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 500px; }
+    th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: .75rem; padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    td { padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #FAF6E8; }
+    .empty-row td { color: var(--ink-soft); text-align: center; padding: 20px; }
+    .badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: .7rem; font-weight: 700; }
+    .badge.ok { background: #DEEAD9; color: var(--green-deep); }
+    .badge.pending { background: #F1E3BE; color: var(--gold); }
+    .badge.active { background: #F3DAD1; color: var(--rust); }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
+    .field input, .field select { width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: .9rem; color: var(--ink); }
+    .field input:disabled, .field select:disabled { background: #f0f0f0; opacity: 0.6; cursor: not-allowed; }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--green); }
+    .field-error { color: var(--rust); font-size: .75rem; margin-top: 4px; display: block; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .modal-actions .btn { flex: 1; text-align: center; }
+    @media(max-width: 768px) { .sidebar { width: 60px; } .nav-item span.label { display: none; } .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; } .content { padding: 16px 12px; } }
+    #toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none; }
+    .toast { background: var(--green-deep); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .85rem; font-weight: 600; box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .35); animation: toastin .3s ease; pointer-events: auto; text-align: center; }
     .toast.error { background: var(--rust); }
-    @keyframes toastin {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .guest-banner {
-      background: linear-gradient(90deg, #8A6417, #C79A45);
-      color: #fff;
-      padding: 8px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      font-size: .85rem;
-      font-weight: 700;
-      flex-wrap: wrap;
-      text-align: center;
-    }
-    .guest-banner button {
-      padding: 4px 16px;
-      border-radius: 999px;
-      font-size: .75rem;
-      font-weight: 700;
-      border: 1.5px solid #fff;
-      background: transparent;
-      color: #fff;
-    }
-    .guest-banner button:hover {
-      background: #fff;
-      color: var(--gold);
-    }
+    @keyframes toastin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .guest-banner { background: linear-gradient(90deg, #8A6417, #C79A45); color: #fff; padding: 8px 20px; display: flex; align-items: center; justify-content: center; gap: 14px; font-size: .85rem; font-weight: 700; flex-wrap: wrap; text-align: center; }
+    .guest-banner button { padding: 4px 16px; border-radius: 999px; font-size: .75rem; font-weight: 700; border: 1.5px solid #fff; background: transparent; color: #fff; }
+    .guest-banner button:hover { background: #fff; color: var(--gold); }
     .hidden { display: none !important; }
-    .role-switch {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--bg);
-      border: 1px solid var(--line);
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: .8rem;
-      color: var(--ink-soft);
-      font-weight: 700;
-    }
-    .role-switch select {
-      border: none;
-      background: transparent;
-      font-weight: 700;
-      color: var(--green-deep);
-      font-size: .85rem;
-    }
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(20, 26, 17, .55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      backdrop-filter: blur(2px);
-      padding: 16px;
-    }
+    .role-switch { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; font-size: .8rem; color: var(--ink-soft); font-weight: 700; }
+    .role-switch select { border: none; background: transparent; font-weight: 700; color: var(--green-deep); font-size: .85rem; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(20, 26, 17, .55); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); padding: 16px; }
     .modal-overlay.hidden { display: none; }
-    .modal {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 24px;
-      width: 100%;
-      max-width: 420px;
-      border: 1px solid var(--line);
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-      animation: modalIn .3s;
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(.95) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .modal-close {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      color: var(--ink-soft);
-      cursor: pointer;
-    }
-    .auth-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      background: var(--bg);
-      border-radius: 10px;
-      padding: 4px;
-    }
-    .auth-tab {
-      flex: 1;
-      padding: 8px;
-      text-align: center;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: .85rem;
-      color: var(--ink-soft);
-      border: none;
-      background: transparent;
-    }
-    .auth-tab.active {
-      background: var(--green-deep);
-      color: #fff;
-    }
+    .modal { background: var(--card); border-radius: 16px; padding: 24px; width: 100%; max-width: 420px; border: 1px solid var(--line); max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn .3s; }
+    @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .modal-close { position: absolute; top: 12px; left: 12px; background: none; border: none; font-size: 1.2rem; color: var(--ink-soft); cursor: pointer; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; background: var(--bg); border-radius: 10px; padding: 4px; }
+    .auth-tab { flex: 1; padding: 8px; text-align: center; border-radius: 8px; font-weight: 700; font-size: .85rem; color: var(--ink-soft); border: none; background: transparent; }
+    .auth-tab.active { background: var(--green-deep); color: #fff; }
     /* Dashboard specific */
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-    }
-    .stat-card .label {
-      font-size: .75rem;
-      color: var(--ink-soft);
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .stat-card .value {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--green-deep);
-    }
-    .stat-card .sub {
-      font-size: .7rem;
-      color: var(--ink-soft);
-      margin-top: 4px;
-    }
-    .gauge-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .gauge {
-      background: var(--bg);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
-    }
-    .gauge .g-label {
-      font-size: .75rem;
-      color: var(--ink-soft);
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .gauge .g-value {
-      font-size: 1.6rem;
-      font-weight: 700;
-    }
-    .gauge .g-bar {
-      height: 6px;
-      border-radius: 4px;
-      background: var(--line);
-      margin-top: 8px;
-      overflow: hidden;
-    }
-    .gauge .g-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width .5s;
-    }
-    .producer-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--line);
-    }
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+    .stat-card .label { font-size: .75rem; color: var(--ink-soft); font-weight: 700; margin-bottom: 6px; }
+    .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--green-deep); }
+    .stat-card .sub { font-size: .7rem; color: var(--ink-soft); margin-top: 4px; }
+    .gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .gauge { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; text-align: center; }
+    .gauge .g-label { font-size: .75rem; color: var(--ink-soft); font-weight: 700; margin-bottom: 4px; }
+    .gauge .g-value { font-size: 1.6rem; font-weight: 700; }
+    .gauge .g-bar { height: 6px; border-radius: 4px; background: var(--line); margin-top: 8px; overflow: hidden; }
+    .gauge .g-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+    .producer-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--line); }
     .producer-row:last-child { border-bottom: none; }
-    .producer-row .liters {
-      font-weight: 600;
-      color: var(--rust);
-    }
-    .alert-item {
-      display: flex;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--line);
-      align-items: flex-start;
-    }
+    .producer-row .liters { font-weight: 600; color: var(--rust); }
+    .alert-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: flex-start; }
     .alert-item:last-child { border-bottom: none; }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-top: 6px;
-      flex: none;
-    }
-    .dot.red {
-      background: var(--rust);
-      animation: pulse 1.8s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(168, 82, 52, .6); }
-      70% { box-shadow: 0 0 0 10px rgba(168, 82, 52, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(168, 82, 52, 0); }
-    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex: none; }
+    .dot.red { background: var(--rust); animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(168, 82, 52, .6); } 70% { box-shadow: 0 0 0 10px rgba(168, 82, 52, 0); } 100% { box-shadow: 0 0 0 0 rgba(168, 82, 52, 0); } }
     .dot.gray { background: #C9BE9C; }
-    .alert-item .meta {
-      font-size: .75rem;
-      color: var(--ink-soft);
-      margin-top: 2px;
-    }
+    .alert-item .meta { font-size: .75rem; color: var(--ink-soft); margin-top: 2px; }
     .alert-item .body { flex: 1; }
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: .7rem;
-      font-weight: 700;
-      color: var(--rust);
-    }
-    .live-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--rust);
-      animation: pulse 1.8s infinite;
-    }
+    .live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; color: var(--rust); }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rust); animation: pulse 1.8s infinite; }
   </style>
 </head>
 <body>
@@ -673,7 +161,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA (بيانات تجريبية غنية)
+    // 2. MOCK DATA (فقط للضيف)
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -801,6 +289,7 @@
       const [activeView, setActiveView] = useState('dashboard');
       const [loading, setLoading] = useState(false);
       const [currentRole, setCurrentRole] = useState('Guest');
+      const [isRealData, setIsRealData] = useState(false); // علم لتمييز البيانات الحقيقية
 
       // --- بيانات الجداول ---
       const [vaccines, setVaccines] = useState([]);
@@ -829,6 +318,7 @@
       // تحميل البيانات (حقيقية أو تجريبية)
       const loadData = useCallback(async () => {
         if (isLoggedIn()) {
+          // وضع المستخدم الحقيقي: تحميل من API
           setLoading(true);
           try {
             const [vacs, vaccs, logs, cattle, staff, milkTop, milkSummary] = await Promise.all([
@@ -869,9 +359,10 @@
             } catch (_) { setDailyMilk('—'); }
             // alerts (mock for now, but could be from real endpoint)
             setAlerts(MOCK.alerts);
+            setIsRealData(true);
           } catch (e) {
             showToast('تعذر تحميل البيانات: ' + (e.response?.data?.message || e.message), true);
-            // الرجوع للبيانات التجريبية في حال فشل الـ API
+            // في حالة فشل الـ API، نستخدم البيانات التجريبية مؤقتاً
             setVaccines(MOCK.vaccines);
             setVaccinations(MOCK.vaccinations);
             setHealthLogs(MOCK.healthLogs);
@@ -881,18 +372,20 @@
             setWeeklyMilk(MOCK.weeklyMilk);
             setDailyMilk('1,840');
             setAlerts(MOCK.alerts);
+            setIsRealData(false);
           } finally { setLoading(false); }
         } else {
-          // وضع الضيف: بيانات تجريبية كاملة
+          // وضع الضيف: بيانات تجريبية فقط
           setVaccines(MOCK.vaccines);
           setVaccinations(MOCK.vaccinations);
           setHealthLogs(MOCK.healthLogs);
           setCattleOptions(MOCK.cattle);
-          setStaffList(MOCK.staff); // تظهر للمالك فقط، ولكن في وضع الضيف يمكن رؤيتها عند اختيار دور المالك
+          setStaffList([]); // لا تظهر الموظفين للضيف (سيتم التحكم بها عبر الصلاحيات)
           setTopProducers(MOCK.topProducers);
           setWeeklyMilk(MOCK.weeklyMilk);
           setDailyMilk('1,840');
           setAlerts(MOCK.alerts);
+          setIsRealData(false);
           setLoading(false);
         }
       }, []);
@@ -906,11 +399,11 @@
           setCurrentRole(primaryRole);
           const name = localStorage.getItem('hs_name') || 'مستخدم';
           setUser({ name, roles });
-          loadData();
+          loadData(); // تحميل البيانات الحقيقية فوراً
         } else {
           setCurrentRole('Guest');
           setUser({ name: 'ضيف', roles: ['Guest'] });
-          loadData();
+          loadData(); // تحميل البيانات التجريبية
         }
       }, []);
 
@@ -923,7 +416,7 @@
           localStorage.setItem('hs_refreshToken', data.refreshToken);
           localStorage.setItem('hs_role', data.role || 'FarmOwner');
           localStorage.setItem('hs_name', data.fullName || 'مستخدم');
-          window.location.reload();
+          window.location.reload(); // إعادة تحميل الصفحة لجلب البيانات الحقيقية
         } catch (e) {
           const msg = e.response?.data?.message || e.message;
           showToast('فشل تسجيل الدخول: ' + msg, true);
@@ -957,7 +450,8 @@
         loadData,
         handleLogin,
         handleRoleChange,
-        logout
+        logout,
+        isRealData
       };
 
       return (
@@ -1061,7 +555,7 @@
     }
 
     // ============================================================
-    // 8. DASHBOARD (لوحة التحكم) - عرض البيانات التجريبية الصحيحة
+    // 8. DASHBOARD (لوحة التحكم)
     // ============================================================
     function Dashboard() {
       const {
@@ -1070,7 +564,8 @@
         dailyMilk,
         weeklyMilk,
         alerts,
-        hasPermission
+        hasPermission,
+        isRealData
       } = useAuth();
 
       const totalCattle = cattleOptions.length || 0;
@@ -1097,7 +592,7 @@
         <div>
           <div className="view-head">
             <div><h1>📊 لوحة التحكم</h1><p>نظرة عامة لحظية على المزرعة</p></div>
-            <span className="live-badge"><span className="live-dot"></span> بيانات حية</span>
+            <span className="live-badge"><span className="live-dot"></span> {isRealData ? 'بيانات حية' : 'بيانات تجريبية'}</span>
           </div>
 
           <div className="stat-row">
@@ -1193,7 +688,7 @@
     }
 
     // ============================================================
-    // 9. HEALTH MANAGEMENT
+    // 9. HEALTH MANAGEMENT (الجدول الطبي)
     // ============================================================
     function HealthManagement() {
       const {
@@ -1326,16 +821,14 @@
         }
       };
 
-      const ActionButton = ({ action, children, onClick, className = '' }) => {
-        const disabled = !hasPermission(action);
+      // دالة لعرض الزر فقط إذا كان المستخدم يملك الصلاحية
+      const PermissionButton = ({ action, children, onClick, className = '' }) => {
+        if (!hasPermission(action)) return null; // إخفاء الزر تماماً
         return (
           <button
             type="button"
             className={`btn ${className}`}
-            disabled={disabled}
             onClick={onClick}
-            title={disabled ? 'هذه الميزة غير متاحة لصلاحيات حسابك الحالي' : ''}
-            style={disabled ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
           >
             {children}
           </button>
@@ -1354,11 +847,11 @@
           <div className="card-box">
             <h4>
               أنواع اللقاحات
-              <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccineForm(true)}>
+              <PermissionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccineForm(true)}>
                 + إضافة لقاح
-              </ActionButton>
+              </PermissionButton>
             </h4>
-            {showVaccineForm && (
+            {showVaccineForm && hasPermission('create') && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>إضافة نوع لقاح جديد</h4>
                 <form onSubmit={handleAddVaccine}>
@@ -1369,7 +862,6 @@
                         type="text"
                         value={vaccineForm.name}
                         onChange={(e) => setVaccineForm({ ...vaccineForm, name: e.target.value })}
-                        disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.name && <span className="field-error">{vaccineErrors.name}</span>}
                     </div>
@@ -1380,7 +872,6 @@
                         value={vaccineForm.targetAgeInMonths}
                         onChange={(e) => setVaccineForm({ ...vaccineForm, targetAgeInMonths: e.target.value })}
                         min="0" step="1"
-                        disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.targetAgeInMonths && <span className="field-error">{vaccineErrors.targetAgeInMonths}</span>}
                     </div>
@@ -1391,7 +882,6 @@
                         value={vaccineForm.dosage}
                         onChange={(e) => setVaccineForm({ ...vaccineForm, dosage: e.target.value })}
                         min="0" step="0.1"
-                        disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.dosage && <span className="field-error">{vaccineErrors.dosage}</span>}
                     </div>
@@ -1402,13 +892,12 @@
                         value={vaccineForm.intervalInDays}
                         onChange={(e) => setVaccineForm({ ...vaccineForm, intervalInDays: e.target.value })}
                         min="0" step="1"
-                        disabled={!hasPermission('create')}
                       />
                       {vaccineErrors.intervalInDays && <span className="field-error">{vaccineErrors.intervalInDays}</span>}
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccine}>حفظ</ActionButton>
+                    <button type="submit" className="btn btn-solid">حفظ</button>
                     <button type="button" className="btn btn-outline" onClick={() => setShowVaccineForm(false)}>إلغاء</button>
                   </div>
                 </form>
@@ -1428,11 +917,11 @@
           <div className="card-box">
             <h4>
               التطعيمات
-              <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccinationForm(true)}>
+              <PermissionButton action="create" className="btn-solid btn-small" onClick={() => setShowVaccinationForm(true)}>
                 + جدولة تطعيم
-              </ActionButton>
+              </PermissionButton>
             </h4>
-            {showVaccinationForm && (
+            {showVaccinationForm && hasPermission('create') && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>جدولة تطعيم جديد</h4>
                 <form onSubmit={handleAddVaccination}>
@@ -1442,7 +931,6 @@
                       <select
                         value={vaccinationForm.cattleId}
                         onChange={(e) => setVaccinationForm({ ...vaccinationForm, cattleId: e.target.value })}
-                        disabled={!hasPermission('create')}
                       >
                         <option value="">اختر بقرة</option>
                         {cattleOptions.map(c => <option key={c.id} value={c.id}>{c.tagNumber}</option>)}
@@ -1454,7 +942,6 @@
                       <select
                         value={vaccinationForm.vaccineId}
                         onChange={(e) => setVaccinationForm({ ...vaccinationForm, vaccineId: e.target.value })}
-                        disabled={!hasPermission('create')}
                       >
                         <option value="">اختر لقاح</option>
                         {vaccineOptions.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
@@ -1467,13 +954,12 @@
                         type="date"
                         value={vaccinationForm.scheduledDate}
                         onChange={(e) => setVaccinationForm({ ...vaccinationForm, scheduledDate: e.target.value })}
-                        disabled={!hasPermission('create')}
                       />
                       {vaccinationErrors.scheduledDate && <span className="field-error">{vaccinationErrors.scheduledDate}</span>}
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <ActionButton action="create" className="btn-solid" onClick={handleAddVaccination}>حفظ</ActionButton>
+                    <button type="submit" className="btn btn-solid">حفظ</button>
                     <button type="button" className="btn btn-outline" onClick={() => setShowVaccinationForm(false)}>إلغاء</button>
                   </div>
                 </form>
@@ -1490,10 +976,10 @@
                       <td>{new Date(v.scheduledDate).toLocaleDateString('ar-EG')}</td>
                       <td><span className={`badge ${v.administeredDate ? 'ok' : 'pending'}`}>{v.administeredDate ? 'تم الإعطاء' : 'مجدول'}</span></td>
                       <td>
-                        {!v.administeredDate && (
-                          <ActionButton action="administer" className="btn-outline btn-small" onClick={() => handleAdminister(v.id)}>
+                        {!v.administeredDate && hasPermission('administer') && (
+                          <button className="btn btn-outline btn-small" onClick={() => handleAdminister(v.id)}>
                             تم الإعطاء
-                          </ActionButton>
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -1507,11 +993,11 @@
           <div className="card-box">
             <h4>
               السجلات الصحية
-              <ActionButton action="create" className="btn-solid btn-small" onClick={() => setShowHealthForm(true)}>
+              <PermissionButton action="create" className="btn-solid btn-small" onClick={() => setShowHealthForm(true)}>
                 + إضافة سجل صحي
-              </ActionButton>
+              </PermissionButton>
             </h4>
-            {showHealthForm && (
+            {showHealthForm && hasPermission('create') && (
               <div className="card-box" style={{ marginBottom: '16px' }}>
                 <h4>إضافة سجل صحي جديد</h4>
                 <form onSubmit={handleAddHealth}>
@@ -1521,7 +1007,6 @@
                       <select
                         value={healthForm.cattleId}
                         onChange={(e) => setHealthForm({ ...healthForm, cattleId: e.target.value })}
-                        disabled={!hasPermission('create')}
                       >
                         <option value="">اختر بقرة</option>
                         {cattleOptions.map(c => <option key={c.id} value={c.id}>{c.tagNumber}</option>)}
@@ -1534,7 +1019,6 @@
                         type="text"
                         value={healthForm.diagnosis}
                         onChange={(e) => setHealthForm({ ...healthForm, diagnosis: e.target.value })}
-                        disabled={!hasPermission('create')}
                       />
                       {healthErrors.diagnosis && <span className="field-error">{healthErrors.diagnosis}</span>}
                     </div>
@@ -1544,7 +1028,6 @@
                         type="text"
                         value={healthForm.treatmentPlan}
                         onChange={(e) => setHealthForm({ ...healthForm, treatmentPlan: e.target.value })}
-                        disabled={!hasPermission('create')}
                       />
                       {healthErrors.treatmentPlan && <span className="field-error">{healthErrors.treatmentPlan}</span>}
                     </div>
@@ -1554,7 +1037,6 @@
                         type="text"
                         value={healthForm.vetNotes}
                         onChange={(e) => setHealthForm({ ...healthForm, vetNotes: e.target.value })}
-                        disabled={!hasPermission('create')}
                       />
                     </div>
                     <div className="field" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1563,14 +1045,13 @@
                           type="checkbox"
                           checked={healthForm.isContagious}
                           onChange={(e) => setHealthForm({ ...healthForm, isContagious: e.target.checked })}
-                          disabled={!hasPermission('create')}
                         />
                         {' حالة معدية'}
                       </label>
                     </div>
                   </div>
                   <div className="modal-actions">
-                    <ActionButton action="create" className="btn-solid" onClick={handleAddHealth}>حفظ</ActionButton>
+                    <button type="submit" className="btn btn-solid">حفظ</button>
                     <button type="button" className="btn btn-outline" onClick={() => setShowHealthForm(false)}>إلغاء</button>
                   </div>
                 </form>
@@ -1636,18 +1117,12 @@
         }
       };
 
-      const ActionButton = ({ action, children, onClick, className = '' }) => {
-        const disabled = !hasPermission(action);
+      // زر إضافة الموظفين يظهر فقط للمالك
+      const AddButton = () => {
+        if (!hasPermission('manageStaff')) return null;
         return (
-          <button
-            type="button"
-            className={`btn ${className}`}
-            disabled={disabled}
-            onClick={onClick}
-            title={disabled ? 'هذه الميزة غير متاحة لصلاحيات حسابك الحالي' : ''}
-            style={disabled ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
-          >
-            {children}
+          <button className="btn btn-solid btn-small" onClick={() => setShowForm(true)}>
+            + إضافة موظف
           </button>
         );
       };
@@ -1656,12 +1131,10 @@
         <div>
           <div className="view-head">
             <div><h1>👥 إدارة الموظفين</h1><p>إضافة وإدارة أطباء بيطريين وعمال</p></div>
-            <ActionButton action="manageStaff" className="btn-solid btn-small" onClick={() => setShowForm(true)}>
-              + إضافة موظف
-            </ActionButton>
+            <AddButton />
           </div>
 
-          {showForm && (
+          {showForm && hasPermission('manageStaff') && (
             <div className="card-box">
               <h4>إضافة موظف جديد</h4>
               <form onSubmit={handleAdd}>
@@ -1672,7 +1145,6 @@
                       type="text"
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      disabled={!hasPermission('manageStaff')}
                     />
                     {errors.fullName && <span className="field-error">{errors.fullName}</span>}
                   </div>
@@ -1682,7 +1154,6 @@
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      disabled={!hasPermission('manageStaff')}
                     />
                     {errors.email && <span className="field-error">{errors.email}</span>}
                   </div>
@@ -1692,7 +1163,6 @@
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      disabled={!hasPermission('manageStaff')}
                     />
                     {errors.password && <span className="field-error">{errors.password}</span>}
                   </div>
@@ -1701,7 +1171,6 @@
                     <select
                       value={formData.role}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      disabled={!hasPermission('manageStaff')}
                     >
                       <option value="Veterinarian">بيطري</option>
                       <option value="Worker">عامل</option>
@@ -1709,7 +1178,7 @@
                   </div>
                 </div>
                 <div className="modal-actions">
-                  <ActionButton action="manageStaff" className="btn-solid" onClick={handleAdd}>حفظ</ActionButton>
+                  <button type="submit" className="btn btn-solid">حفظ</button>
                   <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>إلغاء</button>
                 </div>
               </form>
@@ -1748,18 +1217,11 @@
         showToast('✅ تم إصلاح التنبيه');
       };
 
-      const ActionButton = ({ action, children, onClick, className = '' }) => {
-        const disabled = !hasPermission(action);
+      const ResolveButton = ({ alert }) => {
+        if (!hasPermission('administer') || !alert.active) return null;
         return (
-          <button
-            type="button"
-            className={`btn ${className}`}
-            disabled={disabled}
-            onClick={onClick}
-            title={disabled ? 'هذه الميزة غير متاحة لصلاحيات حسابك الحالي' : ''}
-            style={disabled ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
-          >
-            {children}
+          <button className="btn btn-outline btn-small" onClick={() => resolveAlert(alert.id)}>
+            إصلاح التنبيه
           </button>
         );
       };
@@ -1780,13 +1242,9 @@
                     <div><strong>{a.text}</strong></div>
                     <div className="meta">{a.time} · <span className={`badge ${a.active ? 'active' : 'ok'}`}>{a.active ? 'نشط' : 'تم الحل'}</span></div>
                   </div>
-                  {a.active && (
-                    <div className="alert-actions">
-                      <ActionButton action="administer" className="btn-outline btn-small" onClick={() => resolveAlert(a.id)}>
-                        إصلاح التنبيه
-                      </ActionButton>
-                    </div>
-                  )}
+                  <div className="alert-actions">
+                    <ResolveButton alert={a} />
+                  </div>
                 </div>
               ))
             )}
