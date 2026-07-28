@@ -273,7 +273,7 @@
     };
 
     // ============================================================
-    // 2. MOCK DATA (فقط للضيف) — مع بيانات موظفين تجريبية (string roles)
+    // 2. MOCK DATA (فقط للضيف)
     // ============================================================
     const MOCK = {
       vaccines: [
@@ -415,11 +415,19 @@
       localStorage.setItem('hs_name', data.fullName || 'مستخدم');
     }
 
+    // ===== تحسين فك التشفير: دعم الأدوار الرقمية والنصية =====
     function decodeToken(token) {
       try {
         const decoded = jwtDecode(token);
-        const roles = decoded.roles || decoded.role || [];
-        return Array.isArray(roles) ? roles : [roles];
+        let roles = decoded.roles || decoded.role || [];
+        // إذا كانت القيمة مفردة وليست مصفوفة، نحولها إلى مصفوفة
+        if (!Array.isArray(roles)) roles = [roles];
+        // تحويل الأدوار الرقمية إلى سلاسل نصية
+        roles = roles.map(r => {
+          if (typeof r === 'number') return ROLE_INT_MAP[r] || r;
+          return r;
+        });
+        return roles;
       } catch (e) { return []; }
     }
 
@@ -959,9 +967,15 @@
         } finally { setSavingStatusId(null); }
       };
 
+      // دالة الحذف مع تحسين رسائل الخطأ
       const handleDelete = async (cattle) => {
+        // منع الحذف في وضع الضيف
         if (!isRealData) { showToast('⚠️ لا يمكن حذف بيانات تجريبية', true); return; }
-        if (currentRole !== CATTLE_DELETE_ROLE) { showToast('⚠️ حذف الماشية مسؤولية مالك المزرعة فقط', true); return; }
+        // التأكد من الصلاحية عبر hasPermission بدلاً من المقارنة المباشرة
+        if (!hasPermission('delete_cattle')) {
+          showToast('⚠️ حذف الماشية متاح فقط لمالك المزرعة', true);
+          return;
+        }
         if (!window.confirm(`هل أنت متأكد من حذف رأس الماشية رقم ${cattle.tagNumber}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
         setDeletingId(cattle.id);
         try {
@@ -970,7 +984,9 @@
           showToast('✅ تم حذف رأس الماشية');
           loadData();
         } catch (err) {
-          showToast('فشل الحذف: ' + errMsg(err), true);
+          // عرض رسالة الخطأ التفصيلية من الخادم إن وجدت
+          const msg = errMsg(err, 'حدث خطأ أثناء الحذف، تأكد من أن لديك صلاحية الحذف وأن البقرة غير مرتبطة ببيانات أخرى.');
+          showToast('فشل الحذف: ' + msg, true);
         } finally { setDeletingId(null); }
       };
 
@@ -1090,8 +1106,8 @@
                     </td>
                     <td>
                       <ActionButton
-                        allowed={currentRole === CATTLE_DELETE_ROLE && isRealData}
-                        reason="حذف الماشية مسؤولية مالك المزرعة فقط"
+                        allowed={hasPermission('delete_cattle') && isRealData}
+                        reason="حذف الماشية متاح فقط لمالك المزرعة"
                         className="btn-outline"
                         onClick={() => handleDelete(c)}
                       >
@@ -1338,7 +1354,7 @@
             </div>
           </div>
 
-          {/* التطعيمات — جدولة متاحة للبيطري فقط */}
+          {/* التطعيمات */}
           <div className="card-box">
             <h4>
               التطعيمات
@@ -1545,7 +1561,6 @@
         if (!isRealData) { showToast('⚠️ لا يمكن تعديل بيانات تجريبية', true); return; }
         if (!validate()) return;
         try {
-          // تحويل اسم الدور إلى الرقم الصحيح المطلوب من الـ API
           const roleInt = ROLE_STRING_TO_INT[formData.role];
           const payload = {
             fullName: formData.fullName,
@@ -1554,7 +1569,6 @@
             role: roleInt
           };
           const res = await axiosInstance.post(EP.users, payload);
-          // نضيف المستخدم الجديد مع الدور الرقمي، لكننا نعرضه عبر getRoleDisplay
           setStaffList([...staffList, res.data]);
           setShowForm(false);
           setFormData({ fullName: '', email: '', password: '', role: 'Vet' });
