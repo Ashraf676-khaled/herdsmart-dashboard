@@ -386,31 +386,82 @@
     }
 
     // ===== ترجمة الأخطاء بالعربية =====
+    const ERROR_TRANSLATIONS = [
+      { test: /invalid\s*(email|username)?\s*(or|\/)\s*password|incorrect\s*(email|password)/i, ar: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' },
+      { test: /user\s*not\s*found|account\s*not\s*found/i, ar: 'لا يوجد حساب مسجّل بهذا البريد الإلكتروني' },
+      { test: /already\s*(exists|registered|taken|in\s*use)/i, ar: 'هذا البريد الإلكتروني مستخدم بالفعل' },
+      { test: /unauthorized/i, ar: 'بيانات الدخول غير صحيحة أو انتهت صلاحية الجلسة' },
+      { test: /forbidden|not\s*allowed|permission\s*denied/i, ar: 'ليس لديك صلاحية لتنفيذ هذا الإجراء' },
+      { test: /not\s*found/i, ar: 'العنصر المطلوب غير موجود' },
+      { test: /already\s*administered/i, ar: 'تم إعطاء هذا اللقاح بالفعل' },
+      { test: /conflict|duplicate/i, ar: 'هذه البيانات مسجّلة بالفعل' },
+      { test: /network\s*error/i, ar: 'تعذر الاتصال بالخادم، تحقق من اتصال الإنترنت' },
+      { test: /is\s*required|cannot\s*be\s*empty|field\s*is\s*required/i, ar: 'هناك حقل مطلوب لم يتم إدخاله' },
+      { test: /invalid\s*email/i, ar: 'صيغة البريد الإلكتروني غير صحيحة' },
+      { test: /password.*(short|weak|length|characters)/i, ar: 'كلمة المرور لا تحقق الشروط المطلوبة' },
+      { test: /future\s*date|cannot\s*be\s*in\s*the\s*future/i, ar: 'التاريخ لا يمكن أن يكون في المستقبل' },
+      { test: /token\s*expired|expired\s*token/i, ar: 'انتهت صلاحية الجلسة، يرجى تسجيل الدخول من جديد' },
+      { test: /server\s*error|internal\s*server/i, ar: 'حدث خطأ في الخادم، حاول مرة أخرى لاحقاً' },
+      { test: /rate\s*limit|too\s*many\s*requests/i, ar: 'عدد كبير من المحاولات، حاول مرة أخرى بعد قليل' }
+    ];
+
+    function translateErrorMessage(raw) {
+      if (!raw || typeof raw !== 'string') return null;
+      for (const item of ERROR_TRANSLATIONS) {
+        if (item.test.test(raw)) return item.ar;
+      }
+      if (/[\u0600-\u06FF]/.test(raw)) return raw;
+      return null;
+    }
+
     function errMsg(err, fallback = 'حدث خطأ غير متوقع، حاول مرة أخرى') {
       if (!err) return fallback;
-      // رسائل من السيرفر
+      
+      // 1. محاولة استخراج رسائل من استجابة السيرفر
       const data = err.response?.data;
+      let rawMessages = [];
+      
       if (data) {
-        if (data.message) return data.message;
-        if (data.title) return data.title;
+        if (data.message) rawMessages.push(data.message);
+        if (data.title) rawMessages.push(data.title);
         if (data.errors && typeof data.errors === 'object') {
           const msgs = Object.values(data.errors).flat().filter(Boolean);
-          if (msgs.length) return msgs.join(' | ');
+          rawMessages.push(...msgs);
         }
+        if (data.detail) rawMessages.push(data.detail);
       }
-      // رسائل axios
+      
+      // 2. إذا كان الخطأ من axios نفسه (مشكلة شبكة)
       if (err.message) {
-        const msg = err.message;
-        // ترجمة بعض الأخطاء الشائعة
-        if (msg.includes('Network Error')) return 'تعذر الاتصال بالخادم، تحقق من اتصال الإنترنت';
-        if (msg.includes('timeout')) return 'انتهت مهلة الاتصال، حاول مرة أخرى';
-        if (msg.includes('401')) return 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-        if (msg.includes('403')) return 'ليس لديك صلاحية لتنفيذ هذا الإجراء';
-        if (msg.includes('404')) return 'العنصر المطلوب غير موجود';
-        if (msg.includes('409')) return 'هذه البيانات مسجّلة بالفعل';
-        if (msg.includes('500')) return 'حدث خطأ في الخادم، حاول مرة أخرى لاحقاً';
-        return msg;
+        rawMessages.push(err.message);
       }
+      
+      // 3. ترجمة كل رسالة
+      const translated = rawMessages.map(translateErrorMessage).filter(Boolean);
+      if (translated.length) {
+        return [...new Set(translated)].join(' | ');
+      }
+      
+      // 4. إذا كان هناك status code، نعطي رسالة مناسبة
+      if (err.response?.status === 401) {
+        return 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+      }
+      if (err.response?.status === 403) {
+        return 'ليس لديك صلاحية لتنفيذ هذا الإجراء';
+      }
+      if (err.response?.status === 404) {
+        return 'العنصر المطلوب غير موجود';
+      }
+      if (err.response?.status === 409) {
+        return 'هذه البيانات مسجّلة بالفعل';
+      }
+      if (err.response?.status === 429) {
+        return 'عدد كبير من المحاولات، حاول مرة أخرى بعد قليل';
+      }
+      if (err.response?.status >= 500) {
+        return 'حدث خطأ في الخادم، حاول مرة أخرى لاحقاً';
+      }
+      
       return fallback;
     }
 
@@ -1676,17 +1727,25 @@
       const [submitting, setSubmitting] = useState(false);
       const [touchedPassword, setTouchedPassword] = useState(false);
 
+      // مراقبة تغيير التاب
       useEffect(() => {
-        const id = setInterval(() => {
+        const handler = () => {
           const modal = document.getElementById('authModal');
           if (modal && !modal.classList.contains('hidden')) {
             setTab(window.__authTab || 'login');
           }
-        }, 200);
-        return () => clearInterval(id);
+        };
+        window.addEventListener('hs-auth-tab-change', handler);
+        return () => window.removeEventListener('hs-auth-tab-change', handler);
       }, []);
 
-      const switchTab = t => { setTab(t); setError(''); };
+      const switchTab = t => {
+        window.__authTab = t;
+        setTab(t);
+        setError('');
+        window.dispatchEvent(new Event('hs-auth-tab-change'));
+      };
+
       const isPasswordValid = tab === 'login' ? password.length > 0 : passwordScore(password) === PASSWORD_RULES.length;
 
       const handleSubmit = async e => {
@@ -1702,7 +1761,6 @@
           if (tab === 'login') {
             await onLogin(email, password);
             document.getElementById('authModal').classList.add('hidden');
-            // لا نعيد تحميل الصفحة هنا، سنقوم بإعادة تحميلها بعد persistSession في Root
           } else {
             const res = await axiosInstance.post(EP.register, { farmName, ownerName, email, password });
             if (res.data.accessToken) {
@@ -1754,6 +1812,7 @@
     window.openAuthModal = (tab = 'login') => {
       window.__authTab = tab;
       document.getElementById('authModal').classList.remove('hidden');
+      window.dispatchEvent(new Event('hs-auth-tab-change'));
     };
     window.logout = logout;
 
