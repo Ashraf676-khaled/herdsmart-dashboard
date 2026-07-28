@@ -379,19 +379,26 @@
       try {
         const d = jwtDecode(token);
 
-        const roleClaims = [
-          d.role,
-          d.roles,
-          d['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
-          d['http://schemas.microsoft.com/ws/2008/06/identity/claims/roles'],
-          d['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'],
-          d['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/roles']
-        ].filter(v => v !== undefined && v !== null);
+        // إذا كان الدور موجوداً مباشرة في `role` أو `roles`، نأخذه أولاً
+        let rawRole = d.role || d.roles || null;
+        if (!rawRole) {
+          // وإلا نبحث في Claims المعروفة
+          const roleClaims = [
+            d['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
+            d['http://schemas.microsoft.com/ws/2008/06/identity/claims/roles'],
+            d['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'],
+            d['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/roles']
+          ].filter(v => v !== undefined && v !== null);
+          for (const claim of roleClaims) {
+            if (claim) { rawRole = claim; break; }
+          }
+        }
 
         let roles = [];
-        for (const claim of roleClaims) {
-          if (Array.isArray(claim)) { roles = claim; break; }
-          if (typeof claim === 'string' || typeof claim === 'number') { roles = [claim]; break; }
+        if (Array.isArray(rawRole)) {
+          roles = rawRole;
+        } else if (rawRole !== undefined && rawRole !== null) {
+          roles = [rawRole];
         }
 
         roles = roles.map(r => {
@@ -403,6 +410,8 @@
             if (low === 'owner') return 'Owner';
             if (low === 'vet') return 'Vet';
             if (low === 'worker') return 'Worker';
+            // إذا كان النص "FarmOwner" -> نحوله إلى "Owner"
+            if (low === 'farmowner') return 'Owner';
             return r;
           }
           return String(r);
@@ -430,9 +439,31 @@
       localStorage.setItem('hs_token', data.accessToken);
       if (data.refreshToken) localStorage.setItem('hs_refreshToken', data.refreshToken);
 
-      const decoded = decodeToken(data.accessToken);
-      localStorage.setItem('hs_role', decoded.primaryRole || 'Guest');
-      localStorage.setItem('hs_name', decoded.name || data.fullName || 'مستخدم');
+      // أولاً: نستخدم الدور من استجابة الدخول إن وجد
+      let primaryRole = data.role || 'Guest';
+      let name = data.fullName || 'مستخدم';
+
+      // إذا لم يكن الدور موجوداً في الاستجابة، نحاول استخراجه من التوكن
+      if (!data.role) {
+        const decoded = decodeToken(data.accessToken);
+        primaryRole = decoded.primaryRole || 'Guest';
+        name = decoded.name || data.fullName || 'مستخدم';
+      } else {
+        // حتى لو جاء من الاستجابة، نتأكد من تطابقه مع الخريطة
+        const roleKey = typeof primaryRole === 'string' ? primaryRole : ROLE_INT_MAP[primaryRole];
+        if (roleKey && roleNames[roleKey]) {
+          primaryRole = roleKey;
+        } else {
+          // قد يكون رقمياً
+          const numRole = Number(primaryRole);
+          if (!isNaN(numRole) && ROLE_INT_MAP[numRole]) {
+            primaryRole = ROLE_INT_MAP[numRole];
+          }
+        }
+      }
+
+      localStorage.setItem('hs_role', primaryRole);
+      localStorage.setItem('hs_name', name);
     }
 
     const AuthContext = createContext(null);
@@ -605,15 +636,31 @@
         }
       }, []);
 
-      // ===== 4. useEffect الأول =====
+      // ===== 4. useEffect الأول (معدّل لاستخدام الدور المخزن) =====
       useEffect(() => {
         if (isLoggedIn()) {
           const token = getToken();
-          const decoded = decodeToken(token);
-          setCurrentRole(decoded.primaryRole || 'Guest');
+          // استخدم الدور المخزن مسبقاً في localStorage إذا كان متاحاً
+          const storedRole = localStorage.getItem('hs_role');
+          let decoded = null;
+          try {
+            decoded = decodeToken(token);
+          } catch (e) {
+            // في حالة فك التشفير، نستخدم المخزن
+          }
+          let primaryRole = storedRole || 'Guest';
+          let name = localStorage.getItem('hs_name') || 'مستخدم';
+
+          // إذا كان الدور من التوكن مختلفاً عن المخزن، نأخذ من التوكن (الأحدث)
+          if (decoded && decoded.primaryRole && decoded.primaryRole !== 'Guest') {
+            primaryRole = decoded.primaryRole;
+            name = decoded.name || name;
+          }
+
+          setCurrentRole(primaryRole);
           setUser({
-            name: decoded.name || localStorage.getItem('hs_name') || 'مستخدم',
-            roles: decoded.roles || ['Guest']
+            name: name,
+            roles: decoded ? decoded.roles : [primaryRole]
           });
         } else {
           setCurrentRole('Guest');
