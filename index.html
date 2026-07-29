@@ -1113,16 +1113,16 @@
         // ─── role maps ───
         const ROLE_INT_MAP = { 0: 'Owner', 1: 'Vet', 2: 'Worker' };
         const ROLE_STRING_TO_INT = { Owner: 0, Vet: 1, Worker: 2 };
+        // ========== تعديل الصلاحيات: إزالة schedule_vaccination من المالك ==========
         const ROLES_DEF = {
-            Owner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'schedule_vaccination', 'view', 'manageStaff',
-                'resolve_alerts'
-            ],
+            Owner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'view', 'manageStaff', 'resolve_alerts'],
             Vet: ['create_cattle', 'edit_cattle', 'create_vaccine', 'schedule_vaccination', 'administer_vaccination',
                 'create_health', 'edit_health', 'view', 'resolve_alerts'
             ],
             Worker: ['view'],
             Guest: ['view']
         };
+        // ===========================================================================
         const roleNames = { Owner: 'مالك المزرعة', Vet: 'بيطري', Worker: 'عامل', Guest: 'ضيف' };
 
         // ─── constants ───
@@ -1200,7 +1200,6 @@
 
         axiosInstance.interceptors.response.use(r => r, async e => {
             const o = e.config;
-            // تخطي معالجة 401 لطلب تسجيل الدخول
             if (o.url.includes('/Auth/login')) return Promise.reject(e);
             if (e.response?.status === 401 && !o._retry) {
                 if (isRefreshing) {
@@ -1211,7 +1210,8 @@
                 o._retry = true;
                 isRefreshing = true;
                 const rt = localStorage.getItem('hs_refreshToken');
-                if (!rt) { isRefreshing = false; performLogout(); return Promise.reject(e); }
+                if (!rt) { isRefreshing = false;
+                    performLogout(); return Promise.reject(e); }
                 try {
                     const r = await axios.post(API_BASE + EP.refresh, {
                         refreshToken: rt,
@@ -1253,7 +1253,7 @@
             { test: /forbidden|not\s*allowed|permission\s*denied/i, ar: 'ليس لديك صلاحية' },
             { test: /not\s*found/i, ar: 'العنصر غير موجود' },
             { test: /network\s*error/i, ar: 'تعذر الاتصال بالخادم' },
-            { test: /is\s*required|cannot\s*be\s*empty|field\s*is\s*required/i, ar: 'حقل مطلوب' },
+            { test: /is\s*required|cannot\s*be\s*empty|field\s*is\*required/i, ar: 'حقل مطلوب' },
             { test: /invalid\s*email/i, ar: 'صيغة البريد غير صحيحة' },
             { test: /password.*(short|weak|length|characters)/i, ar: 'كلمة المرور لا تحقق الشروط' },
             { test: /token\s*expired|expired\s*token/i, ar: 'انتهت صلاحية الجلسة' },
@@ -2126,7 +2126,8 @@
 
             const handleAddVaccination = async e => {
                 e.preventDefault();
-                if (!hasPermission('schedule_vaccination')) { showToast('⚠️ للمالك والبيطري', true); return; }
+                // ── فقط البيطري يستطيع الجدولة ──
+                if (!hasPermission('schedule_vaccination')) { showToast('⚠️ فقط البيطري يستطيع جدولة التطعيمات', true); return; }
                 if (!validateVaccination()) return;
                 try {
                     const payload = {
@@ -2233,7 +2234,7 @@
 
                     {/* ─── التطعيمات ─── */}
                     <div className="card-box">
-                        <h4>التطعيمات <ActionButton allowed={hasPermission('schedule_vaccination')} reason="للمالك والبيطري"
+                        <h4>التطعيمات <ActionButton allowed={hasPermission('schedule_vaccination')} reason="للبيطري فقط"
                                 className="btn-solid" onClick={() => setShowVaccinationForm(true)}>+ جدولة</ActionButton></h4>
                         {showVaccinationForm && hasPermission('schedule_vaccination') && (
                             <div className="card-box" style={{ marginBottom: '6px' }}>
