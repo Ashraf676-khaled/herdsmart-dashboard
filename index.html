@@ -1113,7 +1113,7 @@
         // ─── role maps ───
         const ROLE_INT_MAP = { 0: 'Owner', 1: 'Vet', 2: 'Worker' };
         const ROLE_STRING_TO_INT = { Owner: 0, Vet: 1, Worker: 2 };
-        // ========== تعديل الصلاحيات: إزالة schedule_vaccination من المالك ==========
+        // صلاحيات الجدولة فقط للبيطري
         const ROLES_DEF = {
             Owner: ['create_cattle', 'edit_cattle', 'delete_cattle', 'view', 'manageStaff', 'resolve_alerts'],
             Vet: ['create_cattle', 'edit_cattle', 'create_vaccine', 'schedule_vaccination', 'administer_vaccination',
@@ -1122,7 +1122,6 @@
             Worker: ['view'],
             Guest: ['view']
         };
-        // ===========================================================================
         const roleNames = { Owner: 'مالك المزرعة', Vet: 'بيطري', Worker: 'عامل', Guest: 'ضيف' };
 
         // ─── constants ───
@@ -1253,7 +1252,7 @@
             { test: /forbidden|not\s*allowed|permission\s*denied/i, ar: 'ليس لديك صلاحية' },
             { test: /not\s*found/i, ar: 'العنصر غير موجود' },
             { test: /network\s*error/i, ar: 'تعذر الاتصال بالخادم' },
-            { test: /is\s*required|cannot\s*be\s*empty|field\s*is\*required/i, ar: 'حقل مطلوب' },
+            { test: /is\s*required|cannot\s*be\s*empty|field\s*is\s*required/i, ar: 'حقل مطلوب' },
             { test: /invalid\s*email/i, ar: 'صيغة البريد غير صحيحة' },
             { test: /password.*(short|weak|length|characters)/i, ar: 'كلمة المرور لا تحقق الشروط' },
             { test: /token\s*expired|expired\s*token/i, ar: 'انتهت صلاحية الجلسة' },
@@ -1922,6 +1921,11 @@
             };
 
             const handleDelete = async cattle => {
+                // منع الحذف في الوضع التجريبي
+                if (!isReal) {
+                    showToast('⚠️ لا يمكن حذف البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('delete_cattle')) { showToast('⚠️ الحذف لمالك المزرعة فقط', true); return; }
                 if (!window.confirm(`حذف ${cattle.tagNumber}؟`)) return;
                 setDeletingId(cattle.id);
@@ -2037,8 +2041,13 @@
                                                     </span>
                                                 )}</td>
                                                 <td>
-                                                    <ActionButton allowed={hasPermission('delete_cattle')} reason="للمالك فقط"
-                                                        className="btn-outline" onClick={() => handleDelete(c)}>
+                                                    {/* تعطيل زر الحذف في الوضع التجريبي */}
+                                                    <ActionButton
+                                                        allowed={hasPermission('delete_cattle') && isReal}
+                                                        reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للمالك فقط'}
+                                                        className="btn-outline"
+                                                        onClick={() => handleDelete(c)}
+                                                    >
                                                         {deletingId === c.id ? '...' : '🗑️'}
                                                     </ActionButton>
                                                 </td>
@@ -2126,7 +2135,6 @@
 
             const handleAddVaccination = async e => {
                 e.preventDefault();
-                // ── فقط البيطري يستطيع الجدولة ──
                 if (!hasPermission('schedule_vaccination')) { showToast('⚠️ فقط البيطري يستطيع جدولة التطعيمات', true); return; }
                 if (!validateVaccination()) return;
                 try {
