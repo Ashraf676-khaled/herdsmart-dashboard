@@ -1890,6 +1890,10 @@
 
             const handleAdd = async e => {
                 e.preventDefault();
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('create_cattle')) { showToast('⚠️ ليس لديك صلاحية', true); return; }
                 if (!validate()) return;
                 try {
@@ -1911,6 +1915,10 @@
             };
 
             const handleStatus = async (cattle, newStatus) => {
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('edit_cattle')) { showToast('⚠️ ليس لديك صلاحية', true); return; }
                 setSavingId(cattle.id);
                 try {
@@ -1921,9 +1929,8 @@
             };
 
             const handleDelete = async cattle => {
-                // منع الحذف في الوضع التجريبي
                 if (!isReal) {
-                    showToast('⚠️ لا يمكن حذف البيانات في النسخة التجريبية', true);
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
                     return;
                 }
                 if (!hasPermission('delete_cattle')) { showToast('⚠️ الحذف لمالك المزرعة فقط', true); return; }
@@ -1956,11 +1963,11 @@
                 <div>
                     <div className="view-head">
                         <div><h1>🐮 إدارة الماشية</h1><p>{cattleTotal} رأس {isReal ? '' : '(تجريبي)'}</p></div>
-                        <ActionButton allowed={hasPermission('create_cattle')} reason="للمالك والبيطري" className="btn-solid"
+                        <ActionButton allowed={hasPermission('create_cattle') && isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للمالك والبيطري'} className="btn-solid"
                             onClick={() => setShowCattleForm(true)}>+ تسجيل</ActionButton>
                     </div>
 
-                    {showCattleForm && hasPermission('create_cattle') && (
+                    {showCattleForm && hasPermission('create_cattle') && isReal && (
                         <div className="card-box">
                             <h4>تسجيل رأس ماشية</h4>
                             <form onSubmit={handleAdd}>
@@ -2026,7 +2033,7 @@
                                                 <td><span className="gender-ic">{GENDER_MAP[c.gender]?.icon}</span> {GENDER_MAP[
                                                         c.gender]?.label || '—'}</td>
                                                 <td>{ageLabel(c.birthDate)}</td>
-                                                <td>{hasPermission('edit_cattle') ? (
+                                                <td>{hasPermission('edit_cattle') && isReal ? (
                                                     <select value={c.status} disabled={savingId === c.id} onChange={e =>
                                                             handleStatus(c, e.target.value)} style={{ padding: '1px 4px',
                                                             borderRadius: '999px', border: 'none', fontSize: '.5rem',
@@ -2041,7 +2048,6 @@
                                                     </span>
                                                 )}</td>
                                                 <td>
-                                                    {/* تعطيل زر الحذف في الوضع التجريبي */}
                                                     <ActionButton
                                                         allowed={hasPermission('delete_cattle') && isReal}
                                                         reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للمالك فقط'}
@@ -2066,7 +2072,7 @@
         function HealthManagement() {
             const { currentRole, hasPermission, loading, vaccines, setVaccines, vaccinations, setVaccinations, healthLogs,
                 setHealthLogs, cattleOpts, showVaccineForm, setShowVaccineForm, showVaccinationForm,
-                setShowVaccinationForm, showHealthForm, setShowHealthForm, loadData } = useAuth();
+                setShowVaccinationForm, showHealthForm, setShowHealthForm, loadData, isReal } = useAuth();
 
             const [vf, setVf] = useState({ name: '', targetAgeInMonths: '', dosage: '', intervalInDays: '' });
             const [ve, setVe] = useState({});
@@ -2079,7 +2085,6 @@
 
             const opts = vaccines.map(v => ({ id: v.id, name: v.name }));
 
-            // ── استخدام hasPermission بدلاً من المقارنة المباشرة ──
             const canCreateVaccine = hasPermission('create_vaccine');
             const canEditHealth = hasPermission('edit_health');
 
@@ -2087,10 +2092,10 @@
                 const e = {};
                 if (!vf.name.trim()) e.name = 'اسم اللقاح مطلوب';
                 const age = Number(vf.targetAgeInMonths);
-                if (isNaN(age) || age < 0) e.targetAgeInMonths = '0 أو أكبر';
+                if (isNaN(age) || age < 0) e.targetAgeInMonths = 'لا يمكن أن يكون سالباً';
                 const dose = Number(vf.dosage);
-                if (isNaN(dose) || dose < 0) e.dosage = '0 أو أكبر';
-                if (vf.intervalInDays && Number(vf.intervalInDays) < 0) e.intervalInDays = '0 أو أكبر';
+                if (isNaN(dose) || dose < 0) e.dosage = 'لا يمكن أن يكون سالباً';
+                if (vf.intervalInDays && (isNaN(Number(vf.intervalInDays)) || Number(vf.intervalInDays) < 0)) e.intervalInDays = 'لا يمكن أن يكون سالباً';
                 setVe(e);
                 return Object.keys(e).length === 0;
             };
@@ -2115,6 +2120,10 @@
 
             const handleAddVaccine = async e => {
                 e.preventDefault();
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!canCreateVaccine) { showToast('⚠️ للبيطري فقط', true); return; }
                 if (!validateVaccine()) return;
                 try {
@@ -2135,6 +2144,10 @@
 
             const handleAddVaccination = async e => {
                 e.preventDefault();
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('schedule_vaccination')) { showToast('⚠️ فقط البيطري يستطيع جدولة التطعيمات', true); return; }
                 if (!validateVaccination()) return;
                 try {
@@ -2153,6 +2166,10 @@
             };
 
             const handleAdminister = async id => {
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('administer_vaccination')) { showToast('⚠️ للبيطري فقط', true); return; }
                 try {
                     await axiosInstance.post(EP.vaccAdminister(id), new Date().toISOString());
@@ -2163,6 +2180,10 @@
 
             const handleAddHealth = async e => {
                 e.preventDefault();
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (subHealth) return;
                 if (!hasPermission('create_health')) { showToast('⚠️ للبيطري فقط', true); return; }
                 if (!validateHealth()) return;
@@ -2194,9 +2215,9 @@
 
                     {/* ─── اللقاحات ─── */}
                     <div className="card-box">
-                        <h4>أنواع اللقاحات <ActionButton allowed={canCreateVaccine} reason="للبيطري فقط" className="btn-solid"
+                        <h4>أنواع اللقاحات <ActionButton allowed={canCreateVaccine && isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للبيطري فقط'} className="btn-solid"
                                 onClick={() => setShowVaccineForm(true)}>+ إضافة</ActionButton></h4>
-                        {showVaccineForm && canCreateVaccine && (
+                        {showVaccineForm && canCreateVaccine && isReal && (
                             <div className="card-box" style={{ marginBottom: '6px' }}>
                                 <h4>إضافة نوع لقاح</h4>
                                 <form onSubmit={handleAddVaccine}>
@@ -2242,9 +2263,9 @@
 
                     {/* ─── التطعيمات ─── */}
                     <div className="card-box">
-                        <h4>التطعيمات <ActionButton allowed={hasPermission('schedule_vaccination')} reason="للبيطري فقط"
+                        <h4>التطعيمات <ActionButton allowed={hasPermission('schedule_vaccination') && isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للبيطري فقط'}
                                 className="btn-solid" onClick={() => setShowVaccinationForm(true)}>+ جدولة</ActionButton></h4>
-                        {showVaccinationForm && hasPermission('schedule_vaccination') && (
+                        {showVaccinationForm && hasPermission('schedule_vaccination') && isReal && (
                             <div className="card-box" style={{ marginBottom: '6px' }}>
                                 <h4>جدولة تطعيم</h4>
                                 <form onSubmit={handleAddVaccination}>
@@ -2290,7 +2311,7 @@
                                                 <td><span className={`badge ${v.administeredDate ? 'ok' :
                                                         'pending'}`}>{v.administeredDate ? 'تم' : 'مجدول'}</span></td>
                                                 <td>{!v.administeredDate && <ActionButton allowed={hasPermission(
-                                                        'administer_vaccination')} reason="للبيطري فقط"
+                                                        'administer_vaccination') && isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للبيطري فقط'}
                                                     className="btn-outline" onClick={() => handleAdminister(v
                                                         .id)}>إعطاء</ActionButton>}</td>
                                             </tr>
@@ -2303,9 +2324,9 @@
 
                     {/* ─── السجلات الصحية ─── */}
                     <div className="card-box">
-                        <h4>السجلات الصحية <ActionButton allowed={hasPermission('create_health')} reason="للبيطري فقط"
+                        <h4>السجلات الصحية <ActionButton allowed={hasPermission('create_health') && isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للبيطري فقط'}
                                 className="btn-solid" onClick={() => setShowHealthForm(true)}>+ إضافة</ActionButton></h4>
-                        {showHealthForm && hasPermission('create_health') && (
+                        {showHealthForm && hasPermission('create_health') && isReal && (
                             <div className="card-box" style={{ marginBottom: '6px' }}>
                                 <h4>سجل صحي جديد</h4>
                                 <form onSubmit={handleAddHealth}>
@@ -2366,7 +2387,7 @@
 
         // ─── StaffManagement ───
         function StaffManagement() {
-            const { staffList, setStaffList, hasPermission, loadData } = useAuth();
+            const { staffList, setStaffList, hasPermission, loadData, isReal } = useAuth();
             const [showForm, setShowForm] = useState(false);
             const [formData, setFormData] = useState({ fullName: '', email: '', password: '', role: 'Vet' });
             const [errors, setErrors] = useState({});
@@ -2383,6 +2404,10 @@
 
             const handleAdd = async e => {
                 e.preventDefault();
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('manageStaff')) { showToast('⚠️ لمالك المزرعة فقط', true); return; }
                 if (!validate()) return;
                 try {
@@ -2414,11 +2439,11 @@
                 <div>
                     <div className="view-head">
                         <div><h1>👥 إدارة الموظفين</h1><p>أطباء وعمال</p></div>
-                        <ActionButton allowed={true} reason="" className="btn-solid" onClick={() => setShowForm(
+                        <ActionButton allowed={isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : ''} className="btn-solid" onClick={() => setShowForm(
                         true)}>+ إضافة</ActionButton>
                     </div>
 
-                    {showForm && (
+                    {showForm && isReal && (
                         <div className="card-box">
                             <h4>موظف جديد</h4>
                             <form onSubmit={handleAdd}>
@@ -2478,6 +2503,10 @@
             const { alerts, setAlerts, hasPermission, isReal } = useAuth();
 
             const resolve = id => {
+                if (!isReal) {
+                    showToast('⚠️ غير مسموح بتعديل البيانات في النسخة التجريبية', true);
+                    return;
+                }
                 if (!hasPermission('resolve_alerts')) { showToast('⚠️ للمالك والبيطري فقط', true); return; }
                 setAlerts(alerts.map(a => a.id === id ? { ...a, active: false, time: 'تم الإصلاح' } : a));
                 showToast('✅ تم إصلاح التنبيه');
@@ -2504,7 +2533,7 @@
                                     </div>
                                     <div className="alert-actions">
                                         {a.active && (
-                                            <ActionButton allowed={hasPermission('resolve_alerts')} reason="للمالك والبيطري"
+                                            <ActionButton allowed={hasPermission('resolve_alerts') && isReal} reason={!isReal ? 'غير مسموح في النسخة التجريبية' : 'للمالك والبيطري'}
                                                 className="btn-outline" onClick={() => resolve(a.id)}>إصلاح</ActionButton>
                                         )}
                                     </div>
